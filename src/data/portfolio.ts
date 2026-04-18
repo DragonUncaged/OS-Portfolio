@@ -6,6 +6,33 @@ export interface Skill {
   kind: SkillKind;
 }
 
+export interface Project {
+  slug: string;
+  name: string;
+  description: string;
+  tech: string[];
+  live: string;
+  embed: boolean;
+  language: "js" | "ts" | "py";
+}
+
+export interface Job {
+  company: string;
+  role: string;
+  period: string;
+  start: string;
+  end: string | null;
+  location: string;
+  highlights: string[];
+}
+
+export interface School {
+  institution: string;
+  degree: string;
+  period: string;
+  location: string;
+}
+
 export interface SocialLink {
   id: "email" | "github" | "linkedin" | "codechef";
   label: string;
@@ -94,3 +121,111 @@ export const strengths: string[] = [
   "Git, VS Code & modern tooling",
   "Software development lifecycle",
 ];
+
+export const projects: Project[] = [
+  {
+    slug: "codespace",
+    name: "CodeSpace",
+    description:
+      "A collaborative online code editor with live preview — write HTML, CSS and JS and see the result instantly.",
+    tech: ["React", "JavaScript", "CSS"],
+    live: "https://code-two-theta.vercel.app/",
+    embed: true,
+    language: "js",
+  },
+  {
+    slug: "draw",
+    name: "Draw",
+    description:
+      "A real-time collaborative whiteboard. Sketch, diagram and brainstorm together from any device.",
+    tech: ["JavaScript", "Canvas", "WebSockets"],
+    live: "https://draw-zooi.onrender.com/",
+    embed: true,
+    language: "js",
+  },
+  {
+    slug: "chat-app",
+    name: "Chat App",
+    description: "A real-time chat application with rooms, presence and message history.",
+    tech: ["TypeScript", "React", "Firebase"],
+    live: "https://chat-app-ca.netlify.app/",
+    embed: true,
+    language: "ts",
+  },
+  {
+    slug: "document-chatbot",
+    name: "Document Chatbot",
+    description:
+      "A GenAI chatbot that answers questions about your documents using retrieval-augmented generation.",
+    tech: ["Python", "LangChain", "Streamlit"],
+    live: "https://genai-chatbot-ctk7vcbjwwvekridgy6kgg.streamlit.app/",
+    embed: false,
+    language: "py",
+  },
+];
+
+export const experience: Job[] = [
+  {
+    company: "Even Healthcare",
+    role: "Full Stack Developer",
+    period: "Feb 2025 — Present",
+    start: "2025-02",
+    end: null,
+    location: "Gurugram, Haryana",
+    highlights: [
+      "Building scalable full-stack applications with Next.js and Go.",
+      "Designing backend services and REST APIs.",
+      "Collaborating with cross-functional teams in a fast-paced startup environment.",
+    ],
+  },
+  {
+    company: "Startup",
+    role: "Full Stack Developer",
+    period: "Nov 2024 — Jan 2025",
+    start: "2024-11",
+    end: "2025-01",
+    location: "Remote",
+    highlights: [
+      "Developed backend services using Python and FastAPI.",
+      "Built responsive frontend interfaces with React.",
+      "Implemented RESTful APIs and database designs.",
+    ],
+  },
+  {
+    company: "Internshala",
+    role: "Full Stack Developer",
+    period: "Apr 2024 — Oct 2024",
+    start: "2024-04",
+    end: "2024-10",
+    location: "Gurugram, Haryana",
+    highlights: [
+      "Built and shipped full-stack web applications end to end.",
+      "Designed web applications ensuring optimal performance and user experience.",
+      "Worked with React, Node.js and REST APIs in production.",
+    ],
+  },
+];
+
+export const education: School[] = [
+  {
+    institution: "Chandigarh University",
+    degree: "B.Tech, Computer Science & Engineering",
+    period: "Aug 2020 — Jul 2024",
+    location: "Mohali, Punjab",
+  },
+];
+
+export const previousPortfolio = {
+  name: "IDE Portfolio",
+  description: "The previous portfolio, a VS Code-style IDE that runs code in the browser.",
+  live: "https://dragonuncaged.github.io/",
+  repo: "https://github.com/DragonUncaged/dragonuncaged.github.io",
+} as const;
+
+export const site = {
+  title: `${profile.name}, ${profile.role}`,
+  description: `${profile.name}, ${profile.role}. ${profile.tagline}. An operating-system style portfolio: boot macOS, Windows or Linux and explore projects, experience and skills as apps.`,
+  shortName: profile.name,
+} as const;
+
+export const currentJob = experience.find((j) => j.end === null) ?? experience[0];
