@@ -6,6 +6,26 @@ export type Platform = "macos" | "windows" | "ubuntu" | "ios" | "wp" | "android"
 
 export type Theme = "light" | "dark" | "auto";
 
+export type AppId =
+  | "about"
+  | "projects"
+  | "experience"
+  | "skills"
+  | "resume"
+  | "contact"
+  | "terminal"
+  | "files"
+  | "browser"
+  | "settings"
+
+export interface AppArgs {
+  path?: string;
+  url?: string;
+  project?: string;
+  section?: string;
+  nonce?: number;
+}
+
 export interface Rect {
   x: number;
   y: number;
