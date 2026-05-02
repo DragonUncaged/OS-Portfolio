@@ -17,6 +17,18 @@ export type AppId =
   | "files"
   | "browser"
   | "settings"
+  | "notes"
+  | "calculator"
+  | "calendar"
+  | "clock"
+  | "music"
+  | "photos"
+  | "paint"
+  | "mines"
+  | "snake"
+  | "monitor"
+  | "viewer"
+  | "tips";
 
 export interface AppArgs {
   path?: string;
