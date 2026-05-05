@@ -39,57 +39,60 @@
   --ctl-h: 32px;
 }
 
-html,
-body {
-  height: 100%;
-  overflow: hidden;
-  overscroll-behavior: none;
-  background: #000;
-  color: var(--fg);
-  font-family: var(--os-font);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-}
+@layer base {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+    background: #000;
+    color: var(--fg);
+    font-family: var(--os-font);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
 
-body {
-  user-select: none;
-  -webkit-user-select: none;
-}
+  body {
+    user-select: none;
+    -webkit-user-select: none;
+  }
 
-.selectable,
-.selectable * {
-  user-select: text;
-  -webkit-user-select: text;
-}
+  .selectable,
+  .selectable * {
+    user-select: text;
+    -webkit-user-select: text;
+  }
 
-button,
-[role="button"] {
-  cursor: default;
-}
+  button,
+  [role="button"] {
+    cursor: default;
+  }
 
-:focus {
-  outline: none;
-}
+  :focus {
+    outline: none;
+  }
 
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 
-* {
-  scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--fg) 28%, transparent) transparent;
-}
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--fg) 28%, transparent) transparent;
+  }
 
-body.wm-busy iframe {
-  pointer-events: none;
-}
+  /* an iframe under the pointer swallows the drag */
+  body.wm-busy iframe {
+    pointer-events: none;
+  }
 
-body.wm-busy {
-  cursor: default;
+  body.wm-busy {
+    cursor: default;
+  }
 }
 
 @layer components {
@@ -282,11 +285,9 @@ body.wm-busy {
   }
 }
 
-@media print {
-  html,
-  body {
-    height: auto;
-    overflow: visible;
-    background: #fff;
-  }
+.os-root {
+  font-family: var(--os-font);
+  color: var(--fg);
+  font-size: 14px;
+  line-height: 1.4;
 }
