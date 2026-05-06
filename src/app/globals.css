@@ -291,3 +291,63 @@
   font-size: 14px;
   line-height: 1.4;
 }
+
+.os-menu {
+  padding: 5px;
+  border-radius: var(--menu-r, 8px);
+  background: var(--menu-bg, var(--bg-3));
+  border: 1px solid var(--line);
+  color: var(--fg);
+  box-shadow: 0 12px 34px rgb(0 0 0 / 0.28);
+  backdrop-filter: blur(28px) saturate(1.6);
+  font-size: 13px;
+  animation: k-fade-in 0.1s ease-out;
+}
+
+.os-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 26px;
+  padding: 3px 9px;
+  border-radius: var(--menu-item-r, 5px);
+  line-height: 1.2;
+}
+
+.os-menu-item[data-active="true"] {
+  background: var(--menu-hi, var(--accent));
+  color: var(--menu-hi-fg, var(--accent-fg));
+}
+
+.os-menu-item:disabled {
+  opacity: 0.38;
+  pointer-events: none;
+}
+
+.os-menu-icon {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  flex: none;
+}
+
+.os-menu-key {
+  flex: none;
+  padding-left: 18px;
+  opacity: 0.55;
+  font-size: 12px;
+}
+
+.os-menu-sep {
+  height: 1px;
+  margin: 4px 8px;
+  background: var(--line);
+}
+
+.os-menu-label {
+  padding: 4px 9px 2px;
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.55;
+}
