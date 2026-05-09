@@ -292,6 +292,57 @@
   line-height: 1.4;
 }
 
+.os-window-pos {
+  transform-origin: 0 0;
+  transition:
+    transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
+    width 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
+    height 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.os-window-pos[data-busy] {
+  transition: none;
+}
+
+.os-window {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--win-r, 10px);
+  background: var(--bg);
+  box-shadow: var(--win-shadow, 0 20px 60px rgb(0 0 0 / 0.35));
+  transition: box-shadow 0.2s;
+}
+
+.os-window[data-focused="false"] {
+  box-shadow: var(--win-shadow-idle, 0 10px 30px rgb(0 0 0 / 0.22));
+}
+
+.os-window[data-mode="max"],
+.os-window[data-mode="left"],
+.os-window[data-mode="right"] {
+  border-radius: var(--win-r-max, 0px);
+}
+
+.os-window-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.os-window-pick {
+  border-radius: inherit;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.os-window-pick:hover,
+.os-window-pick:focus-visible {
+  box-shadow: 0 0 0 5px var(--accent);
+  outline: none;
+}
+
 .os-menu {
   padding: 5px;
   border-radius: var(--menu-r, 8px);
