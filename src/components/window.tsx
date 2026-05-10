@@ -4,10 +4,10 @@ import { CopySimple, Minus, Plus, Square, X } from "@phosphor-icons/react";
 import { motion } from "motion/react";
 import { Suspense, useMemo, useRef } from "react";
 import { APP_COMPONENTS } from "@/apps/lazy";
-import { appName } from "@/apps/registry";
+import { APPS, appName } from "@/apps/registry";
 import { InstanceContext, type Instance } from "@/hooks/use-instance";
 import { usePlatform } from "@/stores/session";
-import { frameOf, useWM, type Win, type WinMode } from "@/stores/window-manager";
+import { fitRect, frameOf, useWM, type Win, type WinMode } from "@/stores/window-manager";
 import type { Platform, Rect } from "@/types";
 import { AppIcon } from "./app-icon";
 
@@ -16,6 +16,20 @@ export interface OverviewSlot {
   y: number;
   scale: number;
 }
+
+const RESIZE_DIRS = ["n", "s", "e", "w", "ne", "nw", "se", "sw"] as const;
+type Dir = (typeof RESIZE_DIRS)[number];
+
+const HANDLE: Record<Dir, string> = {
+  n: "left-3 right-3 -top-1 h-2 cursor-ns-resize",
+  s: "left-3 right-3 -bottom-1 h-2 cursor-ns-resize",
+  e: "top-3 bottom-3 -right-1 w-2 cursor-ew-resize",
+  w: "top-3 bottom-3 -left-1 w-2 cursor-ew-resize",
+  ne: "-top-1 -right-1 size-4 cursor-nesw-resize",
+  nw: "-top-1 -left-1 size-4 cursor-nwse-resize",
+  se: "-bottom-1 -right-1 size-4 cursor-nwse-resize",
+  sw: "-bottom-1 -left-1 size-4 cursor-nesw-resize",
+};
 
 export function AppLoading() {
   return (
@@ -194,6 +208,49 @@ export function Window({
     );
   };
 
+  const startResize = (dir: Dir) => (e: React.PointerEvent) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const el = ref.current;
+    if (!el) return;
+    const sx = e.clientX;
+    const sy = e.clientY;
+    const base = win.rect;
+    const [minW, minH] = APPS[win.appId].min ?? [320, 240];
+    let cur = base;
+    document.body.classList.add("wm-busy");
+    el.dataset.busy = "1";
+
+    track(
+      (ev) => {
+        const dx = ev.clientX - sx;
+        const dy = ev.clientY - sy;
+        let { x, y, w, h } = base;
+        if (dir.includes("e")) w = Math.max(minW, base.w + dx);
+        if (dir.includes("s")) h = Math.max(minH, base.h + dy);
+        if (dir.includes("w")) {
+          w = Math.max(minW, base.w - dx);
+          x = base.x + base.w - w;
+        }
+        if (dir.includes("n")) {
+          const a = useWM.getState().area;
+          h = Math.max(minH, Math.min(base.h - dy, base.y + base.h - a.y));
+          y = base.y + base.h - h;
+        }
+        cur = { x, y, w, h };
+        el.style.transform = `translate(${x}px, ${y}px)`;
+        el.style.width = `${w}px`;
+        el.style.height = `${h}px`;
+      },
+      () => {
+        const wm = useWM.getState();
+        wm.setRect(win.id, fitRect(cur, wm.area, [minW, minH]));
+        sync();
+      },
+    );
+  };
+
   const shown = !win.minimized;
   const toDock = win.minTo
     ? { x: win.minTo.x - (frame.x + frame.w / 2), y: win.minTo.y - (frame.y + frame.h / 2) }
@@ -250,6 +307,11 @@ export function Window({
           </InstanceContext>
         </div>
         <Controls platform={platform} win={win} title={title} />
+        {win.mode === "normal" &&
+          !slot &&
+          RESIZE_DIRS.map((d) => (
+            <div key={d} className={`absolute z-30 touch-none ${HANDLE[d]}`} onPointerDown={startResize(d)} />
+          ))}
         {slot && (
           <>
             <button
