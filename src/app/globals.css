@@ -343,6 +343,21 @@
   outline: none;
 }
 
+.os-overview-label {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  text-shadow: 0 1px 4px rgb(0 0 0 / 0.6);
+}
+
+.os-snap-hint {
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 16%, rgb(255 255 255 / 0.12));
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  backdrop-filter: blur(10px);
+  animation: k-fade-in 0.15s ease-out;
+}
+
 .os-menu {
   padding: 5px;
   border-radius: var(--menu-r, 8px);

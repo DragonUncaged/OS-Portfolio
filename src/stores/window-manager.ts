@@ -34,6 +34,8 @@ interface WMState {
   setArea: (area: Rect) => void;
   setOverview: (v: boolean) => void;
   setSnapHint: (m: WinMode | null) => void;
+  cycle: () => void;
+  showDesktop: () => void;
 }
 
 let seq = 0;
@@ -186,6 +188,28 @@ export const useWM = create<WMState>()((set, get) => ({
   setOverview: (overview) => set({ overview }),
   setSnapHint: (snapHint) => set((s) => (s.snapHint === snapHint ? s : { snapHint })),
 
+  cycle: () => {
+    const { wins, focus } = get();
+    const order = wins.filter((w) => !w.minimized).sort((a, b) => a.z - b.z);
+    if (order.length < 2) return;
+    const next = order.find((w) => w.id !== focus) ?? order[0];
+    get().focusWin(next.id);
+  },
+
+  showDesktop: () =>
+    set((s) => {
+      const anyVisible = s.wins.some((w) => !w.minimized);
+      if (!anyVisible) {
+        const wins = s.wins.map((w) => ({ ...w, minimized: false }));
+        return { wins, focus: topVisible(wins) };
+      }
+      return {
+        wins: s.wins.map((w) =>
+          w.minimized ? w : { ...w, minimized: true, minTo: dockPoint(w.appId, s.area) },
+        ),
+        focus: null,
+      };
+    }),
 }));
 
 export function useActiveApp(): AppId | null {
