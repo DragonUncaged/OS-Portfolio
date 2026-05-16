@@ -40,3 +40,14 @@ function goBack(instance: string): boolean {
   handler();
   return true;
 }
+
+export function phoneBack() {
+  const phone = usePhone.getState();
+  if (phone.switcher) phone.setSwitcher(false);
+  else if (phone.current && !goBack(`phone:${phone.current}`)) phone.home();
+}
+
+export function phoneCanGoBack(): boolean {
+  const { current } = usePhone.getState();
+  return Boolean(current && backHandlers.has(`phone:${current}`));
+}
