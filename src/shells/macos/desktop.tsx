@@ -10,6 +10,7 @@ import { useSession } from "@/stores/session";
 import { useWM } from "@/stores/window-manager";
 import { MENU_H, type Panel } from "./constants";
 import { Boot, Login } from "./login";
+import { MenuBar } from "./menu-bar";
 
 function Desktop() {
   const { panel, toggle, close } = usePanel<Panel>();
@@ -45,6 +46,7 @@ function Desktop() {
   return (
     <>
       <WindowLayer insets={{ top: MENU_H, right: 0, bottom: 82, left: 0 }} overviewInsets={{ top: 96, right: 56, bottom: 120, left: 56 }} />
+      <MenuBar panel={panel} toggle={toggle} />
       <AnimatePresence>
       </AnimatePresence>
     </>

@@ -88,6 +88,34 @@
   background: rgb(255 255 255 / 0.15);
 }
 
+[data-os="macos"] .mac-menubar {
+  background: var(--bar-bg);
+  color: var(--bar-fg);
+  backdrop-filter: blur(30px) saturate(1.8);
+  font-size: 13.5px;
+  text-shadow: 0 0 1px rgb(255 255 255 / 0.08);
+}
+
+[data-os="macos"] .mac-menu-title,
+[data-os="macos"] .mac-status {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+[data-os="macos"] .mac-status {
+  padding: 0 7px;
+}
+
+[data-os="macos"] button.mac-menu-title:hover,
+[data-os="macos"] button.mac-status:hover,
+[data-os="macos"] .mac-status[aria-expanded="true"] {
+  background: color-mix(in srgb, var(--bar-fg) 16%, transparent);
+}
+
 [data-os="macos"] .os-menu {
   border: 0.5px solid var(--glass-line);
   box-shadow:
