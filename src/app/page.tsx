@@ -1,8 +1,10 @@
 import { education, experience, links, profile, projects, skills } from "@/data/portfolio";
+import { Root } from "@/shells/root";
 
 export default function Page() {
   return (
     <>
+      <Root />
       <main id="plain" className="sr-only">
         <h1>{profile.name}</h1>
         <p>

@@ -1,0 +1,227 @@
+[data-os="macos"] {
+  --os-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter Variable", "Helvetica Neue", sans-serif;
+  --os-mono: "SF Mono", ui-monospace, Menlo, "JetBrains Mono Variable", monospace;
+  --os-r: 6px;
+  --os-r-lg: 10px;
+  --ctl-h: 28px;
+  --win-r: 11px;
+  --win-r-max: 0px;
+  --menu-r: 8px;
+  --menu-item-r: 5px;
+  --folder: #3b9eff;
+
+  --bg: #ffffff;
+  --bg-2: #f1f1f3;
+  --bg-3: #f6f6f8;
+  --fg: #1d1d1f;
+  --fg-2: rgb(60 60 67 / 0.74);
+  --fg-3: rgb(60 60 67 / 0.48);
+  --line: rgb(0 0 0 / 0.1);
+  --ctl: rgb(0 0 0 / 0.055);
+  --ctl-2: rgb(0 0 0 / 0.11);
+  --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
+  --menu-bg: rgb(246 246 248 / 0.78);
+  --bar-bg: rgb(255 255 255 / 0.32);
+  --bar-fg: #111;
+  --glass: rgb(255 255 255 / 0.36);
+  --glass-line: rgb(255 255 255 / 0.4);
+  --win-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.22), 0 22px 70px rgb(0 0 0 / 0.36);
+  --win-shadow-idle: 0 0 0 0.5px rgb(0 0 0 / 0.16), 0 10px 32px rgb(0 0 0 / 0.2);
+}
+
+[data-os="macos"][data-theme="dark"],
+[data-os="macos"] [data-theme="dark"] {
+  --bg: #1e1e20;
+  --bg-2: #28282b;
+  --bg-3: #2c2c2f;
+  --fg: #f5f5f7;
+  --fg-2: rgb(235 235 245 / 0.68);
+  --fg-3: rgb(235 235 245 / 0.4);
+  --line: rgb(255 255 255 / 0.11);
+  --ctl: rgb(255 255 255 / 0.08);
+  --ctl-2: rgb(255 255 255 / 0.15);
+  --menu-bg: rgb(40 40 44 / 0.78);
+  --bar-bg: rgb(20 20 24 / 0.38);
+  --bar-fg: #fff;
+  --glass: rgb(40 40 46 / 0.42);
+  --glass-line: rgb(255 255 255 / 0.16);
+  --win-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.22), 0 22px 70px rgb(0 0 0 / 0.55);
+  --win-shadow-idle: 0 0 0 0.5px rgb(255 255 255 / 0.16), 0 10px 32px rgb(0 0 0 / 0.4);
+}
+
+[data-os="macos"] .mac-boot-bar {
+  animation: mac-boot 2.1s cubic-bezier(0.3, 0.1, 0.3, 1) forwards;
+}
+
+@keyframes mac-boot {
+  from {
+    width: 0;
+  }
+  35% {
+    width: 38%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+[data-os="macos"] .mac-login-field {
+  background: rgb(255 255 255 / 0.2);
+  border: 0.5px solid rgb(255 255 255 / 0.3);
+  backdrop-filter: blur(20px);
+  user-select: text;
+}
+
+[data-os="macos"] .mac-login-field:focus {
+  outline: none;
+  background: rgb(255 255 255 / 0.28);
+}
+
+[data-os="macos"] .mac-login-power {
+  opacity: 0.75;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+[data-os="macos"] .mac-login-power:hover {
+  opacity: 1;
+  background: rgb(255 255 255 / 0.15);
+}
+
+[data-os="macos"] .os-menu {
+  border: 0.5px solid var(--glass-line);
+  box-shadow:
+    0 0 0 0.5px rgb(0 0 0 / 0.18),
+    0 14px 40px rgb(0 0 0 / 0.28);
+  font-size: 13.5px;
+}
+
+[data-os="macos"] .os-menu-item {
+  min-height: 24px;
+}
+
+[data-os="macos"] .os-menu-key {
+  letter-spacing: 0.04em;
+}
+
+[data-os="macos"] .mac-light {
+  display: grid;
+  place-items: center;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  color: transparent;
+  box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.18);
+}
+
+[data-os="macos"] .mac-light[data-kind="close"] {
+  background: #ff5f57;
+}
+
+[data-os="macos"] .mac-light[data-kind="min"] {
+  background: #febc2e;
+}
+
+[data-os="macos"] .mac-light[data-kind="zoom"] {
+  background: #28c840;
+}
+
+[data-os="macos"] .mac-lights:hover .mac-light {
+  color: rgb(0 0 0 / 0.6);
+}
+
+[data-os="macos"] .os-window[data-focused="false"] .mac-light {
+  background: var(--ctl-2);
+}
+
+[data-os="macos"] .mac-sidebar {
+  background: color-mix(in srgb, var(--bg-2) 82%, transparent);
+  backdrop-filter: blur(40px) saturate(1.8);
+  border-right: 0.5px solid var(--line);
+}
+
+[data-os="macos"] .os-window[data-focused="true"] {
+  --sidebar-tint: 1;
+}
+
+[data-os="macos"] .mac-side-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 28px;
+  padding: 0 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  text-align: left;
+}
+
+[data-os="macos"] .mac-side-item svg {
+  flex: none;
+  color: var(--accent);
+}
+
+[data-os="macos"] .mac-side-item:hover {
+  background: var(--ctl);
+}
+
+[data-os="macos"] .mac-side-item[data-on="true"] {
+  background: var(--ctl-2);
+}
+
+[data-os="macos"] .mac-toolbar {
+  background: var(--bg);
+}
+
+[data-os="macos"] .mac-seg {
+  flex: none;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  white-space: nowrap;
+  color: var(--fg-2);
+}
+
+[data-os="macos"] .mac-seg[data-on="true"] {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+[data-os="macos"] .os-search .k-input {
+  min-height: 26px;
+  border-radius: 7px;
+  font-size: 13px;
+}
+
+[data-os="macos"] .k-btn {
+  box-shadow: inset 0 0 0 0.5px var(--line);
+}
+
+[data-os="macos"] .k-btn-primary {
+  background: linear-gradient(color-mix(in srgb, var(--accent) 88%, #fff), var(--accent));
+  box-shadow:
+    inset 0 0 0 0.5px rgb(0 0 0 / 0.1),
+    0 1px 1px rgb(0 0 0 / 0.12);
+}
+
+[data-os="macos"] .k-card {
+  border-width: 0.5px;
+}
+
+[data-os="macos"] .os-toggle[data-on="true"] {
+  background: #34c759;
+}
+
+[data-os="macos"] .os-calc-key {
+  border-radius: 999px;
+  min-height: 48px;
+}
+
+[data-os="macos"] .os-calc-key[data-kind="op"],
+[data-os="macos"] .os-calc-key[data-kind="eq"] {
+  background: #ff9f0a;
+  color: #fff;
+}
+
+[data-os="macos"] .os-heading {
+  font-size: 11.5px;
+}
