@@ -9,6 +9,7 @@ import { isTyping, useWindowEvent } from "@/hooks/use-window-event";
 import { useSession } from "@/stores/session";
 import { useWM } from "@/stores/window-manager";
 import { MENU_H, type Panel } from "./constants";
+import { Dock } from "./dock";
 import { Boot, Login } from "./login";
 import { MenuBar } from "./menu-bar";
 
@@ -47,6 +48,7 @@ function Desktop() {
     <>
       <WindowLayer insets={{ top: MENU_H, right: 0, bottom: 82, left: 0 }} overviewInsets={{ top: 96, right: 56, bottom: 120, left: 56 }} />
       <MenuBar panel={panel} toggle={toggle} />
+      <Dock toggle={toggle} />
       <AnimatePresence>
       </AnimatePresence>
     </>
