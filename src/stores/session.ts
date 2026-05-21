@@ -3,7 +3,9 @@
 import { create } from "zustand";
 import { PLATFORM } from "@/lib/platform";
 import type { AppArgs, AppId, Family, Form, Platform, PowerAction } from "@/types";
+import { usePhone } from "./phone";
 import { useSettings } from "./settings";
+import { useWM } from "./window-manager";
 
 export type Phase = "picker" | "boot" | "login" | "desktop" | "off" | "panic";
 
@@ -24,6 +26,7 @@ interface SessionState {
   notices: Notice[];
   banner: number | null;
   dragon: number;
+  boots: number;
   setForm: (form: Form) => void;
   start: (family: Family) => void;
   setPhase: (phase: Phase) => void;
@@ -39,6 +42,11 @@ interface SessionState {
 
 let noticeId = 0;
 
+function quitAll() {
+  useWM.getState().closeAll();
+  usePhone.getState().closeAll();
+}
+
 export const useSession = create<SessionState>()((set) => ({
   phase: "picker",
   family: null,
@@ -47,16 +55,19 @@ export const useSession = create<SessionState>()((set) => ({
   notices: [],
   banner: null,
   dragon: 0,
+  boots: 0,
   setForm: (form) => set({ form }),
   start: (family) => {
     useSettings.getState().setLastFamily(family);
-    set({ family, phase: "boot", loggedIn: false, notices: [], banner: null });
+    quitAll();
+    set((s) => ({ family, phase: "boot", loggedIn: false, notices: [], banner: null, boots: s.boots + 1 }));
   },
   setPhase: (phase) => set({ phase }),
   login: () => set({ phase: "desktop", loggedIn: true }),
   power: (action) => {
-    if (action === "lock") set({ phase: "login" });
-    else if (action === "logout") set({ phase: "login", loggedIn: false });
+    if (action === "lock") return set({ phase: "login" });
+    quitAll();
+    if (action === "logout") set({ phase: "login", loggedIn: false });
     else if (action === "shutdown") set({ phase: "off", loggedIn: false });
     else set({ phase: "picker", loggedIn: false });
   },

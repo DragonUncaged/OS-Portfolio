@@ -2,9 +2,11 @@
 
 import "./macos.css";
 import { AnimatePresence } from "motion/react";
+import { Banner } from "@/components/notifications";
 import { ShellRoot, ShellWallpaper } from "@/components/shell-root";
 import { WindowLayer } from "@/components/window-layer";
 import { usePanel } from "@/hooks/use-panel";
+import { useWelcome } from "@/hooks/use-welcome";
 import { isTyping, useWindowEvent } from "@/hooks/use-window-event";
 import { useSession } from "@/stores/session";
 import { useWM } from "@/stores/window-manager";
@@ -16,6 +18,7 @@ import { MenuBar } from "./menu-bar";
 function Desktop() {
   const { panel, toggle, close } = usePanel<Panel>();
   const overview = useWM((s) => s.overview);
+  useWelcome("Press ⌘K to search everything, or open Launchpad from the Dock. Restart from the ⌘ menu to try another system.");
 
   useWindowEvent("keydown", (e) => {
     if (useSession.getState().phase !== "desktop") return;
@@ -49,6 +52,7 @@ function Desktop() {
       <WindowLayer insets={{ top: MENU_H, right: 0, bottom: 82, left: 0 }} overviewInsets={{ top: 96, right: 56, bottom: 120, left: 56 }} />
       <MenuBar panel={panel} toggle={toggle} />
       <Dock toggle={toggle} />
+      <Banner className="fixed right-2.5 w-[344px] max-w-[calc(100vw-20px)]" style={{ top: MENU_H + 8 }} from={{ x: 60 }} />
       <AnimatePresence>
       </AnimatePresence>
     </>
