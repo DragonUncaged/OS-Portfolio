@@ -1,7 +1,7 @@
 "use client";
 
 import "./macos.css";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { Banner } from "@/components/notifications";
 import { ShellRoot, ShellWallpaper } from "@/components/shell-root";
 import { WindowLayer } from "@/components/window-layer";
@@ -49,6 +49,24 @@ function Desktop() {
 
   return (
     <>
+      <AnimatePresence>
+        {overview && (
+          <motion.button
+            type="button"
+            key="mc"
+            aria-label="Leave Mission Control"
+            className="mac-mission fixed inset-0 z-[9] cursor-default"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => useWM.getState().setOverview(false)}
+          >
+            <span className="mac-mission-bar absolute inset-x-0 flex justify-center" style={{ top: MENU_H }}>
+              <span className="mac-mission-desk">Desktop</span>
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
       <WindowLayer insets={{ top: MENU_H, right: 0, bottom: 82, left: 0 }} overviewInsets={{ top: 96, right: 56, bottom: 120, left: 56 }} />
       <MenuBar panel={panel} toggle={toggle} />
       <Dock toggle={toggle} />
