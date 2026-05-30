@@ -285,11 +285,24 @@
   }
 }
 
+@media print {
+  html,
+  body {
+    height: auto;
+    overflow: visible;
+    background: #fff;
+  }
+}
+
 .os-root {
   font-family: var(--os-font);
   color: var(--fg);
   font-size: 14px;
   line-height: 1.4;
+}
+
+.print-only {
+  display: none;
 }
 
 .os-window-pos {
@@ -540,6 +553,96 @@
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
 }
 
+.resume-desk {
+  background: var(--bg-2);
+}
+
+.resume-doc {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 34px 38px;
+  border-radius: 3px;
+  background: #fff;
+  color: #1b1c1f;
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 0.14),
+    0 10px 30px rgb(0 0 0 / 0.12);
+  font-family: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.resume-doc h1 {
+  font-size: 28px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.resume-doc .resume-role {
+  margin-top: 3px;
+  font-size: 13.5px;
+  color: #4a4d55;
+}
+
+.resume-doc .resume-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  margin-top: 8px;
+  font-size: 11.5px;
+}
+
+.resume-doc a {
+  color: #1a56c4;
+}
+
+.resume-doc h2 {
+  margin: 20px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1.5px solid #1b1c1f;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.resume-doc .resume-item {
+  margin-bottom: 11px;
+  break-inside: avoid;
+}
+
+.resume-doc .resume-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 12px;
+}
+
+.resume-doc h3 {
+  font-size: 13.5px;
+  font-weight: 650;
+}
+
+.resume-doc .resume-row span,
+.resume-doc .resume-meta {
+  font-size: 11.5px;
+  color: #5b5e66;
+}
+
+.resume-doc ul {
+  margin-top: 4px;
+  padding-left: 16px;
+  list-style: disc;
+}
+
+@container (max-width: 520px) {
+  .resume-doc {
+    padding: 22px 18px;
+  }
+}
+
 .os-banner {
   display: flex;
   align-items: flex-start;
@@ -579,4 +682,21 @@
   background: var(--menu-bg, var(--bg-3));
   border: 1px solid var(--line);
   color: var(--fg);
+}
+
+@media print {
+  .app-root,
+  #plain {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block;
+  }
+
+  .print-only .resume-doc {
+    max-width: none;
+    padding: 0;
+    box-shadow: none;
+  }
 }

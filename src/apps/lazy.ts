@@ -7,4 +7,5 @@ export const APP_COMPONENTS: Record<string, LazyExoticComponent<ComponentType>> 
   projects: lazy(() => import("./projects")),
   experience: lazy(() => import("./experience")),
   skills: lazy(() => import("./skills")),
+  resume: lazy(() => import("./resume")),
 };
