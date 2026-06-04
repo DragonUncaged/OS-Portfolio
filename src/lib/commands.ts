@@ -4,7 +4,7 @@ import { APPS, appName, launchable } from "@/apps/registry";
 import { currentJob, education, experience, links, profile, projects, skillKinds, skills, strengths, type SkillKind } from "@/data/portfolio";
 import type { AppId, Family, Platform } from "@/types";
 import { launch, openExternal } from "./launch";
-import { HOME, canonical, parsePath, resolve, type VDir, type VPath } from "./vfs";
+import { HOME, canonical, parsePath, resolve, sizeOf, type VDir, type VPath } from "./vfs";
 
 export type Tone = "dim" | "ok" | "err" | "accent" | "bold" | "warn";
 
@@ -285,6 +285,98 @@ const COMMANDS: Command[] = [
       run: () => out(kv(l.label.toLowerCase(), l.handle, l.href), line("(click the link to open)", "dim")),
     }),
   ),
+  {
+    name: "ls",
+    usage: "ls [-a] [-l] [path]",
+    about: "list files",
+    aliases: ["dir", "ll"],
+    run: (args, ctx, raw) => {
+      const flags = args.filter((a) => a.startsWith("-")).join("");
+      const target = args.find((a) => !a.startsWith("-"));
+      const node = resolve(target ? parsePath(ctx.cwd, target) : ctx.cwd);
+      if (!node) return err(`ls: ${target}: no such file or directory`);
+      if (node.type === "file") return out(line(node.name));
+      const kids = listDir(node, flags.includes("a"));
+      if (flags.includes("l") || raw.startsWith("ll") || raw.startsWith("dir")) {
+        return out(
+          ...kids.map(
+            (c): Line => [
+              s(c.type === "dir" ? "d" : "-", "dim"),
+              s("r--r--r--  ", "dim"),
+              s(sizeOf(c).padStart(9) + "  ", "dim"),
+              s(c.name, c.type === "dir" ? "accent" : undefined),
+            ],
+          ),
+        );
+      }
+      if (!kids.length) return out();
+      return out(kids.flatMap((c, i): Span[] => [s(c.name, c.type === "dir" ? "accent" : undefined), s(i < kids.length - 1 ? "   " : "")]));
+    },
+  },
+  {
+    name: "cd",
+    usage: "cd [path]",
+    about: "change folder",
+    aliases: ["chdir"],
+    run: (args, ctx) => {
+      if (!args[0]) return { lines: [], cwd: [] };
+      const path = canonical(parsePath(ctx.cwd, args[0]));
+      const node = path && resolve(path);
+      if (!path || !node) return err(`cd: ${args[0]}: no such file or directory`);
+      if (node.type !== "dir") return err(`cd: ${args[0]}: not a directory`);
+      return { lines: [], cwd: path };
+    },
+  },
+  {
+    name: "pwd",
+    about: "print the current folder",
+    run: (_a, ctx) => out(line(displayPath(ctx.platform, ctx.cwd, true))),
+  },
+  {
+    name: "cat",
+    usage: "cat <file>",
+    about: "print a file",
+    aliases: ["type", "less", "more", "bat"],
+    run: (args, ctx) => {
+      if (!args.length) return err("usage: cat <file>");
+      const lines: Line[] = [];
+      for (const a of args) {
+        const node = resolve(parsePath(ctx.cwd, a));
+        if (!node) return err(`cat: ${a}: no such file or directory`);
+        if (node.type === "dir") return err(`cat: ${a}: is a directory`);
+        lines.push(...node.content.replace(/\n$/, "").split("\n").map((t) => line(t)));
+      }
+      return { lines };
+    },
+  },
+  {
+    name: "tree",
+    usage: "tree [path]",
+    about: "show the folder tree",
+    run: (args, ctx) => {
+      const node = resolve(args[0] ? parsePath(ctx.cwd, args[0]) : ctx.cwd);
+      if (!node || node.type !== "dir") return err(`tree: ${args[0] ?? "."}: not a directory`);
+      return out(line(args[0] ?? ".", "accent"), ...tree(node));
+    },
+  },
+  {
+    name: "open",
+    usage: "open <file|app|url>",
+    about: "open a file, folder, app or link",
+    aliases: ["start", "xdg-open", "explorer"],
+    run: (args, ctx) => (args.length ? openTarget(args.join(" "), ctx) : err("usage: open <file|app|url>")),
+  },
+  {
+    name: "apps",
+    about: "list installed apps",
+    run: (_a, ctx) =>
+      out(
+        ...launchable(ctx.platform).map(
+          (id): Line => [s(`  ${id.padEnd(12)}`, "accent"), s(appName(id, ctx.platform))],
+        ),
+        line("open one with: open <name>", "dim"),
+      ),
+  },
   { name: "echo", usage: "echo <text>", about: "print text", run: (args) => out(line(args.join(" "))) },
   { name: "date", about: "current date and time", run: () => out(line(new Date().toString())) },
   { name: "clear", about: "clear the screen", aliases: ["cls"], run: () => ({ lines: [], clear: true }) },
