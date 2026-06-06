@@ -11,4 +11,5 @@ export const APP_COMPONENTS: Record<string, LazyExoticComponent<ComponentType>> 
   contact: lazy(() => import("./contact")),
   terminal: lazy(() => import("./terminal")),
   files: lazy(() => import("./files")),
+  viewer: lazy(() => import("./viewer")),
 };
