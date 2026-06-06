@@ -480,6 +480,10 @@
   box-shadow: 0 0 0 4px var(--accent-soft);
 }
 
+.os-statusbar {
+  background: linear-gradient(to top, var(--bg) 60%, transparent);
+}
+
 .os-toggle {
   position: relative;
   flex: none;
