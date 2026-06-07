@@ -2,9 +2,13 @@
 
 import { APPS, appName, launchable } from "@/apps/registry";
 import { currentJob, education, experience, links, profile, projects, skillKinds, skills, strengths, type SkillKind } from "@/data/portfolio";
-import type { AppId, Family, Platform } from "@/types";
+import { useSession } from "@/stores/session";
+import { useSettings } from "@/stores/settings";
+import type { AppId, Family, Platform, Theme } from "@/types";
+import { span } from "./format";
 import { launch, openExternal } from "./launch";
 import { HOME, canonical, parsePath, resolve, sizeOf, type VDir, type VPath } from "./vfs";
+import { WALLPAPERS } from "./wallpapers";
 
 export type Tone = "dim" | "ok" | "err" | "accent" | "bold" | "warn";
 
@@ -377,10 +381,112 @@ const COMMANDS: Command[] = [
         line("open one with: open <name>", "dim"),
       ),
   },
+  {
+    name: "neofetch",
+    about: "system info, developer edition",
+    aliases: ["fastfetch", "systeminfo"],
+    run: (_a, ctx) => {
+      const info: Line[] = [
+        [s("guest", "ok"), s("@"), s(profile.handle, "ok")],
+        line("─".repeat(8 + profile.handle.length), "dim"),
+        [s("OS       ", "accent"), s(OS_LABEL[ctx.platform])],
+        [s("Host     ", "accent"), s(`${profile.name}, ${profile.role}`)],
+        [s("Uptime   ", "accent"), s(`${span(currentJob.start, null, Date.now())} at ${currentJob.company}`)],
+        [s("Shell    ", "accent"), s(shellName(ctx.platform))],
+        [s("Stack    ", "accent"), s(skills.slice(0, 5).map((x) => x.name.split(" ")[0]).join(", "))],
+        [s("Shipped  ", "accent"), s(`${projects.length} live projects`)],
+        [s("Location ", "accent"), s(profile.location)],
+      ];
+      const logo = LOGO[FAMILY[ctx.platform]];
+      const rows = Math.max(logo.length, info.length);
+      return {
+        lines: Array.from({ length: rows }, (_, i): Line => [
+          s(logo[i] ?? " ".repeat(logo[0].length), "accent"),
+          s("  "),
+          ...(info[i] ?? []),
+        ]),
+      };
+    },
+  },
   { name: "echo", usage: "echo <text>", about: "print text", run: (args) => out(line(args.join(" "))) },
   { name: "date", about: "current date and time", run: () => out(line(new Date().toString())) },
   { name: "clear", about: "clear the screen", aliases: ["cls"], run: () => ({ lines: [], clear: true }) },
+  {
+    name: "history",
+    about: "commands typed so far",
+    run: (_a, ctx) => out(...ctx.history.map((h, i) => line(`${String(i + 1).padStart(4)}  ${h}`))),
+  },
+  {
+    name: "theme",
+    usage: "theme [light|dark|auto]",
+    about: "show or change the appearance",
+    run: (args) => {
+      const settings = useSettings.getState();
+      if (!args[0]) return out(line(`theme: ${settings.theme}`));
+      if (!["light", "dark", "auto"].includes(args[0])) return err("usage: theme [light|dark|auto]");
+      settings.setTheme(args[0] as Theme);
+      return out(line(`theme set to ${args[0]}`, "ok"));
+    },
+  },
+  {
+    name: "wallpaper",
+    usage: "wallpaper [name]",
+    about: "cycle or pick the wallpaper",
+    run: (args, ctx) => {
+      const family = FAMILY[ctx.platform];
+      const list = WALLPAPERS[family];
+      const settings = useSettings.getState();
+      const cur = list.findIndex((w) => w.id === settings.prefs[family].wallpaper);
+      const next = args[0]
+        ? list.find((w) => w.id === args[0].toLowerCase() || w.name.toLowerCase() === args[0].toLowerCase())
+        : list[(cur + 1) % list.length];
+      if (!next) return err(`wallpaper: choose one of ${list.map((w) => w.id).join(", ")}`);
+      settings.setWallpaper(family, next.id);
+      return out(line(`wallpaper set to ${next.name}`, "ok"));
+    },
+  },
+  {
+    name: "notify",
+    usage: "notify <text>",
+    about: "send yourself a notification",
+    run: (args) => {
+      if (!args.length) return err("usage: notify <text>");
+      useSession.getState().notify({ app: "terminal", title: "Terminal", body: args.join(" ") });
+      return out(line("notification sent", "ok"));
+    },
+  },
+  {
+    name: "uname",
+    about: "system name",
+    aliases: ["ver"],
+    secret: true,
+    run: (args, ctx) =>
+      out(line(args.includes("-a") ? `PortfolioOS ${profile.handle} 1.0.0 web x86_64 ${OS_LABEL[ctx.platform]}` : "PortfolioOS")),
+  },
   { name: "hostname", about: "host name", secret: true, run: () => out(line(profile.handle)) },
+  {
+    name: "which",
+    about: "locate a command",
+    secret: true,
+    run: (args) => {
+      const c = args[0] && lookup(args[0]);
+      return c ? out(line(`/usr/bin/${c.name}`)) : err(`${args[0] ?? "which"}: not found`);
+    },
+  },
+  {
+    name: "man",
+    usage: "man <command>",
+    about: "explain a command",
+    run: (args) => {
+      const c = args[0] && lookup(args[0]);
+      if (!c) return err(args[0] ? `No manual entry for ${args[0]}` : "What manual page do you want?");
+      return out(
+        [s("NAME  ", "bold"), s(`${c.name} - ${c.about}`)],
+        [s("USAGE ", "bold"), s(c.usage ?? c.name)],
+        ...(c.aliases?.length ? [[s("ALSO  ", "bold"), s(c.aliases.join(", "))] as Line] : []),
+      );
+    },
+  },
   { name: "exit", about: "close the terminal", aliases: ["quit", "logout"], run: () => ({ lines: [], exit: true }) },
   ...["mkdir", "touch", "mv", "cp", "chmod"].map(
     (name): Command => ({ name, about: "", secret: true, run: () => err(`${name}: read-only file system`) }),
