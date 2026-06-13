@@ -487,6 +487,33 @@ const COMMANDS: Command[] = [
       );
     },
   },
+  {
+    name: "reboot",
+    about: "restart and choose another OS",
+    aliases: ["restart"],
+    run: () => {
+      window.setTimeout(() => useSession.getState().power("restart"), 500);
+      return out(line("Restarting…", "warn"));
+    },
+  },
+  {
+    name: "shutdown",
+    about: "power off",
+    aliases: ["poweroff", "halt"],
+    run: () => {
+      window.setTimeout(() => useSession.getState().power("shutdown"), 500);
+      return out(line("Shutting down…", "warn"));
+    },
+  },
+  {
+    name: "lock",
+    about: "lock the screen",
+    secret: true,
+    run: () => {
+      window.setTimeout(() => useSession.getState().power("lock"), 300);
+      return out(line("Locking…", "dim"));
+    },
+  },
   { name: "exit", about: "close the terminal", aliases: ["quit", "logout"], run: () => ({ lines: [], exit: true }) },
   ...["mkdir", "touch", "mv", "cp", "chmod"].map(
     (name): Command => ({ name, about: "", secret: true, run: () => err(`${name}: read-only file system`) }),
