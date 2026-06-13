@@ -537,6 +537,25 @@
   background: linear-gradient(to top, var(--bg) 60%, transparent);
 }
 
+.os-choice {
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.os-choice[data-on="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.os-choice-frame {
+  border: 1px solid var(--line);
+}
+
+.os-choice[data-on="true"] .os-choice-frame {
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+}
+
 .os-toggle {
   position: relative;
   flex: none;
