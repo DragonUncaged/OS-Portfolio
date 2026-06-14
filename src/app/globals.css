@@ -629,6 +629,34 @@
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
 }
 
+.browser-tabs {
+  background: var(--bg-2);
+}
+
+.browser-tab {
+  border-radius: var(--os-r);
+  color: var(--fg-2);
+}
+
+.browser-tab[data-on="true"] {
+  background: var(--bg);
+  color: var(--fg);
+  box-shadow: 0 0 0 1px var(--line);
+}
+
+.browser-progress {
+  animation: browser-progress 1.1s ease-in-out infinite;
+}
+
+@keyframes browser-progress {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
 .resume-desk {
   background: var(--bg-2);
 }
