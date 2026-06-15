@@ -533,6 +533,26 @@
   font-size: 0.9em;
 }
 
+.os-file[data-on="true"],
+.os-note[data-on="true"],
+.k-row[data-on="true"] {
+  background: var(--accent-soft);
+}
+
+.os-file:hover,
+.os-note:hover {
+  background: var(--ctl);
+}
+
+.os-file[data-on="true"]:hover,
+.os-note[data-on="true"]:hover {
+  background: var(--accent-soft);
+}
+
+.os-note + .os-note {
+  border-top: 1px solid var(--line);
+}
+
 .os-statusbar {
   background: linear-gradient(to top, var(--bg) 60%, transparent);
 }
