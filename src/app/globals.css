@@ -649,6 +649,42 @@
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
 }
 
+.os-calc-key {
+  display: grid;
+  place-items: center;
+  min-height: 46px;
+  border-radius: var(--os-r);
+  background: var(--ctl);
+  font-size: 19px;
+  transition:
+    background-color 0.12s,
+    transform 0.08s;
+}
+
+.os-calc-key:hover {
+  background: var(--ctl-2);
+}
+
+.os-calc-key:active {
+  transform: scale(0.95);
+}
+
+.os-calc-key[data-kind="fn"] {
+  background: var(--ctl-2);
+}
+
+.os-calc-key[data-kind="op"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 22px;
+}
+
+.os-calc-key[data-kind="eq"] {
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: 22px;
+}
+
 .browser-tabs {
   background: var(--bg-2);
 }
