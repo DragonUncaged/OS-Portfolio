@@ -649,6 +649,22 @@
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
 }
 
+.os-day:hover {
+  background: var(--ctl);
+}
+
+.os-day[data-on="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.os-day[data-today="true"] {
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-weight: 700;
+}
+
 .os-calc-key {
   display: grid;
   place-items: center;

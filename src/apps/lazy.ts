@@ -15,5 +15,6 @@ export const APP_COMPONENTS: Record<string, LazyExoticComponent<ComponentType>> 
   settings: lazy(() => import("./settings")),
   notes: lazy(() => import("./notes")),
   calculator: lazy(() => import("./calculator")),
+  calendar: lazy(() => import("./calendar")),
   viewer: lazy(() => import("./viewer")),
 };
