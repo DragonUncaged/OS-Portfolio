@@ -19,5 +19,6 @@ export const APP_COMPONENTS: Record<string, LazyExoticComponent<ComponentType>> 
   clock: lazy(() => import("./clock")),
   music: lazy(() => import("./music")),
   photos: lazy(() => import("./photos")),
+  paint: lazy(() => import("./paint")),
   viewer: lazy(() => import("./viewer")),
 };

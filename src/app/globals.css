@@ -701,6 +701,10 @@
   font-size: 22px;
 }
 
+.os-paint-stage {
+  background: var(--bg-2);
+}
+
 .browser-tabs {
   background: var(--bg-2);
 }
