@@ -701,6 +701,27 @@
   font-size: 22px;
 }
 
+.os-mine-cell {
+  border-radius: 4px;
+  background: var(--ctl-2);
+  box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.12);
+  transition: background-color 0.1s;
+}
+
+.os-mine-cell:hover {
+  background: color-mix(in srgb, var(--accent) 22%, var(--ctl-2));
+}
+
+.os-mine-cell[data-open="true"] {
+  background: var(--ctl);
+  box-shadow: none;
+}
+
+.os-mine-cell[data-boom="true"] {
+  background: #ef4444;
+  color: #fff;
+}
+
 .os-paint-stage {
   background: var(--bg-2);
 }
