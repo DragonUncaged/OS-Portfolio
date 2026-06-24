@@ -21,5 +21,6 @@ export const APP_COMPONENTS: Record<string, LazyExoticComponent<ComponentType>> 
   photos: lazy(() => import("./photos")),
   paint: lazy(() => import("./paint")),
   mines: lazy(() => import("./mines")),
+  snake: lazy(() => import("./snake")),
   viewer: lazy(() => import("./viewer")),
 };

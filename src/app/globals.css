@@ -722,6 +722,14 @@
   color: #fff;
 }
 
+.os-snake {
+  background:
+    linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 100% calc(100% / 18),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / calc(100% / 18) 100%,
+    var(--bg-3);
+  border: 1px solid var(--line);
+}
+
 .os-paint-stage {
   background: var(--bg-2);
 }
