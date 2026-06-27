@@ -649,6 +649,10 @@
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
 }
 
+.os-kbd {
+  font-family: var(--os-font);
+}
+
 .os-day:hover {
   background: var(--ctl);
 }

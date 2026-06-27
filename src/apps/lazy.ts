@@ -24,4 +24,5 @@ export const APP_COMPONENTS: Record<string, LazyExoticComponent<ComponentType>> 
   snake: lazy(() => import("./snake")),
   monitor: lazy(() => import("./monitor")),
   viewer: lazy(() => import("./viewer")),
+  tips: lazy(() => import("./tips")),
 };
