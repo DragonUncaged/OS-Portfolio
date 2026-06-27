@@ -1,8 +1,9 @@
 "use client";
 
 import { lazy, type ComponentType, type LazyExoticComponent } from "react";
+import type { AppId } from "@/types";
 
-export const APP_COMPONENTS: Record<string, LazyExoticComponent<ComponentType>> = {
+export const APP_COMPONENTS: Record<AppId, LazyExoticComponent<ComponentType>> = {
   about: lazy(() => import("./about")),
   projects: lazy(() => import("./projects")),
   experience: lazy(() => import("./experience")),
