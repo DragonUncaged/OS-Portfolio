@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash } from "@phosphor-icons/react";
+import { Rocket, Trash } from "@phosphor-icons/react";
 import { useRef, useState } from "react";
 import { appName } from "@/apps/registry";
 import { AppIcon } from "@/components/app-icon";
@@ -96,6 +96,11 @@ export function Dock({ toggle }: { toggle: (p: Panel) => void }) {
         onMouseMove={(e) => magnify(e.clientX)}
         onMouseLeave={() => magnify(null)}
       >
+        <DockItem id="launchpad" label="Launchpad" running={false} bouncing={false} onOpen={() => toggle("launchpad")}>
+          <span className="mac-launchpad-icon grid size-full place-items-center">
+            <Rocket size={28} weight="fill" />
+          </span>
+        </DockItem>
         {[...DOCK_APPS, ...extra].map((id, i) => (
           <span key={id} className="contents">
             {i === DOCK_APPS.length && <span className="mac-dock-sep" />}
