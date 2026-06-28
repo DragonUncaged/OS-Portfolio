@@ -341,6 +341,52 @@
   color: #6b7280;
 }
 
+[data-os="macos"] .mac-spotlight {
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--menu-bg);
+  color: var(--fg);
+  border: 0.5px solid var(--glass-line);
+  box-shadow:
+    0 0 0 0.5px rgb(0 0 0 / 0.2),
+    0 26px 80px rgb(0 0 0 / 0.42);
+  backdrop-filter: blur(40px) saturate(1.8);
+}
+
+[data-os="macos"] .mac-spotlight-results {
+  border-top: 0.5px solid var(--line);
+}
+
+[data-os="macos"] .mac-spotlight-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 5px 9px;
+  border-radius: 7px;
+  font-size: 14px;
+  text-align: left;
+}
+
+[data-os="macos"] .mac-spotlight-row[data-on="true"] {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+[data-os="macos"] .mac-spotlight-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px 5px 7px;
+  border-radius: 999px;
+  background: var(--ctl);
+  font-size: 13px;
+}
+
+[data-os="macos"] .mac-spotlight-chip:hover {
+  background: var(--ctl-2);
+}
+
 [data-os="macos"] .mac-mission {
   background: rgb(10 12 20 / 0.42);
   backdrop-filter: blur(18px);

@@ -14,6 +14,7 @@ import { MENU_H, type Panel } from "./constants";
 import { Dock } from "./dock";
 import { Boot, Login } from "./login";
 import { MenuBar } from "./menu-bar";
+import { Spotlight } from "./spotlight";
 
 function Desktop() {
   const { panel, toggle, close } = usePanel<Panel>();
@@ -72,6 +73,7 @@ function Desktop() {
       <Dock toggle={toggle} />
       <Banner className="fixed right-2.5 w-[344px] max-w-[calc(100vw-20px)]" style={{ top: MENU_H + 8 }} from={{ x: 60 }} />
       <AnimatePresence>
+        {panel === "spotlight" && <Spotlight key="spotlight" onClose={close} />}
       </AnimatePresence>
     </>
   );
