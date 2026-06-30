@@ -11,6 +11,7 @@ import { isTyping, useWindowEvent } from "@/hooks/use-window-event";
 import { useSession } from "@/stores/session";
 import { useWM } from "@/stores/window-manager";
 import { MENU_H, type Panel } from "./constants";
+import { ControlCentre } from "./control-centre";
 import { Dock } from "./dock";
 import { Launchpad } from "./launchpad";
 import { Boot, Login } from "./login";
@@ -76,6 +77,7 @@ function Desktop() {
       <AnimatePresence>
         {panel === "spotlight" && <Spotlight key="spotlight" onClose={close} />}
         {panel === "launchpad" && <Launchpad key="launchpad" onClose={close} />}
+        {panel === "control" && <ControlCentre key="control" />}
       </AnimatePresence>
     </>
   );

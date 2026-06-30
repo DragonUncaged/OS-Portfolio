@@ -443,6 +443,40 @@
   font-size: 12.5px;
 }
 
+[data-os="macos"] .mac-panel {
+  border-radius: 18px;
+  background: var(--glass);
+  color: var(--fg);
+  border: 0.5px solid var(--glass-line);
+  box-shadow:
+    0 0 0 0.5px rgb(0 0 0 / 0.14),
+    0 18px 50px rgb(0 0 0 / 0.3);
+  backdrop-filter: blur(40px) saturate(1.8);
+  transform-origin: top right;
+}
+
+[data-os="macos"] .mac-cc-tile {
+  padding: 10px;
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--bg) 62%, transparent);
+  box-shadow: 0 0 0 0.5px var(--line);
+}
+
+[data-os="macos"] .mac-cc-round {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--ctl-2);
+}
+
+[data-os="macos"] .mac-cc-round[data-on="true"] {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
 [data-os="macos"] .os-calc-key {
   border-radius: 999px;
   min-height: 48px;
