@@ -16,6 +16,7 @@ import { Dock } from "./dock";
 import { Launchpad } from "./launchpad";
 import { Boot, Login } from "./login";
 import { MenuBar } from "./menu-bar";
+import { NotificationCentre } from "./notification-centre";
 import { Spotlight } from "./spotlight";
 
 function Desktop() {
@@ -78,6 +79,7 @@ function Desktop() {
         {panel === "spotlight" && <Spotlight key="spotlight" onClose={close} />}
         {panel === "launchpad" && <Launchpad key="launchpad" onClose={close} />}
         {panel === "control" && <ControlCentre key="control" />}
+        {panel === "notifications" && <NotificationCentre key="nc" onClose={close} />}
       </AnimatePresence>
     </>
   );

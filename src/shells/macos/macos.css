@@ -477,6 +477,40 @@
   color: var(--accent-fg);
 }
 
+[data-os="macos"] .mac-nc .os-notice,
+[data-os="macos"] .mac-widget,
+[data-os="macos"] .os-banner {
+  border-radius: 16px;
+  background: var(--menu-bg);
+  border: 0.5px solid var(--glass-line);
+  box-shadow:
+    0 0 0 0.5px rgb(0 0 0 / 0.1),
+    0 8px 26px rgb(0 0 0 / 0.2);
+  backdrop-filter: blur(36px) saturate(1.8);
+}
+
+[data-os="macos"] .mac-widget {
+  padding: 12px;
+  color: var(--fg);
+  aspect-ratio: 1;
+}
+
+[data-os="macos"] .mac-nc .os-notice-empty {
+  color: #fff;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.4);
+}
+
+[data-os="macos"] .mac-nc-clear {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.25);
+  font-size: 11.5px;
+}
+
+[data-os="macos"] .mac-nc-clear:hover {
+  background: rgb(255 255 255 / 0.4);
+}
+
 [data-os="macos"] .os-calc-key {
   border-radius: 999px;
   min-height: 48px;
