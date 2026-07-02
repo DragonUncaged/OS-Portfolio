@@ -350,6 +350,39 @@
   color: #6b7280;
 }
 
+[data-os="macos"] .mac-desktop-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 92px;
+  padding: 4px 2px;
+  border-radius: 6px;
+}
+
+[data-os="macos"] .mac-desktop-label {
+  max-width: 100%;
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.75);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[data-os="macos"] .mac-desktop-icon[data-on="true"] > span:first-child {
+  background: rgb(0 0 0 / 0.22);
+  border-radius: 6px;
+}
+
+[data-os="macos"] .mac-desktop-icon[data-on="true"] .mac-desktop-label {
+  background: var(--accent);
+  text-shadow: none;
+}
+
 [data-os="macos"] .mac-spotlight {
   overflow: hidden;
   border-radius: 14px;
