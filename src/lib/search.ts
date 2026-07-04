@@ -43,7 +43,8 @@ function score(q: string, c: Candidate): number {
   if (title.split(/[\s./-]+/).some((w) => w.startsWith(q))) return 80 + c.weight;
   if (title.includes(q)) return 60 + c.weight;
   if (c.extra?.toLowerCase().includes(q)) return 40 + c.weight;
-  if (c.subtitle.toLowerCase().includes(q)) return 25 + c.weight;
+  // a file's subtitle is its folder, matching it would list the whole folder
+  if (c.kind !== "file" && c.subtitle.toLowerCase().includes(q)) return 25 + c.weight;
   return 0;
 }
 
