@@ -63,7 +63,8 @@ export default function Files() {
   const { args } = useInstance();
   const initial = canonical(pathFromKey(args.path ?? "")) ?? [];
   const [path, setPath] = useState<VPath>(initial);
-  const [special, setSpecial] = useState<"apps" | "trash" | null>(null);
+  const specialOf = (section?: string) => (section === "apps" || section === "trash" ? section : null);
+  const [special, setSpecial] = useState<"apps" | "trash" | null>(() => specialOf(args.section));
   const [list, setList] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
@@ -73,7 +74,10 @@ export default function Files() {
     setSpecial(null);
     setSelected(null);
   };
-  useRelaunch((a) => go(canonical(pathFromKey(a.path ?? "")) ?? []));
+  useRelaunch((a) => {
+    go(canonical(pathFromKey(a.path ?? "")) ?? []);
+    setSpecial(specialOf(a.section));
+  });
 
   const node = resolve(path);
   const dir = node?.type === "dir" ? node : null;
