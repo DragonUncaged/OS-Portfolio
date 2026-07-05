@@ -897,6 +897,39 @@
   color: var(--fg);
 }
 
+.phone-screen {
+  background: var(--bg);
+  will-change: transform;
+}
+
+.phone-switcher-bg {
+  cursor: default;
+  background: rgb(0 0 0 / 0.45);
+  backdrop-filter: blur(22px);
+}
+
+.phone-card-label {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.5);
+}
+
+.phone-card-close {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.2);
+  color: #fff;
+}
+
+.phone-card-close:hover {
+  background: rgb(255 255 255 / 0.35);
+}
+
 @media print {
   .app-root,
   #plain {
