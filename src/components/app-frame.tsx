@@ -213,5 +213,49 @@ export function AppFrame(props: FrameProps) {
     );
   }
 
+  if (platform === "ios") {
+    const inline = Boolean(onBack) || compact;
+    return (
+      <div className="flex h-full flex-col bg-bg text-fg" data-theme={tone} style={{ paddingTop: "var(--sb-h)" }}>
+        <header className="relative shrink-0 px-4 pb-2">
+          <div className="flex h-11 items-center gap-1">
+            {onBack && (
+              <button
+                type="button"
+                className="-ml-2 flex items-center gap-0.5 pr-2 text-[17px] text-accent active:opacity-50"
+                onClick={onBack}
+              >
+                <CaretLeft size={22} weight="bold" />
+                Back
+              </button>
+            )}
+            {inline && (
+              <div className="pointer-events-none absolute inset-x-16 truncate text-center text-[17px] font-semibold">
+                {title}
+              </div>
+            )}
+            <div className="flex-1" />
+            <Actions actions={actions} size={22} cls="ios-action" />
+          </div>
+          {!inline && <h1 className="truncate text-[32px] font-bold leading-[1.15] tracking-tight">{title}</h1>}
+          {!inline && subtitle && <p className="mt-0.5 truncate text-[15px] text-fg2">{subtitle}</p>}
+          {search && <SearchField search={search} className="mt-2" />}
+          {center && <div className="mt-1">{center}</div>}
+          {sections && sections.length > 5 && (
+            <Strip sections={sections} section={section} onSection={onSection} className="-mx-4 mt-2 gap-2 px-4" itemClass="ios-chip" />
+          )}
+        </header>
+        {body}
+        {sections && sections.length <= 5 ? (
+          <nav className="ios-tabbar flex shrink-0 justify-around px-1 pt-1.5" style={{ paddingBottom: "var(--nav-h)" }}>
+            {nav("ios-tab", 24, "fill")}
+          </nav>
+        ) : (
+          <div className="shrink-0" style={{ height: "var(--nav-h)" }} />
+        )}
+      </div>
+    );
+  }
+
   return null;
 }

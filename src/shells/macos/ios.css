@@ -1,0 +1,163 @@
+[data-os="ios"] {
+  --os-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter Variable", "Helvetica Neue", sans-serif;
+  --os-mono: "SF Mono", ui-monospace, Menlo, "JetBrains Mono Variable", monospace;
+  --os-r: 10px;
+  --os-r-lg: 14px;
+  --ctl-h: 36px;
+  --sb-h: 52px;
+  --nav-h: 26px;
+  --folder: #3b9eff;
+
+  --bg: #f2f2f7;
+  --bg-2: #e9e9ef;
+  --bg-3: #ffffff;
+  --fg: #000000;
+  --fg-2: rgb(60 60 67 / 0.66);
+  --fg-3: rgb(60 60 67 / 0.4);
+  --line: rgb(60 60 67 / 0.16);
+  --ctl: rgb(118 118 128 / 0.13);
+  --ctl-2: rgb(118 118 128 / 0.24);
+  --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
+  --menu-bg: rgb(250 250 252 / 0.82);
+}
+
+[data-os="ios"][data-theme="dark"],
+[data-os="ios"] [data-theme="dark"] {
+  --bg: #000000;
+  --bg-2: #121214;
+  --bg-3: #1c1c1e;
+  --fg: #ffffff;
+  --fg-2: rgb(235 235 245 / 0.64);
+  --fg-3: rgb(235 235 245 / 0.36);
+  --line: rgb(84 84 88 / 0.5);
+  --ctl: rgb(118 118 128 / 0.24);
+  --ctl-2: rgb(118 118 128 / 0.38);
+  --menu-bg: rgb(36 36 40 / 0.82);
+}
+
+[data-os="ios"][data-theme="dark"] .os-notice,
+[data-os="ios"][data-theme="dark"] .os-banner {
+  background: rgb(44 44 50 / 0.82);
+  color: #fff;
+}
+
+[data-os="ios"] .ios-action {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--accent);
+}
+
+[data-os="ios"] .ios-action:disabled {
+  opacity: 0.3;
+}
+
+[data-os="ios"] .ios-action[data-on="true"] {
+  background: var(--accent-soft);
+}
+
+[data-os="ios"] .ios-action:active {
+  opacity: 0.5;
+}
+
+[data-os="ios"] .ios-tabbar {
+  background: color-mix(in srgb, var(--bg-3) 86%, transparent);
+  border-top: 0.5px solid var(--line);
+  backdrop-filter: blur(24px);
+}
+
+[data-os="ios"] .ios-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 2px;
+  color: var(--fg-3);
+  font-size: 10.5px;
+  font-weight: 500;
+}
+
+[data-os="ios"] .ios-tab[data-on="true"] {
+  color: var(--accent);
+}
+
+[data-os="ios"] .ios-chip {
+  flex: none;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--ctl);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+[data-os="ios"] .ios-chip[data-on="true"] {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+[data-os="ios"] .os-search .k-input {
+  border-radius: 11px;
+  font-size: 16px;
+}
+
+[data-os="ios"] .k-card {
+  border: none;
+}
+
+[data-os="ios"] .k-row {
+  min-height: 46px;
+}
+
+[data-os="ios"] .k-btn {
+  min-height: 38px;
+  border-radius: 11px;
+  font-size: 15px;
+  background: var(--ctl);
+}
+
+[data-os="ios"] .k-btn-primary {
+  background: var(--accent);
+}
+
+[data-os="ios"] .k-input {
+  font-size: 16px;
+}
+
+[data-os="ios"] .os-heading {
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+[data-os="ios"] .os-toggle {
+  width: 51px;
+  height: 31px;
+}
+
+[data-os="ios"] .os-toggle span {
+  width: 27px;
+  height: 27px;
+}
+
+[data-os="ios"] .os-toggle[data-on="true"] {
+  background: #34c759;
+}
+
+[data-os="ios"] .os-toggle[data-on="true"] span {
+  transform: translateX(20px);
+}
+
+[data-os="ios"] .os-calc-key {
+  border-radius: 999px;
+  min-height: 62px;
+  font-size: 26px;
+}
+
+[data-os="ios"] .os-calc-key[data-kind="op"],
+[data-os="ios"] .os-calc-key[data-kind="eq"] {
+  background: #ff9f0a;
+  color: #fff;
+}
