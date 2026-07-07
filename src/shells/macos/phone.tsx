@@ -1,0 +1,352 @@
+"use client";
+
+import "./ios.css";
+import {
+  Command,
+  Flashlight,
+  MagnifyingGlass,
+  Waveform,
+} from "@phosphor-icons/react";
+import { AnimatePresence, motion } from "motion/react";
+import { useRef, useState } from "react";
+import { APPS, appName, launchable, type AppCategory } from "@/apps/registry";
+import { AppIcon } from "@/components/app-icon";
+import { Avatar } from "@/components/kit";
+import { Banner } from "@/components/notifications";
+import { PhoneHost } from "@/components/phone-host";
+import { ShellRoot, ShellWallpaper } from "@/components/shell-root";
+import { BatteryGlyph, WifiGlyph } from "@/components/status-glyphs";
+import { currentJob, profile } from "@/data/portfolio";
+import { useBootTimer } from "@/hooks/use-boot-timer";
+import { useNow } from "@/hooks/use-now";
+import { usePanel } from "@/hooks/use-panel";
+import { useWelcome } from "@/hooks/use-welcome";
+import { useWindowEvent } from "@/hooks/use-window-event";
+import { DAYS, MONTHS, dateLong, time12 } from "@/lib/format";
+import { launch, originOf } from "@/lib/launch";
+import { TRACKS } from "@/lib/synth";
+import { usePhone } from "@/stores/phone";
+import { usePlayer } from "@/stores/player";
+import { useSession } from "@/stores/session";
+import type { AppId } from "@/types";
+
+type Panel = "control" | "notifications" | "search" | "power";
+
+const DOCK: AppId[] = ["about", "projects", "browser", "contact"];
+const PAGE_ONE: AppId[] = ["experience", "skills", "resume", "terminal", "files", "settings", "notes", "calendar", "clock", "music", "photos", "tips"];
+const CATEGORY_LABEL: Record<AppCategory, string> = { portfolio: "Portfolio", system: "System", utility: "Utilities", game: "Games" };
+
+function open(id: AppId, el: Element | null) {
+  launch(id, {}, { origin: originOf(el) });
+}
+
+function Boot() {
+  const skip = useBootTimer(1900);
+  return (
+    <motion.button
+      type="button"
+      className="fixed inset-0 z-[5000] grid cursor-default place-items-center bg-black text-white"
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      aria-label="Starting up. Tap to skip"
+      onClick={skip}
+    >
+      <Command size={72} style={{ animation: "k-fade-in 0.8s ease-out both" }} />
+    </motion.button>
+  );
+}
+
+function StatusBar({ tone, toggle }: { tone: "light" | "auto"; toggle: (p: Panel) => void }) {
+  const now = useNow(1000);
+  const playing = usePlayer((s) => s.playing);
+  return (
+    <div className="ios-status fixed inset-x-0 top-0 z-[3000] flex items-center justify-between px-7" data-tone={tone}>
+      <button type="button" className="ios-status-side justify-start" aria-label="Notifications" data-panel-trigger onClick={() => toggle("notifications")}>
+        <span className="text-[16px] font-semibold tabular-nums">{time12(now)}</span>
+      </button>
+      <div className="ios-island" data-live={playing || undefined} aria-hidden="true">
+        {playing && <Waveform size={15} weight="bold" className="text-[#ff7ab8]" />}
+      </div>
+      <button type="button" className="ios-status-side justify-end gap-1.5" aria-label="Control Centre" data-panel-trigger onClick={() => toggle("control")}>
+        <WifiGlyph size={17} />
+        <BatteryGlyph size={25} />
+      </button>
+    </div>
+  );
+}
+
+function Lock() {
+  const now = useNow(1000);
+  const [torch, setTorch] = useState(false);
+  const start = useRef<number | null>(null);
+  const unlock = () => useSession.getState().login();
+  return (
+    <motion.div
+      className="fixed inset-0 z-[2500] text-white"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ y: "-100%", transition: { duration: 0.38, ease: [0.3, 0, 0.2, 1] } }}
+      onPointerDown={(e) => (start.current = e.clientY)}
+      onPointerUp={(e) => {
+        if (start.current !== null && start.current - e.clientY > 60) unlock();
+        start.current = null;
+      }}
+    >
+      <ShellWallpaper />
+      <div className="absolute inset-0 bg-black/15" />
+      {torch && <div className="pointer-events-none absolute inset-0 bg-white/35 mix-blend-screen" />}
+      <div className="relative flex h-full flex-col items-center px-6" style={{ paddingTop: "calc(var(--sb-h) + 34px)" }}>
+        <div className="text-[21px] font-medium opacity-90">{dateLong(now)}</div>
+        <div className="ios-lock-time">{time12(now)}</div>
+        <div className="mt-auto flex w-full items-end justify-between pb-12">
+          <button
+            type="button"
+            className="ios-lock-btn"
+            data-on={torch}
+            aria-label="Torch"
+            aria-pressed={torch}
+            onClick={() => setTorch((v) => !v)}
+          >
+            <Flashlight size={24} weight="fill" />
+          </button>
+          <button type="button" autoFocus className="ios-unlock pb-1 text-[15px] font-medium" onClick={unlock}>
+            Swipe up or tap to unlock
+          </button>
+          <span className="size-[50px]" />
+        </div>
+      </div>
+      <div className="ios-home-bar absolute bottom-2 left-1/2 -translate-x-1/2 bg-white" />
+    </motion.div>
+  );
+}
+
+function Tile({ id, size = 62 }: { id: AppId; size?: number }) {
+  return (
+    <button type="button" className="ios-app" onClick={(e) => open(id, e.currentTarget.firstElementChild)}>
+      <AppIcon id={id} size={size} />
+      <span className="ios-app-label">{appName(id, "ios")}</span>
+    </button>
+  );
+}
+
+function Home({ toggle }: { toggle: (p: Panel) => void }) {
+  const now = useNow(60_000);
+  const today = new Date(now);
+  const [page, setPage] = useState(0);
+  const scroller = useRef<HTMLDivElement>(null);
+  const rest = launchable("ios").filter((id) => !DOCK.includes(id) && !PAGE_ONE.includes(id));
+  const index = usePlayer((s) => s.index);
+  const playing = usePlayer((s) => s.playing);
+  const byCategory = (Object.keys(CATEGORY_LABEL) as AppCategory[]).map((c) => ({
+    category: c,
+    apps: launchable("ios").filter((id) => APPS[id].category === c),
+  }));
+  const pages = 3;
+
+  return (
+    <div className="ios-home absolute inset-0 flex flex-col text-white" style={{ paddingTop: "calc(var(--sb-h) + 8px)" }}>
+      <div
+        ref={scroller}
+        className="flex min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto overflow-y-hidden [scrollbar-width:none]"
+        onScroll={(e) => setPage(Math.round(e.currentTarget.scrollLeft / e.currentTarget.clientWidth))}
+      >
+        <section className="ios-page" aria-label="Home screen page 1">
+          <div className="ios-grid">
+            <button type="button" className="ios-widget col-span-2 row-span-2" onClick={(e) => open("about", e.currentTarget)}>
+              <Avatar size={44} />
+              <span className="mt-auto block text-[16px] font-semibold leading-tight">{profile.name}</span>
+              <span className="block text-[12.5px] opacity-75">{profile.role}</span>
+              <span className="mt-0.5 block truncate text-[11.5px] opacity-60">@ {currentJob.company}</span>
+            </button>
+            <button type="button" className="ios-widget col-span-2 row-span-2" onClick={(e) => open("calendar", e.currentTarget)}>
+              <span className="block text-[12px] font-bold uppercase text-[#ff453a]">{DAYS[today.getDay()]}</span>
+              <span className="block text-[44px] font-light leading-none">{today.getDate()}</span>
+              <span className="mt-auto block text-[12.5px] opacity-75">{MONTHS[today.getMonth()]}</span>
+              <span className="block text-[11.5px] opacity-60">Tap for calendar</span>
+            </button>
+            {PAGE_ONE.map((id) => (
+              <Tile key={id} id={id} />
+            ))}
+          </div>
+        </section>
+        <section className="ios-page" aria-label="Home screen page 2">
+          <div className="ios-grid">
+            <button type="button" className="ios-widget col-span-4 row-span-2 !flex-row !items-center gap-3.5" onClick={(e) => open("music", e.currentTarget)}>
+              <span
+                className="grid aspect-square h-full max-h-[104px] shrink-0 place-items-center rounded-[14px]"
+                style={{ background: `linear-gradient(140deg, ${TRACKS[index].color[0]}, ${TRACKS[index].color[1]})` }}
+              >
+                <Waveform size={34} weight="bold" />
+              </span>
+              <span className="min-w-0 text-left">
+                <span className="block text-[11.5px] font-bold uppercase opacity-60">{playing ? "Now playing" : "Music"}</span>
+                <span className="block truncate text-[18px] font-semibold">{TRACKS[index].title}</span>
+                <span className="block truncate text-[12.5px] opacity-70">{TRACKS[index].mood}</span>
+              </span>
+            </button>
+            {rest.map((id) => (
+              <Tile key={id} id={id} />
+            ))}
+          </div>
+        </section>
+        <section className="ios-page" aria-label="App Library">
+          <button type="button" className="ios-search-field mx-1 mb-4 flex h-10 w-[calc(100%-8px)] items-center gap-2 px-3.5 text-[16px]" onClick={() => toggle("search")}>
+            <MagnifyingGlass size={17} />
+            App Library
+          </button>
+          <div className="grid grid-cols-2 gap-x-5 gap-y-5 px-1">
+            {byCategory.map((g) => (
+              <div key={g.category}>
+                <div className="ios-pod grid grid-cols-2 gap-2.5 p-3">
+                  {g.apps.slice(0, 4).map((id) => (
+                    <button key={id} type="button" aria-label={appName(id, "ios")} onClick={(e) => open(id, e.currentTarget)}>
+                      <AppIcon id={id} size={54} className="mx-auto" />
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-1.5 text-center text-[12.5px]">{CATEGORY_LABEL[g.category]}</div>
+                {g.apps.length > 4 && (
+                  <div className="mt-2 flex flex-wrap justify-center gap-2">
+                    {g.apps.slice(4).map((id) => (
+                      <button key={id} type="button" aria-label={appName(id, "ios")} onClick={(e) => open(id, e.currentTarget)}>
+                        <AppIcon id={id} size={34} />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <div className="flex shrink-0 flex-col items-center gap-2.5 pb-2.5 pt-1">
+        <button type="button" className="ios-search-pill" data-panel-trigger onClick={() => toggle("search")}>
+          <MagnifyingGlass size={12} weight="bold" />
+          Search
+        </button>
+        <div className="flex gap-1.5" role="tablist" aria-label="Home screen pages">
+          {Array.from({ length: pages }, (_, i) => (
+            <button
+              key={i}
+              type="button"
+              role="tab"
+              aria-selected={i === page}
+              aria-label={i === pages - 1 ? "App Library" : `Page ${i + 1}`}
+              className="ios-dot"
+              data-on={i === page}
+              onClick={() => scroller.current?.scrollTo({ left: i * scroller.current.clientWidth, behavior: "smooth" })}
+            />
+          ))}
+        </div>
+      </div>
+      <div className="ios-dock mx-3 mb-3 flex shrink-0 justify-around px-2 py-3.5">
+        {DOCK.map((id) => (
+          <button key={id} type="button" aria-label={appName(id, "ios")} onClick={(e) => open(id, e.currentTarget)}>
+            <AppIcon id={id} size={62} />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HomeBar() {
+  const current = usePhone((s) => s.current);
+  const switcher = usePhone((s) => s.switcher);
+  const down = useRef<{ y: number; t: number } | null>(null);
+  const timer = useRef<number | undefined>(undefined);
+  if (!current && !switcher) return null;
+  return (
+    <button
+      type="button"
+      className="ios-home-hit fixed bottom-0 left-1/2 z-[2400] flex h-[26px] w-[220px] -translate-x-1/2 touch-none items-center justify-center"
+      aria-label="Home, hold for the app switcher"
+      onPointerDown={(e) => {
+        down.current = { y: e.clientY, t: e.timeStamp };
+        e.currentTarget.setPointerCapture(e.pointerId);
+        window.clearTimeout(timer.current);
+        timer.current = window.setTimeout(() => {
+          down.current = null;
+          usePhone.getState().setSwitcher(true);
+        }, 480);
+      }}
+      onPointerUp={(e) => {
+        window.clearTimeout(timer.current);
+        const d = down.current;
+        down.current = null;
+        if (!d) return;
+        const phone = usePhone.getState();
+        if (d.y - e.clientY > 70 && e.timeStamp - d.t > 260) phone.setSwitcher(true);
+        else phone.home();
+      }}
+      onPointerCancel={() => {
+        window.clearTimeout(timer.current);
+        down.current = null;
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          usePhone.getState().home();
+        }
+      }}
+    >
+      <span className="ios-home-bar" />
+    </button>
+  );
+}
+
+function Phone() {
+  const { panel, toggle, close, open: openPanel } = usePanel<Panel>();
+  const current = usePhone((s) => s.current);
+  const switcher = usePhone((s) => s.switcher);
+  useWelcome("Tap the bar at the bottom to go home; hold it for the app switcher. Control Centre is at the top right.");
+  const overlay = panel !== null || switcher || !current || current === "terminal";
+  useWindowEvent(
+    "pointerdown",
+    (e) => {
+      const t = e.target as Element | null;
+      if (t && !t.closest("[data-panel], [data-panel-trigger]")) close();
+    },
+    panel === "control" || panel === "notifications",
+  );
+  return (
+    <>
+      <Home toggle={toggle} />
+      <PhoneHost variant="ios" />
+      <HomeBar />
+      <StatusBar tone={overlay ? "light" : "auto"} toggle={toggle} />
+      <Banner className="fixed inset-x-2.5" style={{ top: "calc(var(--sb-h) + 2px)" }} from={{ y: -70 }} />
+      <AnimatePresence>
+      </AnimatePresence>
+      {(panel === "control" || panel === "notifications") && (
+        <button
+          type="button"
+          aria-label="Close"
+          className="ios-home-hit fixed bottom-0 left-1/2 z-[2950] flex h-[30px] w-[220px] -translate-x-1/2 items-center justify-center"
+          onClick={close}
+        >
+          <span className="ios-home-bar !bg-white" />
+        </button>
+      )}
+    </>
+  );
+}
+
+export default function IPhone() {
+  const phase = useSession((s) => s.phase);
+  return (
+    <ShellRoot platform="ios">
+      <ShellWallpaper />
+      {phase !== "boot" && (
+        <div className="absolute inset-0" inert={phase !== "desktop"}>
+          <Phone />
+        </div>
+      )}
+      <AnimatePresence>
+        {phase === "login" && <Lock key="lock" />}
+        {phase === "boot" && <Boot key="boot" />}
+      </AnimatePresence>
+    </ShellRoot>
+  );
+}
