@@ -18,6 +18,7 @@ import { ShellRoot, ShellWallpaper } from "@/components/shell-root";
 import { BatteryGlyph, WifiGlyph } from "@/components/status-glyphs";
 import { currentJob, profile } from "@/data/portfolio";
 import { useBootTimer } from "@/hooks/use-boot-timer";
+import { useLauncher } from "@/hooks/use-launcher";
 import { useNow } from "@/hooks/use-now";
 import { usePanel } from "@/hooks/use-panel";
 import { useWelcome } from "@/hooks/use-welcome";
@@ -251,6 +252,81 @@ function Home({ toggle }: { toggle: (p: Panel) => void }) {
   );
 }
 
+function Search({ onClose }: { onClose: () => void }) {
+  const l = useLauncher(onClose, 8);
+  const apps = launchable("ios").slice(0, 8);
+  return (
+    <motion.div
+      className="ios-sheet-bg fixed inset-0 z-[2800] flex flex-col text-white"
+      style={{ paddingTop: "calc(var(--sb-h) + 6px)" }}
+      role="dialog"
+      aria-label="Search"
+      data-panel
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
+    >
+      <div className="flex items-center gap-2.5 px-4">
+        <label className="ios-search-field flex h-10 min-w-0 flex-1 items-center gap-2 px-3">
+          <MagnifyingGlass size={17} className="shrink-0 opacity-70" />
+          <input
+            autoFocus
+            value={l.query}
+            onChange={(e) => l.setQuery(e.target.value)}
+            onKeyDown={l.onKeyDown}
+            placeholder="Search"
+            aria-label="Search"
+            className="min-w-0 flex-1 bg-transparent text-[17px] text-white outline-none placeholder:text-white/55"
+            autoComplete="off"
+            spellCheck={false}
+            enterKeyHint="go"
+          />
+        </label>
+        <button type="button" className="text-[17px]" onClick={onClose}>
+          Cancel
+        </button>
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-10 pt-4">
+        {l.query.trim() ? (
+          <div className="ios-search-results overflow-hidden">
+            {l.hits.length === 0 && <p className="p-5 text-center text-[15px] opacity-70">No results</p>}
+            {l.hits.map((h, i) => (
+              <button key={h.id} type="button" className="ios-search-row" data-on={i === l.index} onClick={() => l.run(h)}>
+                <AppIcon id={h.app} size={34} />
+                <span className="min-w-0 flex-1 text-left">
+                  <span className="block truncate text-[16px]">{h.title}</span>
+                  <span className="block truncate text-[12.5px] opacity-60">{h.subtitle}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="mb-2 text-[13px] font-semibold opacity-70">Suggestions</div>
+            <div className="ios-search-results grid grid-cols-4 gap-y-4 p-4">
+              {apps.map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  className="ios-app"
+                  onClick={(e) => {
+                    onClose();
+                    open(id, e.currentTarget);
+                  }}
+                >
+                  <AppIcon id={id} size={52} />
+                  <span className="ios-app-label">{appName(id, "ios")}</span>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
 function HomeBar() {
   const current = usePhone((s) => s.current);
   const switcher = usePhone((s) => s.switcher);
@@ -318,6 +394,7 @@ function Phone() {
       <StatusBar tone={overlay ? "light" : "auto"} toggle={toggle} />
       <Banner className="fixed inset-x-2.5" style={{ top: "calc(var(--sb-h) + 2px)" }} from={{ y: -70 }} />
       <AnimatePresence>
+        {panel === "search" && <Search key="search" onClose={close} />}
       </AnimatePresence>
       {(panel === "control" || panel === "notifications") && (
         <button
