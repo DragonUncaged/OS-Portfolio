@@ -5,21 +5,31 @@ import {
   Command,
   Flashlight,
   MagnifyingGlass,
+  Moon,
+  Pause,
+  Play,
+  Power,
+  SkipForward,
+  SpeakerHigh,
+  Sun,
+  SunDim,
   Waveform,
 } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRef, useState } from "react";
 import { APPS, appName, launchable, type AppCategory } from "@/apps/registry";
 import { AppIcon } from "@/components/app-icon";
-import { Avatar } from "@/components/kit";
+import { Avatar, Slider } from "@/components/kit";
 import { Banner } from "@/components/notifications";
 import { PhoneHost } from "@/components/phone-host";
 import { ShellRoot, ShellWallpaper } from "@/components/shell-root";
 import { BatteryGlyph, WifiGlyph } from "@/components/status-glyphs";
 import { currentJob, profile } from "@/data/portfolio";
 import { useBootTimer } from "@/hooks/use-boot-timer";
+import { useDark } from "@/hooks/use-dark";
 import { useLauncher } from "@/hooks/use-launcher";
 import { useNow } from "@/hooks/use-now";
+import { useOnline } from "@/hooks/use-online";
 import { usePanel } from "@/hooks/use-panel";
 import { useWelcome } from "@/hooks/use-welcome";
 import { useWindowEvent } from "@/hooks/use-window-event";
@@ -29,6 +39,7 @@ import { TRACKS } from "@/lib/synth";
 import { usePhone } from "@/stores/phone";
 import { usePlayer } from "@/stores/player";
 import { useSession } from "@/stores/session";
+import { useSettings } from "@/stores/settings";
 import type { AppId } from "@/types";
 
 type Panel = "control" | "notifications" | "search" | "power";
@@ -327,6 +338,101 @@ function Search({ onClose }: { onClose: () => void }) {
   );
 }
 
+function ControlCentre({ onPower }: { onPower: () => void }) {
+  const dark = useDark();
+  const online = useOnline();
+  const settings = useSettings();
+  const index = usePlayer((s) => s.index);
+  const playing = usePlayer((s) => s.playing);
+  const player = usePlayer.getState();
+  return (
+    <motion.div
+      className="ios-sheet-bg fixed inset-0 z-[2800] overflow-y-auto text-white"
+      style={{ paddingTop: "calc(var(--sb-h) + 14px)" }}
+      role="dialog"
+      aria-label="Control Centre"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
+      <motion.div
+        className="mx-auto grid w-full max-w-[360px] grid-cols-4 gap-3 px-5 pb-12"
+        data-panel
+        initial={{ scale: 0.86, y: -30 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: -20 }}
+        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+      >
+        <div className="ios-cc col-span-2 flex flex-col justify-between gap-3 p-3.5">
+          <div className="flex items-center gap-2.5">
+            <span className="ios-cc-round" data-on={online}>
+              <WifiGlyph size={19} />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[13px] font-semibold">Wi-Fi</span>
+              <span className="block text-[11.5px] opacity-65">{online ? "Connected" : "Offline"}</span>
+            </span>
+          </div>
+          <button type="button" className="flex items-center gap-2.5 text-left" aria-pressed={dark} onClick={() => settings.setTheme(dark ? "light" : "dark")}>
+            <span className="ios-cc-round" data-on={dark}>
+              {dark ? <Moon size={19} weight="fill" /> : <Sun size={19} weight="fill" />}
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[13px] font-semibold">Dark Mode</span>
+              <span className="block text-[11.5px] opacity-65">{dark ? "On" : "Off"}</span>
+            </span>
+          </button>
+        </div>
+        <div className="ios-cc col-span-2 flex flex-col justify-between p-3.5">
+          <button type="button" className="flex items-center gap-2.5 text-left" onClick={() => launch("music")}>
+            <AppIcon id="music" size={34} />
+            <span className="min-w-0">
+              <span className="block truncate text-[13px] font-semibold">{TRACKS[index].title}</span>
+              <span className="block text-[11.5px] opacity-65">{playing ? "Playing" : "Not playing"}</span>
+            </span>
+          </button>
+          <div className="mt-3 flex justify-center gap-5">
+            <button type="button" aria-label={playing ? "Pause" : "Play"} onClick={player.toggle}>
+              {playing ? <Pause size={24} weight="fill" /> : <Play size={24} weight="fill" />}
+            </button>
+            <button type="button" aria-label="Next track" onClick={player.next}>
+              <SkipForward size={24} weight="fill" />
+            </button>
+          </div>
+        </div>
+        <button
+          type="button"
+          className="ios-cc col-span-2 flex items-center gap-2.5 p-3.5 text-left"
+          aria-pressed={settings.nightLight}
+          onClick={() => settings.setNightLight(!settings.nightLight)}
+        >
+          <span className="ios-cc-round" data-on={settings.nightLight}>
+            <SunDim size={20} weight="fill" />
+          </span>
+          <span className="text-[13px] font-semibold">Night Shift</span>
+        </button>
+        <button type="button" className="ios-cc col-span-2 flex items-center gap-2.5 p-3.5 text-left" onClick={onPower}>
+          <span className="ios-cc-round">
+            <Power size={19} weight="bold" />
+          </span>
+          <span className="text-[13px] font-semibold">Power</span>
+        </button>
+        <div className="ios-cc col-span-4 p-3.5">
+          <div className="flex items-center gap-2.5">
+            <SunDim size={20} className="shrink-0" />
+            <Slider label="Brightness" value={settings.brightness} min={0.35} max={1} onChange={settings.setBrightness} />
+          </div>
+          <div className="mt-3 flex items-center gap-2.5">
+            <SpeakerHigh size={20} className="shrink-0" />
+            <Slider label="Volume" value={settings.volume} onChange={settings.setVolume} />
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function HomeBar() {
   const current = usePhone((s) => s.current);
   const switcher = usePhone((s) => s.switcher);
@@ -395,6 +501,7 @@ function Phone() {
       <Banner className="fixed inset-x-2.5" style={{ top: "calc(var(--sb-h) + 2px)" }} from={{ y: -70 }} />
       <AnimatePresence>
         {panel === "search" && <Search key="search" onClose={close} />}
+        {panel === "control" && <ControlCentre key="cc" onPower={() => openPanel("power")} />}
       </AnimatePresence>
       {(panel === "control" || panel === "notifications") && (
         <button
