@@ -292,6 +292,10 @@
   margin-top: -7px;
 }
 
+[data-os="ios"] .ios-slide {
+  background: rgb(255 255 255 / 0.16);
+}
+
 [data-os="ios"] .os-notice,
 [data-os="ios"] .os-banner {
   border-radius: 22px;

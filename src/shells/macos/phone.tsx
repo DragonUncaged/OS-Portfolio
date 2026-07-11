@@ -2,6 +2,7 @@
 
 import "./ios.css";
 import {
+  ArrowClockwise,
   Command,
   Flashlight,
   MagnifyingGlass,
@@ -14,6 +15,7 @@ import {
   Sun,
   SunDim,
   Waveform,
+  X,
 } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRef, useState } from "react";
@@ -433,6 +435,62 @@ function ControlCentre({ onPower }: { onPower: () => void }) {
   );
 }
 
+function PowerSheet({ onClose }: { onClose: () => void }) {
+  const [x, setX] = useState(0);
+  const track = useRef<HTMLDivElement>(null);
+  const from = useRef<number | null>(null);
+  const max = () => (track.current?.clientWidth ?? 280) - 64;
+  return (
+    <motion.div
+      className="ios-sheet-bg fixed inset-0 z-[2900] flex flex-col items-center justify-between px-8 pb-14 text-white"
+      style={{ paddingTop: "calc(var(--sb-h) + 60px)" }}
+      role="dialog"
+      aria-label="Power"
+      data-panel
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <div className="w-full max-w-[320px]">
+        <div ref={track} className="ios-slide relative h-[64px] w-full overflow-hidden rounded-full">
+          <span className="absolute inset-0 grid place-items-center pl-10 text-[17px] opacity-80" style={{ opacity: 0.8 - x / 200 }}>
+            slide to power off
+          </span>
+          <button
+            type="button"
+            aria-label="Slide to power off (or press Enter)"
+            className="absolute left-1 top-1 grid size-14 touch-none place-items-center rounded-full bg-white text-[#ff3b30]"
+            style={{ transform: `translateX(${x}px)` }}
+            onPointerDown={(e) => {
+              from.current = e.clientX - x;
+              e.currentTarget.setPointerCapture(e.pointerId);
+            }}
+            onPointerMove={(e) => from.current !== null && setX(Math.max(0, Math.min(max(), e.clientX - from.current)))}
+            onPointerUp={() => {
+              from.current = null;
+              if (x > max() * 0.85) useSession.getState().power("shutdown");
+              else setX(0);
+            }}
+            onKeyDown={(e) => e.key === "Enter" && useSession.getState().power("shutdown")}
+          >
+            <Power size={26} weight="bold" />
+          </button>
+        </div>
+        <button type="button" className="ios-slide mt-5 flex h-[56px] w-full items-center justify-center gap-2.5 rounded-full text-[17px]" onClick={() => useSession.getState().power("restart")}>
+          <ArrowClockwise size={20} weight="bold" />
+          Restart and choose another system
+        </button>
+      </div>
+      <button type="button" className="flex flex-col items-center gap-2 text-[13px]" onClick={onClose}>
+        <span className="ios-cc-round !size-14">
+          <X size={24} weight="bold" />
+        </span>
+        Cancel
+      </button>
+    </motion.div>
+  );
+}
+
 function HomeBar() {
   const current = usePhone((s) => s.current);
   const switcher = usePhone((s) => s.switcher);
@@ -502,6 +560,7 @@ function Phone() {
       <AnimatePresence>
         {panel === "search" && <Search key="search" onClose={close} />}
         {panel === "control" && <ControlCentre key="cc" onPower={() => openPanel("power")} />}
+        {panel === "power" && <PowerSheet key="power" onClose={close} />}
       </AnimatePresence>
       {(panel === "control" || panel === "notifications") && (
         <button
