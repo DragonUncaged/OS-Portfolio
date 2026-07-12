@@ -296,6 +296,15 @@
   background: rgb(255 255 255 / 0.16);
 }
 
+[data-os="ios"] .ios-clear {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.2);
+}
+
 [data-os="ios"] .os-notice,
 [data-os="ios"] .os-banner {
   border-radius: 22px;

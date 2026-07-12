@@ -22,7 +22,7 @@ import { useRef, useState } from "react";
 import { APPS, appName, launchable, type AppCategory } from "@/apps/registry";
 import { AppIcon } from "@/components/app-icon";
 import { Avatar, Slider } from "@/components/kit";
-import { Banner } from "@/components/notifications";
+import { Banner, NoticeList } from "@/components/notifications";
 import { PhoneHost } from "@/components/phone-host";
 import { ShellRoot, ShellWallpaper } from "@/components/shell-root";
 import { BatteryGlyph, WifiGlyph } from "@/components/status-glyphs";
@@ -435,6 +435,39 @@ function ControlCentre({ onPower }: { onPower: () => void }) {
   );
 }
 
+function NotificationCentre({ onClose }: { onClose: () => void }) {
+  const now = useNow(1000);
+  const has = useSession((s) => s.notices.length > 0);
+  return (
+    <motion.div
+      className="ios-sheet-bg fixed inset-0 z-[2800] overflow-y-auto text-white"
+      style={{ paddingTop: "calc(var(--sb-h) + 20px)" }}
+      role="dialog"
+      aria-label="Notification Centre"
+      initial={{ y: "-100%" }}
+      animate={{ y: 0 }}
+      exit={{ y: "-100%" }}
+      transition={{ duration: 0.32, ease: [0.2, 0.8, 0.2, 1] }}
+    >
+      <div className="mx-auto w-full max-w-[420px] px-4 pb-16" data-panel>
+        <div className="text-center">
+          <div className="text-[19px] font-medium opacity-90">{dateLong(now)}</div>
+          <div className="text-[70px] font-semibold leading-none tracking-tight">{time12(now)}</div>
+        </div>
+        <div className="mb-2 mt-6 flex items-center justify-between">
+          <span className="text-[19px] font-semibold">Notification Centre</span>
+          {has && (
+            <button type="button" className="ios-clear" aria-label="Clear all notifications" onClick={() => useSession.getState().clearNotices()}>
+              <X size={13} weight="bold" />
+            </button>
+          )}
+        </div>
+        <NoticeList empty="No Older Notifications" onOpen={onClose} />
+      </div>
+    </motion.div>
+  );
+}
+
 function PowerSheet({ onClose }: { onClose: () => void }) {
   const [x, setX] = useState(0);
   const track = useRef<HTMLDivElement>(null);
@@ -560,6 +593,7 @@ function Phone() {
       <AnimatePresence>
         {panel === "search" && <Search key="search" onClose={close} />}
         {panel === "control" && <ControlCentre key="cc" onPower={() => openPanel("power")} />}
+        {panel === "notifications" && <NotificationCentre key="nc" onClose={close} />}
         {panel === "power" && <PowerSheet key="power" onClose={close} />}
       </AnimatePresence>
       {(panel === "control" || panel === "notifications") && (
