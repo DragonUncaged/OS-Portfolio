@@ -36,7 +36,7 @@ import { usePanel } from "@/hooks/use-panel";
 import { useWelcome } from "@/hooks/use-welcome";
 import { useWindowEvent } from "@/hooks/use-window-event";
 import { DAYS, MONTHS, dateLong, time12 } from "@/lib/format";
-import { launch, originOf } from "@/lib/launch";
+import { launch, originOf, phoneBack } from "@/lib/launch";
 import { TRACKS } from "@/lib/synth";
 import { usePhone } from "@/stores/phone";
 import { usePlayer } from "@/stores/player";
@@ -569,6 +569,26 @@ function HomeBar() {
   );
 }
 
+function BackEdge() {
+  const current = usePhone((s) => s.current);
+  const switcher = usePhone((s) => s.switcher);
+  const from = useRef<number | null>(null);
+  if (!current || switcher) return null;
+  return (
+    <div
+      className="fixed bottom-24 left-0 top-24 z-[2300] w-3 touch-none"
+      onPointerDown={(e) => {
+        from.current = e.clientX;
+        e.currentTarget.setPointerCapture(e.pointerId);
+      }}
+      onPointerUp={(e) => {
+        if (from.current !== null && e.clientX - from.current > 56) phoneBack();
+        from.current = null;
+      }}
+    />
+  );
+}
+
 function Phone() {
   const { panel, toggle, close, open: openPanel } = usePanel<Panel>();
   const current = usePhone((s) => s.current);
@@ -588,6 +608,7 @@ function Phone() {
       <Home toggle={toggle} />
       <PhoneHost variant="ios" />
       <HomeBar />
+      <BackEdge />
       <StatusBar tone={overlay ? "light" : "auto"} toggle={toggle} />
       <Banner className="fixed inset-x-2.5" style={{ top: "calc(var(--sb-h) + 2px)" }} from={{ y: -70 }} />
       <AnimatePresence>
