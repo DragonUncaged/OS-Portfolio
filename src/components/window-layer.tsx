@@ -4,6 +4,7 @@ import { AnimatePresence } from "motion/react";
 import { useEffect, useMemo } from "react";
 import { useViewport } from "@/hooks/use-viewport";
 import { isTyping, useWindowEvent } from "@/hooks/use-window-event";
+import { useSession } from "@/stores/session";
 import { frameOf, useWM, type Win } from "@/stores/window-manager";
 import type { Rect } from "@/types";
 import { Window, type OverviewSlot } from "./window";
@@ -70,6 +71,7 @@ export function WindowLayer({
   }, [overview, wins, area, vw, vh, overviewInsets.top, overviewInsets.right, overviewInsets.bottom, overviewInsets.left]);
 
   useWindowEvent("keydown", (e) => {
+    if (useSession.getState().phase !== "desktop") return;
     const wm = useWM.getState();
     if (e.key === "Escape" && wm.overview) {
       wm.setOverview(false);
