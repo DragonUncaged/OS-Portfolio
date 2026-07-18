@@ -930,6 +930,53 @@
   background: rgb(255 255 255 / 0.35);
 }
 
+.picker-glow {
+  background:
+    radial-gradient(60% 50% at 18% 0%, rgb(120 90 255 / 0.2) 0%, transparent 70%),
+    radial-gradient(50% 45% at 92% 12%, rgb(60 150 255 / 0.16) 0%, transparent 70%),
+    radial-gradient(60% 50% at 60% 110%, rgb(255 120 70 / 0.14) 0%, transparent 70%),
+    linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px) 0 0 / 100% 44px,
+    linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px) 0 0 / 44px 100%;
+}
+
+.picker-card {
+  background: rgb(255 255 255 / 0.045);
+  border: 1px solid rgb(255 255 255 / 0.09);
+  transition:
+    background-color 0.25s,
+    border-color 0.25s,
+    box-shadow 0.25s,
+    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.picker-card[data-on="true"] {
+  background: rgb(255 255 255 / 0.085);
+  border-color: color-mix(in srgb, var(--tint) 65%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--tint) 45%, transparent),
+    0 18px 50px color-mix(in srgb, var(--tint) 20%, transparent);
+  transform: translateY(-3px);
+}
+
+.picker-card:focus-visible {
+  outline: 2px solid var(--tint);
+  outline-offset: 3px;
+}
+
+.picker-glyph {
+  background: color-mix(in srgb, var(--tint) 20%, transparent);
+  color: var(--tint);
+}
+
+.picker-cta {
+  color: rgb(255 255 255 / 0.4);
+  transition: color 0.2s;
+}
+
+.picker-card[data-on="true"] .picker-cta {
+  color: var(--tint);
+}
+
 @media print {
   .app-root,
   #plain {
