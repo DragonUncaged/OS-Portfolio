@@ -99,6 +99,69 @@ function Ridge({ sky, layers }: { sky: string[]; layers: string[] }) {
   );
 }
 
+function Fan({ base, petals }: { base: string[]; petals: string[] }) {
+  const id = useId();
+  const count = 9;
+  const angles = Array.from({ length: count }, (_, i) => -76 + (152 / (count - 1)) * i).sort(
+    (a, b) => Math.abs(b) - Math.abs(a),
+  );
+  return (
+    <Svg>
+      <defs>
+        <linearGradient id={`${id}b`} x1="0" y1="0" x2="0.3" y2="1">
+          {base.map((c, i) => (
+            <stop key={i} offset={i / (base.length - 1)} stopColor={c} />
+          ))}
+        </linearGradient>
+        {petals.map((c, i) => (
+          <linearGradient key={i} id={`${id}p${i}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#fff" stopOpacity="0.55" />
+            <stop offset="0.35" stopColor={c} stopOpacity="0.9" />
+            <stop offset="1" stopColor={c} stopOpacity="0.55" />
+          </linearGradient>
+        ))}
+      </defs>
+      <rect width="1600" height="1000" fill={`url(#${id}b)`} />
+      <g transform="translate(800 1010)">
+        {angles.map((a, i) => (
+          <path
+            key={a}
+            transform={`rotate(${a})`}
+            fill={`url(#${id}p${i % petals.length})`}
+            d="M0,0 C -230,-190 -250,-560 0,-800 C 250,-560 230,-190 0,0 Z"
+          />
+        ))}
+      </g>
+    </Svg>
+  );
+}
+
+function Beams({ base, beams }: { base: string; beams: [string, number, number][] }) {
+  const id = useId();
+  return (
+    <Svg>
+      <defs>
+        {beams.map(([c], i) => (
+          <linearGradient key={i} id={`${id}${i}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor={c} stopOpacity="0" />
+            <stop offset="0.5" stopColor={c} stopOpacity="0.85" />
+            <stop offset="1" stopColor={c} stopOpacity="0" />
+          </linearGradient>
+        ))}
+        <filter id={`${id}f`} x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="26" />
+        </filter>
+      </defs>
+      <rect width="1600" height="1000" fill={base} />
+      <g filter={`url(#${id}f)`}>
+        {beams.map(([, x, w], i) => (
+          <rect key={i} x={x} y="-300" width={w} height="1700" fill={`url(#${id}${i})`} transform={`rotate(32 ${x} 500)`} />
+        ))}
+      </g>
+    </Svg>
+  );
+}
+
 const ART: Record<string, (p: ArtProps) => ReactNode> = {
   dunes: () => (
     <Waves
@@ -127,6 +190,40 @@ const ART: Record<string, (p: ArtProps) => ReactNode> = {
       blobs={[
         ["rgb(160 170 190 / 0.55)", 22, 18, 42],
         ["rgb(90 100 130 / 0.5)", 86, 82, 46],
+      ]}
+    />
+  ),
+  ribbons: ({ dark }) =>
+    dark ? (
+      <Fan base={["#04113a", "#0a2a8a", "#061a52"]} petals={["#1e6bff", "#3fa0ff", "#0f47c9", "#59b8ff"]} />
+    ) : (
+      <Fan base={["#d6ebff", "#9cc9ff", "#5fa2f5"]} petals={["#2f7bff", "#66b3ff", "#1657d8", "#8fd0ff"]} />
+    ),
+  glow: () => (
+    <Beams
+      base="#070b1f"
+      beams={[
+        ["#22d3ee", 220, 150],
+        ["#6366f1", 620, 220],
+        ["#d946ef", 1060, 160],
+        ["#38bdf8", 1380, 90],
+      ]}
+    />
+  ),
+  flow: () => (
+    <Waves
+      sky={["#ffe9c9", "#ffc6a8", "#ff9ec0"]}
+      sun="#fff3d6"
+      layers={["#ffb37a", "#ff8d8d", "#f062a4", "#b43fbf", "#6e34c9", "#3d219a"]}
+    />
+  ),
+  midnight: () => (
+    <Blobs
+      base="#05060f"
+      blobs={[
+        ["#1d4ed8", 78, 30, 52],
+        ["#7c3aed", 24, 74, 50],
+        ["#0ea5e9", 55, 108, 40],
       ]}
     />
   ),
