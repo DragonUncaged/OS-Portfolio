@@ -1,11 +1,12 @@
 "use client";
 
-import { CaretLeft, MagnifyingGlass, X, type Icon } from "@phosphor-icons/react";
+import { ArrowLeft, CaretLeft, MagnifyingGlass, X, type Icon } from "@phosphor-icons/react";
 import { useEffect, type ReactNode } from "react";
 import { appName } from "@/apps/registry";
 import { useInstance } from "@/hooks/use-instance";
 import { registerBack } from "@/lib/launch";
 import { usePlatform } from "@/stores/session";
+import { AppIcon } from "./app-icon";
 
 export interface FrameSection {
   id: string;
@@ -208,6 +209,70 @@ export function AppFrame(props: FrameProps) {
             />
           )}
           {body}
+        </div>
+      </div>
+    );
+  }
+
+  if (platform === "windows") {
+    const bar = Boolean(actions?.length || search || center);
+    return (
+      <div className="@container flex h-full flex-col bg-bg text-fg" data-theme={tone}>
+        <header data-wm-drag className="flex h-10 shrink-0 items-center gap-2 pl-2 pr-[146px]">
+          {onBack ? (
+            <button type="button" className="k-icon-btn !size-8" aria-label="Back" onClick={onBack}>
+              <ArrowLeft size={15} />
+            </button>
+          ) : (
+            <span className="w-1" />
+          )}
+          <AppIcon id={instance.appId} size={16} />
+          <span className="truncate text-xs">{title === name ? name : `${title} - ${name}`}</span>
+        </header>
+        <div className="flex min-h-0 flex-1">
+          {sections && (
+            <nav className="hidden w-[208px] shrink-0 flex-col gap-0.5 px-1.5 pb-2 @min-[620px]:flex">
+              {nav("win-nav-item", 17, "fill")}
+            </nav>
+          )}
+          <div className="flex min-w-0 flex-1 flex-col">
+            {bar && (
+              <div className="flex h-11 shrink-0 items-center gap-1 px-2">
+                {actions?.map((a) => {
+                  const ActionIcon = a.icon;
+                  return (
+                    <button
+                      key={a.id}
+                      type="button"
+                      className="win-cmd"
+                      data-on={a.on}
+                      aria-pressed={a.on}
+                      disabled={a.disabled}
+                      title={a.label}
+                      onClick={a.onClick}
+                    >
+                      <ActionIcon size={16} />
+                      <span className="hidden @min-[520px]:inline">{a.label}</span>
+                    </button>
+                  );
+                })}
+                {center ? <div className="min-w-0 flex-1 px-1">{center}</div> : <div className="flex-1" />}
+                {search && <SearchField search={search} className="w-[220px] max-w-[50%]" />}
+              </div>
+            )}
+            {sections && (
+              <Strip
+                sections={sections}
+                section={section}
+                onSection={onSection}
+                className="gap-4 px-4 pb-1 @min-[620px]:hidden"
+                itemClass="win-pivot"
+              />
+            )}
+            <div className={`win-layer flex min-h-0 flex-1 flex-col ${sections ? "@min-[620px]:rounded-tl-lg @min-[620px]:border-l" : ""}`}>
+              {body}
+            </div>
+          </div>
         </div>
       </div>
     );

@@ -1,0 +1,275 @@
+[data-os="windows"] {
+  --os-font: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", "Open Sans Variable", system-ui, sans-serif;
+  --os-mono: "Cascadia Mono", "Cascadia Code", Consolas, "JetBrains Mono Variable", monospace;
+  --os-r: 4px;
+  --os-r-lg: 8px;
+  --ctl-h: 32px;
+  --win-r: 8px;
+  --win-r-max: 0px;
+  --menu-r: 8px;
+  --menu-item-r: 4px;
+  --folder: #f3bd3b;
+
+  --bg: #f3f3f3;
+  --bg-2: #eeeeee;
+  --bg-3: #fbfbfb;
+  --layer: #f9f9f9;
+  --fg: #1b1b1b;
+  --fg-2: rgb(0 0 0 / 0.62);
+  --fg-3: rgb(0 0 0 / 0.45);
+  --line: rgb(0 0 0 / 0.08);
+  --ctl: rgb(0 0 0 / 0.045);
+  --ctl-2: rgb(0 0 0 / 0.085);
+  --accent-soft: color-mix(in srgb, var(--accent) 13%, transparent);
+  --menu-bg: rgb(249 249 249 / 0.9);
+  --bar-bg: rgb(243 243 243 / 0.82);
+  --bar-fg: #1b1b1b;
+  --menu-hi: rgb(0 0 0 / 0.06);
+  --menu-hi-fg: var(--fg);
+  --win-shadow: 0 0 0 1px rgb(0 0 0 / 0.16), 0 26px 60px rgb(0 0 0 / 0.3);
+  --win-shadow-idle: 0 0 0 1px rgb(0 0 0 / 0.12), 0 10px 26px rgb(0 0 0 / 0.16);
+}
+
+[data-os="windows"][data-theme="dark"],
+[data-os="windows"] [data-theme="dark"] {
+  --bg: #202020;
+  --bg-2: #1c1c1c;
+  --bg-3: #2b2b2b;
+  --layer: #272727;
+  --fg: #ffffff;
+  --fg-2: rgb(255 255 255 / 0.76);
+  --fg-3: rgb(255 255 255 / 0.5);
+  --line: rgb(255 255 255 / 0.09);
+  --ctl: rgb(255 255 255 / 0.06);
+  --ctl-2: rgb(255 255 255 / 0.1);
+  --menu-bg: rgb(44 44 44 / 0.92);
+  --bar-bg: rgb(28 28 28 / 0.8);
+  --bar-fg: #ffffff;
+  --menu-hi: rgb(255 255 255 / 0.08);
+  --win-shadow: 0 0 0 1px rgb(255 255 255 / 0.14), 0 26px 60px rgb(0 0 0 / 0.55);
+  --win-shadow-idle: 0 0 0 1px rgb(255 255 255 / 0.1), 0 10px 26px rgb(0 0 0 / 0.4);
+}
+
+[data-os="windows"] .os-window {
+  background: var(--bg);
+}
+
+[data-os="windows"] .win-caption button {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 32px;
+  color: var(--fg);
+}
+
+[data-os="windows"] .win-caption button:last-child {
+  border-top-right-radius: var(--win-r);
+}
+
+[data-os="windows"] .os-window[data-mode="max"] .win-caption button:last-child,
+[data-os="windows"] .os-window[data-mode="right"] .win-caption button:last-child {
+  border-top-right-radius: 0;
+}
+
+[data-os="windows"] .win-caption button:hover {
+  background: var(--ctl-2);
+}
+
+[data-os="windows"] .win-caption button[data-kind="close"]:hover {
+  background: #c42b1c;
+  color: #fff;
+}
+
+[data-os="windows"] .os-window[data-focused="false"] .win-caption button {
+  color: var(--fg-3);
+}
+
+[data-os="windows"] .win-layer {
+  background: var(--layer);
+  border-top: 1px solid var(--line);
+  border-color: var(--line);
+}
+
+[data-os="windows"] .win-nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 4px;
+  font-size: 13.5px;
+  text-align: left;
+}
+
+[data-os="windows"] .win-nav-item:hover {
+  background: var(--ctl);
+}
+
+[data-os="windows"] .win-nav-item[data-on="true"] {
+  background: var(--ctl-2);
+}
+
+[data-os="windows"] .win-nav-item[data-on="true"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+[data-os="windows"] .win-cmd {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 4px;
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+[data-os="windows"] .win-cmd:hover {
+  background: var(--ctl-2);
+}
+
+[data-os="windows"] .win-cmd:disabled {
+  opacity: 0.38;
+  pointer-events: none;
+}
+
+[data-os="windows"] .win-cmd[data-on="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+[data-os="windows"] .win-pivot {
+  flex: none;
+  padding: 6px 0;
+  border-bottom: 2px solid transparent;
+  font-size: 13.5px;
+  color: var(--fg-2);
+  white-space: nowrap;
+}
+
+[data-os="windows"] .win-pivot[data-on="true"] {
+  border-bottom-color: var(--accent);
+  color: var(--fg);
+  font-weight: 600;
+}
+
+[data-os="windows"] .os-menu {
+  padding: 4px;
+  box-shadow: 0 10px 28px rgb(0 0 0 / 0.26);
+}
+
+[data-os="windows"] .os-menu-item {
+  min-height: 32px;
+  padding: 0 11px;
+  gap: 12px;
+}
+
+[data-os="windows"] .os-menu-icon {
+  width: 16px;
+}
+
+[data-os="windows"] .k-btn {
+  border: 1px solid var(--line);
+  border-bottom-color: color-mix(in srgb, var(--fg) 16%, transparent);
+  background: var(--bg-3);
+  font-weight: 400;
+  font-size: 13.5px;
+}
+
+[data-os="windows"] .k-btn:hover {
+  background: var(--ctl-2);
+}
+
+[data-os="windows"] .k-btn-primary {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: transparent;
+}
+
+[data-os="windows"] .k-btn-primary:hover {
+  background: color-mix(in srgb, var(--accent) 90%, var(--bg));
+}
+
+[data-os="windows"] .k-input {
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-bottom-color: color-mix(in srgb, var(--fg) 45%, transparent);
+}
+
+[data-os="windows"] .k-input:focus {
+  border-bottom: 2px solid var(--accent);
+  border-color: var(--line) var(--line) var(--accent);
+}
+
+[data-os="windows"] .os-toggle {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--fg-2);
+  height: 20px;
+}
+
+[data-os="windows"] .os-toggle span {
+  top: 4px;
+  left: 4px;
+  width: 12px;
+  height: 12px;
+  background: var(--fg-2);
+  box-shadow: none;
+}
+
+[data-os="windows"] .os-toggle[data-on="true"] {
+  background: var(--accent);
+  box-shadow: none;
+}
+
+[data-os="windows"] .os-toggle[data-on="true"] span {
+  background: var(--accent-fg);
+  transform: translateX(20px);
+}
+
+[data-os="windows"] .os-slider::-webkit-slider-runnable-track {
+  height: 4px;
+}
+
+[data-os="windows"] .os-slider::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  margin-top: -7px;
+  background: var(--accent);
+  border: 4px solid var(--bg-3);
+  box-shadow: 0 0 0 1px var(--line), 0 1px 3px rgb(0 0 0 / 0.3);
+}
+
+[data-os="windows"] .os-heading {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--fg);
+}
+
+[data-os="windows"] .os-display {
+  font-weight: 600;
+}
+
+[data-os="windows"] .k-tag {
+  border-radius: 4px;
+}
+
+[data-os="windows"] .os-calc-key {
+  border: 1px solid var(--line);
+  background: var(--bg-3);
+}
+
+[data-os="windows"] .os-calc-key[data-kind="fn"],
+[data-os="windows"] .os-calc-key[data-kind="op"] {
+  background: var(--ctl);
+  color: var(--fg);
+}
