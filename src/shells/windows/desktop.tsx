@@ -6,6 +6,7 @@ import {
   ArrowClockwise,
   ArrowRight,
   Cards,
+  FileText,
   LockSimple,
   MagnifyingGlass,
   Power,
@@ -13,7 +14,7 @@ import {
 } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { appName } from "@/apps/registry";
+import { appName, launchable } from "@/apps/registry";
 import { AppIcon } from "@/components/app-icon";
 import { Avatar } from "@/components/kit";
 import { showContextMenu, toggleDropdown, type MenuItem } from "@/components/menu";
@@ -21,8 +22,9 @@ import { Banner } from "@/components/notifications";
 import { ShellRoot, ShellWallpaper } from "@/components/shell-root";
 import { BatteryGlyph, WifiGlyph } from "@/components/status-glyphs";
 import { WindowLayer } from "@/components/window-layer";
-import { profile } from "@/data/portfolio";
+import { profile, projects } from "@/data/portfolio";
 import { useBootTimer } from "@/hooks/use-boot-timer";
+import { useLauncher } from "@/hooks/use-launcher";
 import { useNow } from "@/hooks/use-now";
 import { usePanel } from "@/hooks/use-panel";
 import { useSuperKey } from "@/hooks/use-super-key";
@@ -30,6 +32,7 @@ import { useWelcome } from "@/hooks/use-welcome";
 import { useWindowEvent } from "@/hooks/use-window-event";
 import { dateLong, dateNumeric, time12m } from "@/lib/format";
 import { launch } from "@/lib/launch";
+import { KIND_LABEL, grouped } from "@/lib/search";
 import { useSession } from "@/stores/session";
 import { useWM } from "@/stores/window-manager";
 import type { AppId } from "@/types";
@@ -253,6 +256,142 @@ function Taskbar({ panel, toggle }: { panel: Panel | null; toggle: (p: Panel) =>
   );
 }
 
+function StartMenu({ onClose }: { onClose: () => void }) {
+  const l = useLauncher(onClose, 8);
+  const pinned = launchable("windows");
+  const recommended = [
+    { label: "Resume", note: "Document", icon: <AppIcon id="resume" size={30} />, open: () => launch("resume") },
+    { label: "about.md", note: "Markdown document", icon: <FileText size={28} weight="duotone" className="text-accent" />, open: () => launch("viewer", { path: "about.md" }) },
+    ...projects.slice(0, 4).map((p) => ({
+      label: p.name,
+      note: p.tech.join(" · "),
+      icon: <AppIcon id="projects" size={30} />,
+      open: () => launch("projects", { project: p.slug }),
+    })),
+  ];
+  return (
+    <motion.div
+      className="win-flyout win-start fixed left-1/2 z-[1800] flex w-[640px] max-w-[calc(100vw-16px)] flex-col"
+      style={{ bottom: TASKBAR_H + 12, maxHeight: `calc(100vh - ${TASKBAR_H + 24}px)` }}
+      data-panel
+      role="dialog"
+      aria-label="Start"
+      initial={{ opacity: 0, y: 40, x: "-50%" }}
+      animate={{ opacity: 1, y: 0, x: "-50%" }}
+      exit={{ opacity: 0, y: 30, x: "-50%" }}
+      transition={{ duration: 0.2, ease: [0.1, 0.9, 0.2, 1] }}
+    >
+      <label className="win-start-search m-6 mb-2 flex h-9 shrink-0 items-center gap-2.5 px-3.5">
+        <MagnifyingGlass size={16} className="shrink-0 text-accent" />
+        <input
+          autoFocus
+          value={l.query}
+          onChange={(e) => l.setQuery(e.target.value)}
+          onKeyDown={l.onKeyDown}
+          placeholder="Search for apps, projects, files and settings"
+          aria-label="Search"
+          className="min-w-0 flex-1 bg-transparent text-[14px] outline-none placeholder:text-fg3"
+          autoComplete="off"
+          spellCheck={false}
+        />
+      </label>
+      <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-3">
+        {l.query.trim() ? (
+          <div className="pb-2 pt-2">
+            {l.hits.length === 0 && <p className="py-10 text-center text-[13.5px] text-fg2">No results for &quot;{l.query}&quot;</p>}
+            {grouped(l.hits).map((g) => (
+              <div key={g.kind}>
+                <div className="px-2 pb-1 pt-2.5 text-[12.5px] font-semibold">{KIND_LABEL[g.kind]}</div>
+                {g.hits.map((h) => (
+                  <button
+                    key={h.id}
+                    type="button"
+                    className="win-result"
+                    data-on={l.hits.indexOf(h) === l.index}
+                    onPointerEnter={() => l.setIndex(l.hits.indexOf(h))}
+                    onClick={() => l.run(h)}
+                  >
+                    <AppIcon id={h.app} size={26} />
+                    <span className="min-w-0 flex-1 text-left">
+                      <span className="block truncate text-[13.5px]">{h.title}</span>
+                      <span className="block truncate text-[12px] text-fg2">{h.subtitle}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-between px-2 pb-2 pt-3">
+              <span className="text-[14px] font-semibold">Pinned</span>
+              <span className="text-[12px] text-fg2">{pinned.length} apps</span>
+            </div>
+            <div className="grid grid-cols-4 gap-y-1 sm:grid-cols-6">
+              {pinned.map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  className="win-pin"
+                  onClick={() => {
+                    onClose();
+                    launch(id);
+                  }}
+                >
+                  <AppIcon id={id} size={32} />
+                  <span className="line-clamp-2 max-w-full text-[12px] leading-tight">{appName(id, "windows")}</span>
+                </button>
+              ))}
+            </div>
+            <div className="px-2 pb-2 pt-5 text-[14px] font-semibold">Recommended</div>
+            <div className="grid grid-cols-1 gap-x-2 sm:grid-cols-2">
+              {recommended.map((r) => (
+                <button
+                  key={r.label}
+                  type="button"
+                  className="win-result"
+                  onClick={() => {
+                    onClose();
+                    r.open();
+                  }}
+                >
+                  {r.icon}
+                  <span className="min-w-0 flex-1 text-left">
+                    <span className="block truncate text-[13px]">{r.label}</span>
+                    <span className="block truncate text-[12px] text-fg2">{r.note}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+      <div className="win-start-foot flex h-16 shrink-0 items-center justify-between px-10">
+        <button
+          type="button"
+          className="win-result !w-auto !pr-4"
+          onClick={() => {
+            onClose();
+            launch("about");
+          }}
+        >
+          <Avatar size={32} />
+          <span className="text-[13px]">{profile.name}</span>
+        </button>
+        <button
+          type="button"
+          className="k-icon-btn !size-10"
+          aria-label="Power"
+          data-menu-trigger
+          onClick={(e) => toggleDropdown(e.currentTarget, "start-power", powerItems(), { side: "top", align: "end", gap: 8 })}
+        >
+          <Power size={18} />
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
 function Desktop() {
   const { panel, toggle, close } = usePanel<Panel>();
   const overview = useWM((s) => s.overview);
@@ -293,6 +432,7 @@ function Desktop() {
       <Taskbar panel={panel} toggle={toggle} />
       <Banner className="fixed right-3 w-[364px] max-w-[calc(100vw-24px)]" style={{ bottom: TASKBAR_H + 12 }} from={{ x: 80 }} />
       <AnimatePresence>
+        {panel === "start" && <StartMenu key="start" onClose={close} />}
       </AnimatePresence>
     </>
   );
