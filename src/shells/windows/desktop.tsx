@@ -7,33 +7,39 @@ import {
   ArrowRight,
   Cards,
   FileText,
+  GearSix,
   LockSimple,
   MagnifyingGlass,
+  Moon,
   Power,
   SpeakerHigh,
+  SunDim,
 } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { appName, launchable } from "@/apps/registry";
 import { AppIcon } from "@/components/app-icon";
-import { Avatar } from "@/components/kit";
+import { Avatar, Slider } from "@/components/kit";
 import { showContextMenu, toggleDropdown, type MenuItem } from "@/components/menu";
-import { Banner } from "@/components/notifications";
+import { Banner, NoticeList } from "@/components/notifications";
 import { ShellRoot, ShellWallpaper } from "@/components/shell-root";
 import { BatteryGlyph, WifiGlyph } from "@/components/status-glyphs";
 import { WindowLayer } from "@/components/window-layer";
 import { profile, projects } from "@/data/portfolio";
 import { useBootTimer } from "@/hooks/use-boot-timer";
+import { useDark } from "@/hooks/use-dark";
 import { useLauncher } from "@/hooks/use-launcher";
 import { useNow } from "@/hooks/use-now";
+import { useOnline } from "@/hooks/use-online";
 import { usePanel } from "@/hooks/use-panel";
 import { useSuperKey } from "@/hooks/use-super-key";
 import { useWelcome } from "@/hooks/use-welcome";
 import { useWindowEvent } from "@/hooks/use-window-event";
-import { dateLong, dateNumeric, time12m } from "@/lib/format";
+import { DAYS, MONTHS, dateLong, dateNumeric, time12m } from "@/lib/format";
 import { launch } from "@/lib/launch";
 import { KIND_LABEL, grouped } from "@/lib/search";
 import { useSession } from "@/stores/session";
+import { useSettings } from "@/stores/settings";
 import { useWM } from "@/stores/window-manager";
 import type { AppId } from "@/types";
 import { WinLogo } from "./win-logo";
@@ -392,6 +398,135 @@ function StartMenu({ onClose }: { onClose: () => void }) {
   );
 }
 
+function QuickSettings({ onClose }: { onClose: () => void }) {
+  const dark = useDark();
+  const online = useOnline();
+  const settings = useSettings();
+  return (
+    <motion.div
+      className="win-flyout fixed right-3 z-[1800] w-[360px] max-w-[calc(100vw-24px)]"
+      style={{ bottom: TASKBAR_H + 12 }}
+      data-panel
+      role="dialog"
+      aria-label="Quick settings"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      transition={{ duration: 0.18, ease: [0.1, 0.9, 0.2, 1] }}
+    >
+      <div className="grid grid-cols-3 gap-2 p-5 pb-3">
+        <div className="text-center">
+          <div className="win-quick" data-on={online}>
+            <WifiGlyph size={18} />
+          </div>
+          <div className="mt-1.5 text-[12px]">{online ? "Connected" : "Offline"}</div>
+        </div>
+        <div className="text-center">
+          <button type="button" className="win-quick" data-on={dark} aria-pressed={dark} aria-label="Dark mode" onClick={() => settings.setTheme(dark ? "light" : "dark")}>
+            <Moon size={18} weight={dark ? "fill" : "regular"} />
+          </button>
+          <div className="mt-1.5 text-[12px]">Dark mode</div>
+        </div>
+        <div className="text-center">
+          <button
+            type="button"
+            className="win-quick"
+            data-on={settings.nightLight}
+            aria-pressed={settings.nightLight}
+            aria-label="Night light"
+            onClick={() => settings.setNightLight(!settings.nightLight)}
+          >
+            <SunDim size={19} weight={settings.nightLight ? "fill" : "regular"} />
+          </button>
+          <div className="mt-1.5 text-[12px]">Night light</div>
+        </div>
+      </div>
+      <div className="flex items-center gap-3 px-6 py-2">
+        <SunDim size={18} className="shrink-0" />
+        <Slider label="Brightness" value={settings.brightness} min={0.35} max={1} onChange={settings.setBrightness} />
+      </div>
+      <div className="flex items-center gap-3 px-6 pb-4 pt-2">
+        <SpeakerHigh size={18} className="shrink-0" />
+        <Slider label="Volume" value={settings.volume} onChange={settings.setVolume} />
+      </div>
+      <div className="win-start-foot flex h-12 items-center justify-between px-5 text-[12.5px]">
+        <BatteryGlyph size={20} showPercent />
+        <span className="flex-1" />
+        <button
+          type="button"
+          className="k-icon-btn"
+          aria-label="All settings"
+          title="All settings"
+          onClick={() => {
+            onClose();
+            launch("settings");
+          }}
+        >
+          <GearSix size={17} />
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
+function CalendarFlyout({ onClose }: { onClose: () => void }) {
+  const now = useNow(60_000);
+  const today = new Date(now);
+  const first = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
+  const count = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+  const has = useSession((s) => s.notices.length > 0);
+  return (
+    <motion.div
+      className="fixed right-3 z-[1800] flex w-[340px] max-w-[calc(100vw-24px)] flex-col gap-3"
+      style={{ bottom: TASKBAR_H + 12, maxHeight: `calc(100vh - ${TASKBAR_H + 24}px)` }}
+      data-panel
+      role="dialog"
+      aria-label="Notifications and calendar"
+      initial={{ opacity: 0, x: 60 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 60 }}
+      transition={{ duration: 0.2, ease: [0.1, 0.9, 0.2, 1] }}
+    >
+      <div className="win-flyout flex min-h-0 flex-col p-4">
+        <div className="mb-2.5 flex items-center justify-between">
+          <span className="text-[14px] font-semibold">Notifications</span>
+          {has && (
+            <button type="button" className="k-btn !min-h-7 !px-2.5 !text-[12px]" onClick={() => useSession.getState().clearNotices()}>
+              Clear all
+            </button>
+          )}
+        </div>
+        <div className="min-h-0 overflow-y-auto">
+          <NoticeList empty="No new notifications" onOpen={onClose} />
+        </div>
+      </div>
+      <div className="win-flyout shrink-0 p-4">
+        <button type="button" className="mb-3 block text-left text-[14px] font-semibold" onClick={() => (onClose(), launch("calendar"))}>
+          {dateLong(now)}
+        </button>
+        <div className="mb-1 text-[13px] font-semibold">
+          {MONTHS[today.getMonth()]} {today.getFullYear()}
+        </div>
+        <div className="grid grid-cols-7 gap-y-1 text-center text-[12px]">
+          {DAYS.map((d) => (
+            <span key={d} className="py-1 font-semibold">
+              {d.slice(0, 2)}
+            </span>
+          ))}
+          {Array.from({ length: first }, (_, i) => (
+            <span key={`b${i}`} />
+          ))}
+          {Array.from({ length: count }, (_, i) => (
+            <span key={i} className={`mx-auto grid size-8 place-items-center rounded-full ${i + 1 === today.getDate() ? "bg-accent font-semibold text-accent-fg" : ""}`}>
+              {i + 1}
+            </span>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 function Desktop() {
   const { panel, toggle, close } = usePanel<Panel>();
   const overview = useWM((s) => s.overview);
@@ -433,6 +568,8 @@ function Desktop() {
       <Banner className="fixed right-3 w-[364px] max-w-[calc(100vw-24px)]" style={{ bottom: TASKBAR_H + 12 }} from={{ x: 80 }} />
       <AnimatePresence>
         {panel === "start" && <StartMenu key="start" onClose={close} />}
+        {panel === "quick" && <QuickSettings key="quick" onClose={close} />}
+        {panel === "calendar" && <CalendarFlyout key="calendar" onClose={close} />}
       </AnimatePresence>
     </>
   );
