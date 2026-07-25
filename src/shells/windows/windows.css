@@ -497,3 +497,7 @@
   background: var(--ctl);
   color: var(--fg);
 }
+
+[data-os="windows"] .os-snap-hint {
+  border-radius: 8px;
+}

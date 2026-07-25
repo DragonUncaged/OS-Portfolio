@@ -561,6 +561,7 @@ function Desktop() {
   return (
     <>
       <WindowLayer
+        snapping
         insets={{ top: 0, right: 0, bottom: TASKBAR_H, left: 0 }}
         overviewInsets={{ top: 56, right: 56, bottom: TASKBAR_H + 96, left: 56 }}
       />
