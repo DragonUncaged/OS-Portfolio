@@ -274,6 +274,21 @@
   background: var(--bg-3);
 }
 
+[data-os="windows"] .win-taskview {
+  background: rgb(18 20 28 / 0.5);
+  backdrop-filter: blur(24px);
+}
+
+[data-os="windows"] .win-taskview-desk {
+  padding: 22px 46px 8px;
+  border-radius: 6px;
+  background: rgb(255 255 255 / 0.12);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-bottom: 2px solid var(--accent);
+  color: #fff;
+  font-size: 12px;
+}
+
 [data-os="windows"] .os-window {
   background: var(--bg);
 }

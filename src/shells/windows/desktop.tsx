@@ -560,6 +560,24 @@ function Desktop() {
 
   return (
     <>
+      <AnimatePresence>
+        {overview && (
+          <motion.button
+            type="button"
+            key="taskview"
+            aria-label="Leave task view"
+            className="win-taskview fixed inset-0 z-[9] cursor-default"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => useWM.getState().setOverview(false)}
+          >
+            <span className="win-taskview-desk absolute left-1/2 -translate-x-1/2" style={{ bottom: TASKBAR_H + 18 }}>
+              Desktop 1
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
       <WindowLayer
         snapping
         insets={{ top: 0, right: 0, bottom: TASKBAR_H, left: 0 }}
