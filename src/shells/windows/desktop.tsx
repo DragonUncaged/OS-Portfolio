@@ -6,7 +6,9 @@ import {
   ArrowClockwise,
   ArrowRight,
   Cards,
+  Desktop as DesktopGlyph,
   FileText,
+  Folder,
   GearSix,
   LockSimple,
   MagnifyingGlass,
@@ -14,6 +16,7 @@ import {
   Power,
   SpeakerHigh,
   SunDim,
+  Trash,
 } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
@@ -38,7 +41,8 @@ import { useWindowEvent } from "@/hooks/use-window-event";
 import { DAYS, MONTHS, dateLong, dateNumeric, time12m } from "@/lib/format";
 import { launch } from "@/lib/launch";
 import { KIND_LABEL, grouped } from "@/lib/search";
-import { useSession } from "@/stores/session";
+import { WALLPAPERS } from "@/lib/wallpapers";
+import { useFamily, useSession } from "@/stores/session";
 import { useSettings } from "@/stores/settings";
 import { useWM } from "@/stores/window-manager";
 import type { AppId } from "@/types";
@@ -527,6 +531,72 @@ function CalendarFlyout({ onClose }: { onClose: () => void }) {
   );
 }
 
+function DesktopIcons() {
+  const family = useFamily();
+  const [selected, setSelected] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const items = [
+    { id: "pc", label: "This PC", icon: <DesktopGlyph size={44} weight="duotone" className="text-[#7cc4ff]" />, open: () => launch("files") },
+    { id: "bin", label: "Recycle Bin", icon: <Trash size={44} weight="duotone" className="text-white" />, open: () => launch("files", { section: "trash" }) },
+    { id: "projects", label: "Projects", icon: <Folder size={46} weight="fill" className="text-[#f8c84a]" />, open: () => launch("files", { path: "Projects" }) },
+    { id: "resume", label: "Resume", icon: <AppIcon id="resume" size={42} />, open: () => launch("resume") },
+    { id: "about", label: "About me", icon: <AppIcon id="about" size={42} />, open: () => launch("about") },
+  ];
+  return (
+    <div
+      className="absolute inset-0 z-[1]"
+      style={{ bottom: TASKBAR_H }}
+      onPointerDown={(e) => e.target === e.currentTarget && setSelected(null)}
+      onContextMenu={(e) =>
+        showContextMenu(e, [
+          {
+            label: "Refresh",
+            icon: ArrowClockwise,
+            onSelect: () => {
+              setRefreshing(true);
+              window.setTimeout(() => setRefreshing(false), 160);
+            },
+          },
+          {
+            label: "Next desktop background",
+            onSelect: () => {
+              const list = WALLPAPERS[family];
+              const settings = useSettings.getState();
+              const at = list.findIndex((w) => w.id === settings.prefs[family].wallpaper);
+              settings.setWallpaper(family, list[(at + 1) % list.length].id);
+            },
+          },
+          { type: "separator" },
+          { label: "Open in Terminal", onSelect: () => launch("terminal") },
+          { type: "separator" },
+          { label: "Display settings", onSelect: () => launch("settings", { section: "display" }) },
+          { label: "Personalize", onSelect: () => launch("settings", { section: "appearance" }) },
+        ])
+      }
+    >
+      <div
+        className="pointer-events-none absolute left-1.5 top-1.5 flex max-h-full flex-col flex-wrap content-start gap-1"
+        style={{ visibility: refreshing ? "hidden" : "visible" }}
+      >
+        {items.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            className="win-desktop-icon pointer-events-auto"
+            data-on={selected === item.id}
+            onClick={() => setSelected(item.id)}
+            onDoubleClick={item.open}
+            onKeyDown={(e) => e.key === "Enter" && item.open()}
+          >
+            <span className="grid h-[48px] place-items-center drop-shadow-[0_2px_3px_rgb(0_0_0/0.4)]">{item.icon}</span>
+            <span className="win-desktop-label">{item.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Desktop() {
   const { panel, toggle, close } = usePanel<Panel>();
   const overview = useWM((s) => s.overview);
@@ -560,6 +630,7 @@ function Desktop() {
 
   return (
     <>
+      <DesktopIcons />
       <AnimatePresence>
         {overview && (
           <motion.button
