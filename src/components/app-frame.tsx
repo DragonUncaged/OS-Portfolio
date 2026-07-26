@@ -3,6 +3,7 @@
 import { ArrowLeft, CaretLeft, MagnifyingGlass, X, type Icon } from "@phosphor-icons/react";
 import { useEffect, type ReactNode } from "react";
 import { appName } from "@/apps/registry";
+import { profile } from "@/data/portfolio";
 import { useInstance } from "@/hooks/use-instance";
 import { registerBack } from "@/lib/launch";
 import { usePlatform } from "@/stores/session";
@@ -322,5 +323,31 @@ export function AppFrame(props: FrameProps) {
     );
   }
 
-  return null;
+  return (
+    <div
+      className="flex h-full flex-col bg-bg text-fg"
+      data-theme={tone}
+      style={{ paddingTop: "var(--sb-h)", paddingBottom: "var(--nav-h)" }}
+    >
+      <header className="shrink-0 px-5 pt-3">
+        <div className="truncate text-[13px] font-semibold uppercase tracking-[0.04em]">
+          {title === name ? profile.name : name}
+        </div>
+        {sections ? (
+          <Strip sections={sections} section={section} onSection={onSection} className="-mx-5 gap-5 px-5 pb-1" itemClass="wp-pivot" />
+        ) : (
+          !compact && <h1 className="-ml-0.5 truncate pb-1 text-[44px] font-light lowercase leading-[1.15]">{title}</h1>
+        )}
+        {subtitle && !sections && !compact && <p className="-mt-1 pb-1 text-[15px] text-fg2">{subtitle}</p>}
+        {search && <SearchField search={search} className="wp-search my-2" />}
+        {center && <div className="pb-2 pt-1">{center}</div>}
+      </header>
+      {body}
+      {actions?.length ? (
+        <div className="wp-appbar flex h-[58px] shrink-0 items-center justify-center gap-6 px-4">
+          <Actions actions={actions} size={20} cls="wp-appbar-btn" />
+        </div>
+      ) : null}
+    </div>
+  );
 }

@@ -1,0 +1,224 @@
+[data-os="wp"] {
+  --os-font: "Segoe WP", "Segoe UI Variable Text", "Segoe UI", "Open Sans Variable", system-ui, sans-serif;
+  --os-mono: "Cascadia Mono", Consolas, "JetBrains Mono Variable", monospace;
+  --os-r: 0px;
+  --os-r-lg: 0px;
+  --ctl-h: 40px;
+  --sb-h: 26px;
+  --nav-h: 48px;
+  --folder: var(--accent);
+
+  --bg: #ffffff;
+  --bg-2: #f2f2f2;
+  --bg-3: #ededed;
+  --fg: #000000;
+  --fg-2: rgb(0 0 0 / 0.6);
+  --fg-3: rgb(0 0 0 / 0.4);
+  --line: rgb(0 0 0 / 0.14);
+  --ctl: rgb(0 0 0 / 0.08);
+  --ctl-2: rgb(0 0 0 / 0.16);
+  --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
+  --menu-bg: #f2f2f2;
+  --tile: var(--accent);
+  --tile-fg: var(--accent-fg);
+}
+
+[data-os="wp"][data-theme="dark"],
+[data-os="wp"] [data-theme="dark"] {
+  --bg: #000000;
+  --bg-2: #111111;
+  --bg-3: #1f1f1f;
+  --fg: #ffffff;
+  --fg-2: rgb(255 255 255 / 0.62);
+  --fg-3: rgb(255 255 255 / 0.4);
+  --line: rgb(255 255 255 / 0.18);
+  --ctl: rgb(255 255 255 / 0.1);
+  --ctl-2: rgb(255 255 255 / 0.2);
+  --menu-bg: #1f1f1f;
+}
+
+[data-os="wp"] {
+  font-size: 15px;
+}
+
+[data-os="wp"] .wp-input,
+[data-os="wp"] .k-input {
+  background: #fff;
+  color: #000;
+  border: 2px solid var(--fg-3);
+  border-radius: 0;
+  font-size: 16px;
+}
+
+[data-os="wp"] .wp-input::placeholder,
+[data-os="wp"] .k-input::placeholder {
+  color: #767676;
+}
+
+[data-os="wp"] .os-search svg {
+  color: #555;
+}
+
+[data-os="wp"] .wp-input:focus,
+[data-os="wp"] .k-input:focus {
+  border-color: var(--accent);
+  background: #fff;
+}
+
+[data-os="wp"] .wp-pivot {
+  flex: none;
+  padding: 0;
+  color: var(--fg-3);
+  font-size: 40px;
+  font-weight: 300;
+  line-height: 1.2;
+  text-transform: lowercase;
+  white-space: nowrap;
+}
+
+[data-os="wp"] .wp-pivot[data-on="true"] {
+  color: var(--fg);
+}
+
+[data-os="wp"] .wp-appbar {
+  background: var(--bg-3);
+}
+
+[data-os="wp"] .wp-appbar-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2.5px solid var(--fg);
+  color: var(--fg);
+}
+
+[data-os="wp"] .wp-appbar-btn:disabled {
+  opacity: 0.35;
+}
+
+[data-os="wp"] .wp-appbar-btn:active,
+[data-os="wp"] .wp-appbar-btn[data-on="true"] {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+[data-os="wp"] .k-card {
+  border: none;
+  background: var(--bg-3);
+}
+
+[data-os="wp"] .k-btn {
+  min-height: 40px;
+  border: 2.5px solid var(--fg);
+  background: transparent;
+  font-size: 16px;
+  font-weight: 400;
+  text-transform: lowercase;
+}
+
+[data-os="wp"] .k-btn:active {
+  background: var(--fg);
+  color: var(--bg);
+  transform: none;
+}
+
+[data-os="wp"] .k-btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
+
+[data-os="wp"] .k-tag {
+  border-radius: 0;
+}
+
+[data-os="wp"] .k-icon-btn {
+  border-radius: 50%;
+}
+
+[data-os="wp"] .os-heading {
+  margin-top: 26px;
+  font-size: 24px;
+  font-weight: 300;
+  letter-spacing: 0;
+  text-transform: lowercase;
+  color: var(--accent);
+}
+
+[data-os="wp"] .os-display {
+  font-size: 34px;
+  font-weight: 300;
+  letter-spacing: 0;
+}
+
+[data-os="wp"] .os-avatar {
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--accent) !important;
+  color: var(--accent-fg);
+  font-weight: 300;
+}
+
+[data-os="wp"] .os-toggle {
+  width: 52px;
+  height: 22px;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: inset 0 0 0 2.5px var(--fg);
+}
+
+[data-os="wp"] .os-toggle span {
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 22px;
+  border-radius: 0;
+  background: var(--fg);
+  box-shadow: 0 0 0 3px var(--bg);
+}
+
+[data-os="wp"] .os-toggle[data-on="true"] {
+  background: var(--accent);
+  box-shadow: inset 0 0 0 2.5px var(--fg), inset 0 0 0 5px var(--bg);
+}
+
+[data-os="wp"] .os-toggle[data-on="true"] span {
+  transform: translateX(38px);
+}
+
+[data-os="wp"] .os-slider::-webkit-slider-runnable-track {
+  height: 10px;
+  border-radius: 0;
+}
+
+[data-os="wp"] .os-slider::-webkit-slider-thumb {
+  width: 12px;
+  height: 22px;
+  margin-top: -6px;
+  border-radius: 0;
+  background: var(--fg);
+  border: none;
+  box-shadow: 0 0 0 3px var(--bg);
+}
+
+[data-os="wp"] .os-calc-key {
+  min-height: 56px;
+  font-size: 24px;
+  font-weight: 300;
+}
+
+[data-os="wp"] .os-mine-cell,
+[data-os="wp"] .os-snake,
+[data-os="wp"] .os-art {
+  border-radius: 0;
+}
+
+[data-os="wp"] .browser-tab[data-on="true"] {
+  box-shadow: inset 0 -3px 0 var(--accent);
+}
+
+[data-os="wp"] .os-choice[data-on="true"] {
+  box-shadow: inset 0 0 0 3px var(--accent);
+}
