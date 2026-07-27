@@ -21,6 +21,7 @@ const SHELLS: Partial<Record<Family, Partial<Record<Form, ComponentType>>>> = {
   },
   windows: {
     desktop: dynamic(() => import("@/shells/windows/desktop"), { ssr: false, loading: Blank }),
+    phone: dynamic(() => import("@/shells/windows/phone"), { ssr: false, loading: Blank }),
   },
 };
 
