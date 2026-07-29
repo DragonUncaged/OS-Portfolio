@@ -2,17 +2,19 @@
 
 import "@fontsource-variable/open-sans";
 import "./wp.css";
-import { ArrowLeft, ArrowRight, MagnifyingGlass } from "@phosphor-icons/react";
+import { ArrowClockwise, ArrowLeft, ArrowRight, GearSix, MagnifyingGlass, Moon, Power, SunDim } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRef, type ReactNode } from "react";
 import { APPS, appName, launchable } from "@/apps/registry";
 import { AppIcon } from "@/components/app-icon";
-import { Banner } from "@/components/notifications";
+import { Banner, NoticeList } from "@/components/notifications";
 import { PhoneHost } from "@/components/phone-host";
 import { ShellRoot, ShellWallpaper } from "@/components/shell-root";
 import { BatteryGlyph, WifiGlyph } from "@/components/status-glyphs";
 import { currentJob, profile, projects, skills } from "@/data/portfolio";
 import { useBootTimer } from "@/hooks/use-boot-timer";
+import { useDark } from "@/hooks/use-dark";
+import { useLauncher } from "@/hooks/use-launcher";
 import { useLongPress } from "@/hooks/use-long-press";
 import { useNow } from "@/hooks/use-now";
 import { usePanel } from "@/hooks/use-panel";
@@ -24,6 +26,7 @@ import { TRACKS } from "@/lib/synth";
 import { usePhone } from "@/stores/phone";
 import { usePlayer } from "@/stores/player";
 import { useSession } from "@/stores/session";
+import { useSettings } from "@/stores/settings";
 import type { AppId } from "@/types";
 import { WinLogo } from "./win-logo";
 
@@ -228,6 +231,115 @@ function Start({ toggle }: { toggle: (p: Panel) => void }) {
   );
 }
 
+function Search({ onClose }: { onClose: () => void }) {
+  const l = useLauncher(onClose, 8);
+  return (
+    <motion.div
+      className="wp-sheet fixed inset-0 z-[2800] flex flex-col"
+      style={{ paddingTop: "var(--sb-h)", paddingBottom: "var(--nav-h)" }}
+      role="dialog"
+      aria-label="Search"
+      data-panel
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 40 }}
+      transition={{ duration: 0.22, ease: [0.1, 0.9, 0.2, 1] }}
+    >
+      <div className="px-5 pt-4">
+        <div className="text-[13px] font-semibold uppercase tracking-[0.04em]">{profile.name}</div>
+        <h1 className="-ml-0.5 text-[44px] font-light lowercase leading-[1.15]">search</h1>
+        <input
+          autoFocus
+          value={l.query}
+          onChange={(e) => l.setQuery(e.target.value)}
+          onKeyDown={l.onKeyDown}
+          placeholder="apps, projects, files, settings"
+          aria-label="Search"
+          className="wp-input mt-2 h-11 w-full px-3 text-[17px] outline-none"
+          autoComplete="off"
+          spellCheck={false}
+          enterKeyHint="search"
+        />
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-4 pt-3">
+        {l.query.trim() && l.hits.length === 0 && <p className="pt-4 text-[17px] text-fg2">no results for &quot;{l.query}&quot;</p>}
+        {!l.query.trim() && <p className="pt-4 text-[17px] text-fg2">type to search everything on this phone.</p>}
+        {l.hits.map((h, i) => (
+          <button key={h.id} type="button" className="wp-app-row" data-on={i === l.index} onClick={() => l.run(h)}>
+            <AppIcon id={h.app} size={48} />
+            <span className="min-w-0 text-left">
+              <span className="block truncate text-[20px] font-light leading-tight">{h.title}</span>
+              <span className="block truncate text-[13px] text-fg2">{h.subtitle}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+function ActionCentre({ onClose }: { onClose: () => void }) {
+  const dark = useDark();
+  const settings = useSettings();
+  const has = useSession((s) => s.notices.length > 0);
+  const { power } = useSession.getState();
+  const quick = [
+    { label: dark ? "dark" : "light", icon: Moon, on: dark, run: () => settings.setTheme(dark ? "light" : "dark") },
+    { label: "night light", icon: SunDim, on: settings.nightLight, run: () => settings.setNightLight(!settings.nightLight) },
+    { label: "restart", icon: ArrowClockwise, on: false, run: () => power("restart") },
+    { label: "power off", icon: Power, on: false, run: () => power("shutdown") },
+  ];
+  return (
+    <motion.div
+      className="wp-sheet fixed inset-x-0 top-0 z-[2900] flex max-h-full flex-col"
+      style={{ paddingTop: "var(--sb-h)", height: "calc(100% - var(--nav-h))" }}
+      role="dialog"
+      aria-label="Action centre"
+      data-panel
+      initial={{ y: "-100%" }}
+      animate={{ y: 0 }}
+      exit={{ y: "-100%" }}
+      transition={{ duration: 0.28, ease: [0.1, 0.9, 0.2, 1] }}
+    >
+      <div className="grid shrink-0 grid-cols-4 gap-1 px-1 pt-1">
+        {quick.map((q) => {
+          const QuickIcon = q.icon;
+          return (
+            <button key={q.label} type="button" className="wp-quick" data-on={q.on} aria-pressed={q.on} onClick={q.run}>
+              <QuickIcon size={24} />
+              <span>{q.label}</span>
+            </button>
+          );
+        })}
+      </div>
+      <div className="flex shrink-0 items-center justify-between px-4 py-3 text-[13px] uppercase tracking-[0.04em]">
+        <button
+          type="button"
+          className="flex items-center gap-1.5"
+          onClick={() => {
+            onClose();
+            launch("settings");
+          }}
+        >
+          <GearSix size={15} />
+          all settings
+        </button>
+        {has && (
+          <button type="button" onClick={() => useSession.getState().clearNotices()}>
+            clear all
+          </button>
+        )}
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4">
+        <NoticeList empty="no notifications" onOpen={onClose} />
+      </div>
+      <button type="button" className="wp-grabber shrink-0" aria-label="Close action centre" onClick={onClose}>
+        <span />
+      </button>
+    </motion.div>
+  );
+}
+
 function NavBar({ panel, toggle, close }: { panel: Panel | null; toggle: (p: Panel) => void; close: () => void }) {
   const back = useLongPress(
     () => {
@@ -275,6 +387,8 @@ function Phone() {
       <StatusBar onOpen={() => toggle("action")} />
       <Banner className="fixed inset-x-0 !rounded-none" style={{ top: 0 }} from={{ y: -80 }} />
       <AnimatePresence>
+        {panel === "search" && <Search key="search" onClose={close} />}
+        {panel === "action" && <ActionCentre key="action" onClose={close} />}
       </AnimatePresence>
       <NavBar panel={panel} toggle={toggle} close={close} />
     </>
