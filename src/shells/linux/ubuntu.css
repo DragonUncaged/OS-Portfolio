@@ -1,0 +1,183 @@
+[data-os="ubuntu"] {
+  --os-font: "Ubuntu", "Ubuntu Sans", "Cantarell", "Inter Variable", system-ui, sans-serif;
+  --os-mono: "Ubuntu Mono", "Ubuntu Sans Mono", "JetBrains Mono Variable", monospace;
+  --os-r: 6px;
+  --os-r-lg: 12px;
+  --ctl-h: 34px;
+  --win-r: 12px;
+  --win-r-max: 0px;
+  --menu-r: 12px;
+  --menu-item-r: 6px;
+  --folder: #e95420;
+
+  --bg: #fafafa;
+  --bg-2: #f0f0f0;
+  --bg-3: #ffffff;
+  --header: #ebebeb;
+  --fg: #1c1c1c;
+  --fg-2: rgb(0 0 0 / 0.64);
+  --fg-3: rgb(0 0 0 / 0.44);
+  --line: rgb(0 0 0 / 0.11);
+  --ctl: rgb(0 0 0 / 0.07);
+  --ctl-2: rgb(0 0 0 / 0.13);
+  --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
+  --menu-bg: #ffffff;
+  --menu-hi: rgb(0 0 0 / 0.08);
+  --menu-hi-fg: var(--fg);
+  --win-shadow: 0 0 0 1px rgb(0 0 0 / 0.2), 0 18px 46px rgb(0 0 0 / 0.36);
+  --win-shadow-idle: 0 0 0 1px rgb(0 0 0 / 0.16), 0 8px 22px rgb(0 0 0 / 0.2);
+}
+
+[data-os="ubuntu"][data-theme="dark"],
+[data-os="ubuntu"] [data-theme="dark"] {
+  --bg: #242424;
+  --bg-2: #2b2b2b;
+  --bg-3: #363636;
+  --header: #303030;
+  --fg: #ffffff;
+  --fg-2: rgb(255 255 255 / 0.7);
+  --fg-3: rgb(255 255 255 / 0.46);
+  --line: rgb(255 255 255 / 0.1);
+  --ctl: rgb(255 255 255 / 0.09);
+  --ctl-2: rgb(255 255 255 / 0.16);
+  --menu-bg: #383838;
+  --menu-hi: rgb(255 255 255 / 0.1);
+  --win-shadow: 0 0 0 1px rgb(0 0 0 / 0.7), 0 18px 46px rgb(0 0 0 / 0.55);
+  --win-shadow-idle: 0 0 0 1px rgb(0 0 0 / 0.6), 0 8px 22px rgb(0 0 0 / 0.4);
+}
+
+[data-os="ubuntu"] .ub-header {
+  background: var(--header);
+  border-bottom: 1px solid var(--line);
+}
+
+[data-os="ubuntu"] .os-window[data-focused="false"] .ub-header {
+  background: var(--bg-2);
+  color: var(--fg-3);
+}
+
+[data-os="ubuntu"] .ub-buttons button {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ctl);
+  color: var(--fg);
+  transition: background-color 0.12s;
+}
+
+[data-os="ubuntu"] .ub-buttons button:hover {
+  background: var(--ctl-2);
+}
+
+[data-os="ubuntu"] .ub-buttons button[data-kind="close"]:hover {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+[data-os="ubuntu"] .ub-switcher {
+  gap: 2px;
+  padding: 3px;
+  border-radius: 9px;
+  background: var(--ctl);
+}
+
+[data-os="ubuntu"] .ub-switcher button {
+  min-width: 78px;
+  padding: 4px 14px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fg-2);
+}
+
+[data-os="ubuntu"] .ub-switcher button[data-on="true"] {
+  background: var(--bg-3);
+  color: var(--fg);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+}
+
+[data-os="ubuntu"] .ub-sidebar {
+  background: var(--bg-2);
+  border-right: 1px solid var(--line);
+}
+
+[data-os="ubuntu"] .ub-side-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 36px;
+  padding: 0 11px;
+  border-radius: 7px;
+  font-size: 13.5px;
+  text-align: left;
+}
+
+[data-os="ubuntu"] .ub-side-item:hover {
+  background: var(--ctl);
+}
+
+[data-os="ubuntu"] .ub-side-item[data-on="true"] {
+  background: var(--ctl-2);
+  font-weight: 700;
+}
+
+[data-os="ubuntu"] .os-menu {
+  padding: 6px;
+  backdrop-filter: none;
+}
+
+[data-os="ubuntu"] .os-menu-item {
+  min-height: 32px;
+  padding: 0 11px;
+}
+
+[data-os="ubuntu"] .k-btn {
+  font-weight: 700;
+  font-size: 13.5px;
+}
+
+[data-os="ubuntu"] .k-input {
+  border-width: 2px;
+}
+
+[data-os="ubuntu"] .os-search .k-input {
+  min-height: 32px;
+}
+
+[data-os="ubuntu"] .os-heading {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--fg);
+}
+
+[data-os="ubuntu"] .os-display {
+  font-weight: 700;
+}
+
+[data-os="ubuntu"] .os-toggle {
+  width: 46px;
+  height: 26px;
+}
+
+[data-os="ubuntu"] .os-toggle span {
+  width: 22px;
+  height: 22px;
+}
+
+[data-os="ubuntu"] .os-toggle[data-on="true"] span {
+  transform: translateX(20px);
+}
+
+[data-os="ubuntu"] .os-slider::-webkit-slider-runnable-track {
+  height: 6px;
+}
+
+[data-os="ubuntu"] .os-slider::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  margin-top: -7px;
+}

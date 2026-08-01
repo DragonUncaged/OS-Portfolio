@@ -279,6 +279,69 @@ export function AppFrame(props: FrameProps) {
     );
   }
 
+  if (platform === "ubuntu") {
+    const switcher = sections && sections.length <= 4;
+    return (
+      <div className="@container flex h-full flex-col bg-bg text-fg" data-theme={tone}>
+        <header data-wm-drag className="ub-header flex h-[46px] shrink-0 items-center gap-1 pl-2 pr-[112px]">
+          {onBack && (
+            <button type="button" className="k-icon-btn" aria-label="Back" onClick={onBack}>
+              <CaretLeft size={16} weight="bold" />
+            </button>
+          )}
+          {search && <SearchField search={search} className="w-[200px] max-w-[38%]" />}
+          {center && (
+            <div className="min-w-0 flex-1 px-1" data-no-drag>
+              {center}
+            </div>
+          )}
+          <div className={`min-w-0 flex-1 items-center justify-center px-2 ${center ? "hidden" : "flex"}`}>
+            {switcher && (
+              <div className="ub-switcher hidden @min-[640px]:flex" role="tablist">
+                {sections.map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={s.id === section}
+                    data-on={s.id === section}
+                    onClick={() => onSection?.(s.id)}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className={`min-w-0 text-center ${switcher ? "@min-[640px]:hidden" : ""}`}>
+              <div className="truncate text-[13px] font-bold leading-tight">{title}</div>
+              {subtitle && <div className="truncate text-[11px] leading-tight text-fg3">{subtitle}</div>}
+            </div>
+          </div>
+          <Actions actions={actions} size={16} />
+        </header>
+        <div className="flex min-h-0 flex-1">
+          {sections && !switcher && (
+            <aside className="ub-sidebar hidden w-[204px] shrink-0 flex-col gap-0.5 p-1.5 @min-[620px]:flex">
+              {nav("ub-side-item", 16)}
+            </aside>
+          )}
+          <div className="flex min-w-0 flex-1 flex-col">
+            {sections && (
+              <Strip
+                sections={sections}
+                section={section}
+                onSection={onSection}
+                className={`gap-1 border-b border-line px-2 py-1.5 ${switcher ? "@min-[640px]:hidden" : "@min-[620px]:hidden"}`}
+                itemClass="ub-chip"
+              />
+            )}
+            {body}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (platform === "ios") {
     const inline = Boolean(onBack) || compact;
     return (
