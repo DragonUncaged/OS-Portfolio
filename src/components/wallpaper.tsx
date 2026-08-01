@@ -162,6 +162,82 @@ function Beams({ base, beams }: { base: string; beams: [string, number, number][
   );
 }
 
+function Rings({ base, ring, dots }: { base: string[]; ring: string; dots: string[] }) {
+  const id = useId();
+  const radii = [120, 210, 310, 420, 540, 670, 810, 960];
+  return (
+    <Svg>
+      <defs>
+        <linearGradient id={`${id}b`} x1="0" y1="0" x2="1" y2="1">
+          {base.map((c, i) => (
+            <stop key={i} offset={i / (base.length - 1)} stopColor={c} />
+          ))}
+        </linearGradient>
+        <radialGradient id={`${id}g`}>
+          <stop offset="0" stopColor={dots[0]} stopOpacity="0.95" />
+          <stop offset="1" stopColor={dots[0]} stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <rect width="1600" height="1000" fill={`url(#${id}b)`} />
+      <circle cx="1120" cy="560" r="330" fill={`url(#${id}g)`} opacity="0.55" />
+      <g fill="none" stroke={ring} strokeWidth="1.6">
+        {radii.map((r, i) => (
+          <circle key={r} cx="1120" cy="560" r={r} opacity={0.5 - i * 0.045} />
+        ))}
+      </g>
+      <circle cx="1120" cy="560" r="46" fill={dots[0]} />
+      {radii.slice(0, 6).map((r, i) => {
+        const t = (i * 137.5 * Math.PI) / 180;
+        return (
+          <circle
+            key={r}
+            cx={1120 + Math.cos(t) * r}
+            cy={560 + Math.sin(t) * r}
+            r={8 + (i % 3) * 5}
+            fill={dots[(i + 1) % dots.length]}
+          />
+        );
+      })}
+    </Svg>
+  );
+}
+
+function Grid({ sky, line, sun }: { sky: string[]; line: string; sun: string[] }) {
+  const id = useId();
+  const rows = Array.from({ length: 13 }, (_, i) => 600 + Math.pow(i / 12, 2.1) * 400);
+  const cols = Array.from({ length: 31 }, (_, i) => i - 15);
+  return (
+    <Svg>
+      <defs>
+        <linearGradient id={`${id}s`} x1="0" y1="0" x2="0" y2="1">
+          {sky.map((c, i) => (
+            <stop key={i} offset={i / (sky.length - 1)} stopColor={c} />
+          ))}
+        </linearGradient>
+        <linearGradient id={`${id}u`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={sun[0]} />
+          <stop offset="1" stopColor={sun[1]} />
+        </linearGradient>
+        <linearGradient id={`${id}f`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={sky[sky.length - 1]} />
+          <stop offset="1" stopColor="#000" />
+        </linearGradient>
+      </defs>
+      <rect width="1600" height="1000" fill={`url(#${id}s)`} />
+      <circle cx="800" cy="560" r="210" fill={`url(#${id}u)`} />
+      <rect y="600" width="1600" height="400" fill={`url(#${id}f)`} />
+      <g stroke={line} strokeWidth="1.5" opacity="0.75">
+        {rows.map((y) => (
+          <line key={y} x1="0" x2="1600" y1={y} y2={y} />
+        ))}
+        {cols.map((c) => (
+          <line key={c} x1={800 + c * 26} y1="600" x2={800 + c * 190} y2="1000" />
+        ))}
+      </g>
+    </Svg>
+  );
+}
+
 const ART: Record<string, (p: ArtProps) => ReactNode> = {
   dunes: () => (
     <Waves
@@ -227,6 +303,21 @@ const ART: Record<string, (p: ArtProps) => ReactNode> = {
       ]}
     />
   ),
+  orbit: () => <Rings base={["#2c001e", "#5e2750", "#a03a54", "#e95420"]} ring="#ffffff" dots={["#ffd9c2", "#f99b11", "#ffffff"]} />,
+  peaks: () => (
+    <Ridge sky={["#2c001e", "#77216f", "#e95420", "#f9c784"]} layers={["#8b2f6b", "#641f58", "#431444", "#240a29"]} />
+  ),
+  ember: () => (
+    <Blobs
+      base="#1c0716"
+      blobs={[
+        ["#e95420", 80, 80, 55],
+        ["#77216f", 20, 22, 55],
+        ["#f99b11", 96, 12, 34],
+      ]}
+    />
+  ),
+  grid: () => <Grid sky={["#10061c", "#3b0f4a", "#8a1f5c"]} line="#ff7a3d" sun={["#ffd166", "#e95420"]} />,
 };
 
 export const DEFAULT_WALLPAPER: Record<Family, string> = { macos: "dunes", windows: "ribbons", linux: "orbit" };
