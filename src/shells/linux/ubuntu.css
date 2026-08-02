@@ -46,6 +46,164 @@
   --win-shadow-idle: 0 0 0 1px rgb(0 0 0 / 0.6), 0 8px 22px rgb(0 0 0 / 0.4);
 }
 
+[data-os="ubuntu"] .ub-boot {
+  background: radial-gradient(120% 90% at 50% 40%, #3a0a2c 0%, #1a0514 55%, #000 100%);
+}
+
+[data-os="ubuntu"] .ub-spinner {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 3px solid rgb(255 255 255 / 0.18);
+  border-top-color: #e95420;
+  animation: k-spin 0.9s linear infinite;
+}
+
+[data-os="ubuntu"] .ub-login {
+  background: radial-gradient(130% 100% at 50% 0%, #4a1040 0%, #2c001e 50%, #170010 100%);
+}
+
+[data-os="ubuntu"] .ub-user {
+  background: rgb(255 255 255 / 0.08);
+  transition: background-color 0.15s;
+}
+
+[data-os="ubuntu"] .ub-user:hover,
+[data-os="ubuntu"] .ub-user:focus-visible {
+  background: rgb(255 255 255 / 0.16);
+}
+
+[data-os="ubuntu"] .ub-login-field {
+  background: rgb(255 255 255 / 0.12);
+  border: 2px solid transparent;
+  user-select: text;
+}
+
+[data-os="ubuntu"] .ub-login-field:focus {
+  outline: none;
+  border-color: #e95420;
+}
+
+[data-os="ubuntu"] .ub-topbar {
+  background: #131313;
+  color: #fff;
+  font-size: 13.5px;
+}
+
+[data-os="ubuntu"] .ub-bar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 22px;
+  padding: 0 11px;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: background-color 0.12s;
+}
+
+[data-os="ubuntu"] .ub-bar-btn:hover,
+[data-os="ubuntu"] .ub-bar-btn[data-on="true"] {
+  background: rgb(255 255 255 / 0.17);
+}
+
+[data-os="ubuntu"] .ub-workspace {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.45);
+}
+
+[data-os="ubuntu"] .ub-workspace[data-on="true"] {
+  width: 34px;
+  background: #fff;
+}
+
+[data-os="ubuntu"] .ub-dock {
+  background: rgb(19 19 19 / 0.82);
+  backdrop-filter: blur(24px);
+}
+
+[data-os="ubuntu"] .ub-dock-item {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  transition: background-color 0.12s;
+}
+
+[data-os="ubuntu"] .ub-dock-item:hover,
+[data-os="ubuntu"] .ub-dock-item[data-on="true"] {
+  background: rgb(255 255 255 / 0.13);
+}
+
+[data-os="ubuntu"] .ub-dock-item:active > :not(.ub-tooltip):not(.ub-dock-dot) {
+  transform: scale(0.9);
+}
+
+[data-os="ubuntu"] .ub-dock-dot {
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  margin-top: -2px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+}
+
+[data-os="ubuntu"] .ub-dock-item[data-running="true"] .ub-dock-dot {
+  opacity: 1;
+}
+
+[data-os="ubuntu"] .ub-tooltip {
+  position: fixed;
+  left: 74px;
+  margin-top: 14px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgb(20 20 20 / 0.92);
+  color: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 0.12s,
+    transform 0.12s;
+  z-index: 2;
+}
+
+[data-os="ubuntu"] .ub-dock-item:hover .ub-tooltip,
+[data-os="ubuntu"] .ub-dock-item:focus-visible .ub-tooltip {
+  opacity: 1;
+  transform: none;
+}
+
+[data-os="ubuntu"] .ub-popover {
+  border-radius: 18px;
+  background: var(--menu-bg);
+  color: var(--fg);
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 0.38);
+  transform-origin: top center;
+}
+
+[data-os="ubuntu"] .os-banner,
+[data-os="ubuntu"] .os-notice {
+  border-radius: 14px;
+  backdrop-filter: none;
+}
+
+[data-os="ubuntu"] .ub-popover .os-notice {
+  background: var(--ctl);
+  border: none;
+}
+
 [data-os="ubuntu"] .ub-header {
   background: var(--header);
   border-bottom: 1px solid var(--line);
@@ -180,4 +338,8 @@
   width: 20px;
   height: 20px;
   margin-top: -7px;
+}
+
+[data-os="ubuntu"] .os-snap-hint {
+  border-radius: 12px;
 }

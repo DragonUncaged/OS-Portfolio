@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowBendDownLeft, Command, SquaresFour, type Icon } from "@phosphor-icons/react";
+import { ArrowBendDownLeft, Command, SquaresFour, TerminalWindow, type Icon } from "@phosphor-icons/react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { DEFAULT_WALLPAPER, Wallpaper } from "@/components/wallpaper";
@@ -17,6 +17,7 @@ import type { Family } from "@/types";
 const OPTIONS: { family: Family; glyph: Icon; blurb: string; tint: string }[] = [
   { family: "macos", glyph: Command, blurb: "Menu bar, Dock, Spotlight and Launchpad.", tint: "#b98cff" },
   { family: "windows", glyph: SquaresFour, blurb: "Taskbar, Start menu, snapping and live tiles.", tint: "#5aa9ff" },
+  { family: "linux", glyph: TerminalWindow, blurb: "Ubuntu-style top bar, dock and Activities.", tint: "#ff8a5c" },
 ];
 
 function DesktopMock({ family }: { family: Family }) {
