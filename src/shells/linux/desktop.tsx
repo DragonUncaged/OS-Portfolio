@@ -10,6 +10,7 @@ import {
   ArrowRight,
   DotsNine,
   LockSimple,
+  MagnifyingGlass,
   Power,
   SignOut,
   SpeakerHigh,
@@ -28,6 +29,7 @@ import { BatteryGlyph, WifiGlyph } from "@/components/status-glyphs";
 import { WindowLayer } from "@/components/window-layer";
 import { profile } from "@/data/portfolio";
 import { useBootTimer } from "@/hooks/use-boot-timer";
+import { useLauncher } from "@/hooks/use-launcher";
 import { useNow } from "@/hooks/use-now";
 import { usePanel } from "@/hooks/use-panel";
 import { useSuperKey } from "@/hooks/use-super-key";
@@ -35,6 +37,7 @@ import { useWelcome } from "@/hooks/use-welcome";
 import { useWindowEvent } from "@/hooks/use-window-event";
 import { dateMonthDay, time24 } from "@/lib/format";
 import { launch } from "@/lib/launch";
+import { KIND_LABEL, grouped } from "@/lib/search";
 import { useSession } from "@/stores/session";
 import { useWM } from "@/stores/window-manager";
 import type { AppId } from "@/types";
@@ -270,6 +273,58 @@ function Dock({ panel, toggle }: { panel: Panel | null; toggle: (p: Panel) => vo
   );
 }
 
+function OverviewSearch({ onDone, children }: { onDone: () => void; children?: React.ReactNode }) {
+  const l = useLauncher(onDone, 9);
+  return (
+    <>
+      <label className="ub-search relative z-[2] mx-auto mt-5 flex h-10 w-[min(420px,calc(100%-32px))] shrink-0 items-center gap-2.5 px-4">
+        <MagnifyingGlass size={16} className="shrink-0 opacity-70" />
+        <input
+          autoFocus
+          value={l.query}
+          onChange={(e) => l.setQuery(e.target.value)}
+          onKeyDown={l.onKeyDown}
+          placeholder="Type to search"
+          aria-label="Search"
+          className="min-w-0 flex-1 bg-transparent text-[14.5px] text-white outline-none placeholder:text-white/55"
+          autoComplete="off"
+          spellCheck={false}
+        />
+      </label>
+      {l.query.trim() ? (
+        <div className="ub-results relative z-[60] mx-auto mt-5 w-[min(680px,calc(100%-32px))] overflow-y-auto p-2" style={{ maxHeight: "calc(100% - 110px)" }}>
+          {l.hits.length === 0 && <p className="p-6 text-center text-[14px] text-white/70">No results.</p>}
+          {grouped(l.hits).map((g) => (
+            <div key={g.kind} className="ub-result-group flex gap-3 py-1.5">
+              <div className="w-[104px] shrink-0 px-2 pt-2.5 text-right text-[12.5px] text-white/60">{KIND_LABEL[g.kind]}</div>
+              <div className="min-w-0 flex-1">
+                {g.hits.map((h) => (
+                  <button
+                    key={h.id}
+                    type="button"
+                    className="ub-result"
+                    data-on={l.hits.indexOf(h) === l.index}
+                    onPointerEnter={() => l.setIndex(l.hits.indexOf(h))}
+                    onClick={() => l.run(h)}
+                  >
+                    <AppIcon id={h.app} size={30} />
+                    <span className="min-w-0 flex-1 text-left">
+                      <span className="block truncate text-[14px] text-white">{h.title}</span>
+                      <span className="block truncate text-[12px] text-white/60">{h.subtitle}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        children
+      )}
+    </>
+  );
+}
+
 function Desktop() {
   const { panel, toggle, close } = usePanel<Panel>();
   const overview = useWM((s) => s.overview);
@@ -308,6 +363,28 @@ function Desktop() {
 
   return (
     <>
+      <AnimatePresence>
+        {overview && (
+          <motion.div
+            key="activities"
+            className="ub-overview fixed bottom-0 right-0 z-[9] flex flex-col"
+            style={{ top: BAR_H, left: DOCK_W }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={(e) => e.target === e.currentTarget && useWM.getState().setOverview(false)}
+          >
+            <OverviewSearch onDone={() => useWM.getState().setOverview(false)}>
+              {count === 0 && (
+                <button type="button" className="m-auto text-[15px] text-white/70" onClick={() => useWM.getState().setOverview(false)}>
+                  No open windows. Type to search, or click to go back
+                </button>
+              )}
+            </OverviewSearch>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <WindowLayer
         snapping
         insets={{ top: BAR_H, right: 0, bottom: 0, left: DOCK_W }}

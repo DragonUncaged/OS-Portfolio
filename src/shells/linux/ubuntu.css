@@ -184,6 +184,45 @@
   transform: none;
 }
 
+[data-os="ubuntu"] .ub-overview {
+  background: rgb(26 12 24 / 0.72);
+  backdrop-filter: blur(26px) saturate(1.2);
+}
+
+[data-os="ubuntu"] .ub-search {
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.13);
+  border: 2px solid transparent;
+  color: #fff;
+}
+
+[data-os="ubuntu"] .ub-search:focus-within {
+  border-color: var(--accent);
+}
+
+[data-os="ubuntu"] .ub-results {
+  border-radius: 16px;
+  background: rgb(40 28 38 / 0.94);
+  box-shadow: 0 16px 50px rgb(0 0 0 / 0.5);
+}
+
+[data-os="ubuntu"] .ub-result-group + .ub-result-group {
+  border-top: 1px solid rgb(255 255 255 / 0.1);
+}
+
+[data-os="ubuntu"] .ub-result {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 10px;
+}
+
+[data-os="ubuntu"] .ub-result[data-on="true"] {
+  background: rgb(255 255 255 / 0.13);
+}
+
 [data-os="ubuntu"] .ub-popover {
   border-radius: 18px;
   background: var(--menu-bg);
