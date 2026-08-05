@@ -19,7 +19,7 @@ import {
 } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { appName } from "@/apps/registry";
+import { appName, launchable } from "@/apps/registry";
 import { AppIcon } from "@/components/app-icon";
 import { Avatar } from "@/components/kit";
 import { showContextMenu, toggleDropdown, type MenuItem } from "@/components/menu";
@@ -325,6 +325,49 @@ function OverviewSearch({ onDone, children }: { onDone: () => void; children?: R
   );
 }
 
+function AppGrid({ onClose }: { onClose: () => void }) {
+  const apps = launchable("ubuntu");
+  return (
+    <motion.div
+      className="ub-overview fixed bottom-0 right-0 z-[900] flex flex-col"
+      style={{ top: BAR_H, left: DOCK_W }}
+      data-panel
+      role="dialog"
+      aria-label="Applications"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <OverviewSearch onDone={onClose}>
+        <motion.div
+          className="mx-auto grid min-h-0 w-full max-w-[920px] flex-1 grid-cols-3 content-start gap-x-2 gap-y-5 overflow-y-auto px-6 pb-10 pt-10 sm:grid-cols-4 md:grid-cols-6"
+          initial={{ scale: 0.92, y: 30 }}
+          animate={{ scale: 1, y: 0 }}
+          transition={{ duration: 0.28, ease: [0.2, 0.8, 0.2, 1] }}
+          onClick={(e) => e.target === e.currentTarget && onClose()}
+        >
+          {apps.map((id) => (
+            <button
+              key={id}
+              type="button"
+              className="ub-grid-app"
+              onClick={() => {
+                onClose();
+                launch(id);
+              }}
+            >
+              <AppIcon id={id} size={76} />
+              <span className="max-w-full truncate text-[13.5px] text-white">{appName(id, "ubuntu")}</span>
+            </button>
+          ))}
+        </motion.div>
+      </OverviewSearch>
+    </motion.div>
+  );
+}
+
 function Desktop() {
   const { panel, toggle, close } = usePanel<Panel>();
   const overview = useWM((s) => s.overview);
@@ -394,6 +437,7 @@ function Desktop() {
       <Dock panel={panel} toggle={toggle} />
       <Banner className="fixed left-1/2 w-[440px] max-w-[calc(100vw-24px)] -translate-x-1/2" style={{ top: BAR_H + 8 }} from={{ y: -50 }} />
       <AnimatePresence>
+        {panel === "apps" && <AppGrid key="apps" onClose={close} />}
       </AnimatePresence>
     </>
   );
