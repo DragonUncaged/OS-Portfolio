@@ -248,6 +248,60 @@
   transform-origin: top center;
 }
 
+[data-os="ubuntu"] .ub-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 13px;
+  border-radius: 999px;
+  background: var(--ctl);
+}
+
+[data-os="ubuntu"] .ub-circle {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--ctl);
+}
+
+[data-os="ubuntu"] .ub-circle:hover {
+  background: var(--ctl-2);
+}
+
+[data-os="ubuntu"] .ub-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  height: 46px;
+  padding: 0 15px;
+  border-radius: 999px;
+  background: var(--ctl);
+  font-size: 13.5px;
+  font-weight: 500;
+  text-align: left;
+}
+
+[data-os="ubuntu"] button.ub-pill:hover {
+  background: var(--ctl-2);
+}
+
+[data-os="ubuntu"] .ub-pill[data-on="true"] {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+[data-os="ubuntu"] .ub-date {
+  background: var(--ctl);
+}
+
+[data-os="ubuntu"] button.ub-date:hover {
+  background: var(--ctl-2);
+}
+
 [data-os="ubuntu"] .os-banner,
 [data-os="ubuntu"] .os-notice {
   border-radius: 14px;
@@ -334,6 +388,20 @@
 [data-os="ubuntu"] .ub-side-item[data-on="true"] {
   background: var(--ctl-2);
   font-weight: 700;
+}
+
+[data-os="ubuntu"] .ub-chip[role="tab"],
+[data-os="ubuntu"] button.ub-chip {
+  flex: none;
+  height: 30px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+[data-os="ubuntu"] button.ub-chip[data-on="true"] {
+  background: var(--accent);
+  color: var(--accent-fg);
 }
 
 [data-os="ubuntu"] .os-menu {

@@ -9,11 +9,15 @@ import {
   ArrowClockwise,
   ArrowRight,
   DotsNine,
+  GearSix,
+  House,
   LockSimple,
   MagnifyingGlass,
+  Moon,
   Power,
   SignOut,
   SpeakerHigh,
+  SunDim,
   TerminalWindow,
   Trash,
 } from "@phosphor-icons/react";
@@ -21,24 +25,27 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { appName, launchable } from "@/apps/registry";
 import { AppIcon } from "@/components/app-icon";
-import { Avatar } from "@/components/kit";
+import { Avatar, Slider } from "@/components/kit";
 import { showContextMenu, toggleDropdown, type MenuItem } from "@/components/menu";
-import { Banner } from "@/components/notifications";
+import { Banner, NoticeList } from "@/components/notifications";
 import { ShellRoot, ShellWallpaper } from "@/components/shell-root";
 import { BatteryGlyph, WifiGlyph } from "@/components/status-glyphs";
 import { WindowLayer } from "@/components/window-layer";
 import { profile } from "@/data/portfolio";
 import { useBootTimer } from "@/hooks/use-boot-timer";
+import { useDark } from "@/hooks/use-dark";
 import { useLauncher } from "@/hooks/use-launcher";
 import { useNow } from "@/hooks/use-now";
+import { useOnline } from "@/hooks/use-online";
 import { usePanel } from "@/hooks/use-panel";
 import { useSuperKey } from "@/hooks/use-super-key";
 import { useWelcome } from "@/hooks/use-welcome";
 import { useWindowEvent } from "@/hooks/use-window-event";
-import { dateMonthDay, time24 } from "@/lib/format";
+import { DAYS, MONTHS, dateLong, dateMonthDay, time24 } from "@/lib/format";
 import { launch } from "@/lib/launch";
 import { KIND_LABEL, grouped } from "@/lib/search";
 import { useSession } from "@/stores/session";
+import { useSettings } from "@/stores/settings";
 import { useWM } from "@/stores/window-manager";
 import type { AppId } from "@/types";
 
@@ -368,6 +375,139 @@ function AppGrid({ onClose }: { onClose: () => void }) {
   );
 }
 
+function QuickSettings({ onClose }: { onClose: () => void }) {
+  const dark = useDark();
+  const online = useOnline();
+  const settings = useSettings();
+  return (
+    <motion.div
+      className="ub-popover fixed right-1.5 z-[1800] w-[348px] max-w-[calc(100vw-12px)] p-3"
+      style={{ top: BAR_H + 6 }}
+      data-panel
+      role="dialog"
+      aria-label="System menu"
+      initial={{ opacity: 0, scale: 0.94, y: -10 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96 }}
+      transition={{ duration: 0.14 }}
+    >
+      <div className="flex items-center gap-2 pb-2.5">
+        <span className="ub-chip mr-auto">
+          <BatteryGlyph size={17} showPercent />
+          <span className="text-[12.5px]">{online ? "Online" : "Offline"}</span>
+        </span>
+        <button type="button" className="ub-circle" aria-label="Settings" title="Settings" onClick={() => (onClose(), launch("settings"))}>
+          <GearSix size={16} weight="fill" />
+        </button>
+        <button type="button" className="ub-circle" aria-label="Lock" title="Lock" onClick={() => useSession.getState().power("lock")}>
+          <LockSimple size={16} weight="fill" />
+        </button>
+        <button
+          type="button"
+          className="ub-circle"
+          aria-label="Power"
+          title="Power"
+          data-menu-trigger
+          onClick={(e) => toggleDropdown(e.currentTarget, "ub-power", powerItems().slice(1), { align: "end" })}
+        >
+          <Power size={16} weight="bold" />
+        </button>
+      </div>
+      <div className="flex items-center gap-3 px-1 py-1.5">
+        <SpeakerHigh size={17} weight="fill" className="shrink-0" />
+        <Slider label="Volume" value={settings.volume} onChange={settings.setVolume} />
+      </div>
+      <div className="flex items-center gap-3 px-1 py-1.5">
+        <SunDim size={18} weight="fill" className="shrink-0" />
+        <Slider label="Brightness" value={settings.brightness} min={0.35} max={1} onChange={settings.setBrightness} />
+      </div>
+      <div className="mt-2 grid grid-cols-2 gap-2.5">
+        <div className="ub-pill" data-on={online}>
+          <WifiGlyph size={17} />
+          <span className="min-w-0 truncate">{online ? "Connected" : "Offline"}</span>
+        </div>
+        <button type="button" className="ub-pill" data-on={dark} aria-pressed={dark} onClick={() => settings.setTheme(dark ? "light" : "dark")}>
+          <Moon size={17} weight="fill" />
+          <span>Dark Style</span>
+        </button>
+        <button
+          type="button"
+          className="ub-pill"
+          data-on={settings.nightLight}
+          aria-pressed={settings.nightLight}
+          onClick={() => settings.setNightLight(!settings.nightLight)}
+        >
+          <SunDim size={18} weight="fill" />
+          <span>Night Light</span>
+        </button>
+        <button type="button" className="ub-pill" onClick={() => (onClose(), launch("settings", { section: "wallpaper" }))}>
+          <House size={17} weight="fill" />
+          <span>Background</span>
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
+function ClockPopover({ onClose }: { onClose: () => void }) {
+  const now = useNow(60_000);
+  const today = new Date(now);
+  const first = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
+  const count = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+  const has = useSession((s) => s.notices.length > 0);
+  return (
+    <motion.div
+      className="ub-popover fixed left-1/2 z-[1800] flex w-[640px] max-w-[calc(100vw-12px)] gap-3 p-3"
+      style={{ top: BAR_H + 6, maxHeight: `calc(100vh - ${BAR_H + 18}px)` }}
+      data-panel
+      role="dialog"
+      aria-label="Calendar and notifications"
+      initial={{ opacity: 0, scale: 0.95, y: -10, x: "-50%" }}
+      animate={{ opacity: 1, scale: 1, y: 0, x: "-50%" }}
+      exit={{ opacity: 0, scale: 0.97, x: "-50%" }}
+      transition={{ duration: 0.14 }}
+    >
+      <div className="flex min-w-0 flex-1 flex-col">
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <NoticeList empty="No Notifications" onOpen={onClose} />
+        </div>
+        {has && (
+          <button type="button" className="k-btn mt-2 self-end" onClick={() => useSession.getState().clearNotices()}>
+            Clear
+          </button>
+        )}
+      </div>
+      <div className="hidden w-[270px] shrink-0 sm:block">
+        <button type="button" className="ub-date block w-full rounded-xl p-3 text-left" onClick={() => (onClose(), launch("calendar"))}>
+          <span className="block text-[13px] font-medium opacity-65">{DAYS[today.getDay()]}</span>
+          <span className="block text-[21px] font-bold leading-tight">
+            {MONTHS[today.getMonth()]} {today.getDate()} {today.getFullYear()}
+          </span>
+        </button>
+        <div className="mt-2 px-1">
+          <div className="pb-1.5 text-center text-[13px] font-bold">{MONTHS[today.getMonth()]}</div>
+          <div className="grid grid-cols-7 gap-y-0.5 text-center text-[12.5px]">
+            {DAYS.map((d) => (
+              <span key={d} className="py-1 text-[11px] opacity-55">
+                {d.slice(0, 1)}
+              </span>
+            ))}
+            {Array.from({ length: first }, (_, i) => (
+              <span key={`b${i}`} />
+            ))}
+            {Array.from({ length: count }, (_, i) => (
+              <span key={i} className={`mx-auto grid size-8 place-items-center rounded-full ${i + 1 === today.getDate() ? "bg-accent font-bold text-accent-fg" : ""}`}>
+                {i + 1}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="ub-date mt-3 rounded-xl p-3 text-[12.5px] opacity-80">{dateLong(now)}</div>
+      </div>
+    </motion.div>
+  );
+}
+
 function Desktop() {
   const { panel, toggle, close } = usePanel<Panel>();
   const overview = useWM((s) => s.overview);
@@ -438,6 +578,8 @@ function Desktop() {
       <Banner className="fixed left-1/2 w-[440px] max-w-[calc(100vw-24px)] -translate-x-1/2" style={{ top: BAR_H + 8 }} from={{ y: -50 }} />
       <AnimatePresence>
         {panel === "apps" && <AppGrid key="apps" onClose={close} />}
+        {panel === "quick" && <QuickSettings key="quick" onClose={close} />}
+        {panel === "clock" && <ClockPopover key="clock" onClose={close} />}
       </AnimatePresence>
     </>
   );
