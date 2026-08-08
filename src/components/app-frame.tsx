@@ -386,6 +386,37 @@ export function AppFrame(props: FrameProps) {
     );
   }
 
+  if (platform === "android") {
+    return (
+      <div
+        className="flex h-full flex-col bg-bg text-fg"
+        data-theme={tone}
+        style={{ paddingTop: "var(--sb-h)", paddingBottom: "var(--nav-h)" }}
+      >
+        <header className="flex h-16 shrink-0 items-center gap-1 px-1">
+          {onBack ? (
+            <button type="button" className="md-icon-btn" aria-label="Back" onClick={onBack}>
+              <ArrowLeft size={24} />
+            </button>
+          ) : (
+            <span className="w-3" />
+          )}
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate text-[22px] leading-7">{title}</h1>
+            {subtitle && <p className="truncate text-xs text-fg2">{subtitle}</p>}
+          </div>
+          <Actions actions={actions} size={24} cls="md-icon-btn" />
+        </header>
+        {search && <SearchField search={search} className="md-search mx-4 mb-2 shrink-0" />}
+        {center && <div className="shrink-0 px-3 pb-2">{center}</div>}
+        {sections && (
+          <Strip sections={sections} section={section} onSection={onSection} className="md-tabs px-2" itemClass="md-tab" />
+        )}
+        {body}
+      </div>
+    );
+  }
+
   return (
     <div
       className="flex h-full flex-col bg-bg text-fg"
