@@ -9,6 +9,7 @@ import {
   ArrowClockwise,
   ArrowRight,
   DotsNine,
+  Folder,
   GearSix,
   House,
   LockSimple,
@@ -508,6 +509,49 @@ function ClockPopover({ onClose }: { onClose: () => void }) {
   );
 }
 
+function DesktopIcons() {
+  const [selected, setSelected] = useState<string | null>(null);
+  const items = [
+    { id: "home", label: "Home", icon: <Folder size={50} weight="fill" className="text-[#e95420]" />, open: () => launch("files") },
+    { id: "projects", label: "Projects", icon: <Folder size={50} weight="fill" className="text-[#b5b5b5]" />, open: () => launch("files", { path: "Projects" }) },
+    { id: "resume", label: "resume.md", icon: <AppIcon id="resume" size={44} />, open: () => launch("resume") },
+  ];
+  return (
+    <div
+      className="absolute z-[1]"
+      style={{ top: BAR_H, left: DOCK_W, right: 0, bottom: 0 }}
+      onPointerDown={(e) => e.target === e.currentTarget && setSelected(null)}
+      onContextMenu={(e) =>
+        showContextMenu(e, [
+          { label: "Open in Terminal", onSelect: () => launch("terminal") },
+          { label: "Show Desktop in Files", onSelect: () => launch("files") },
+          { type: "separator" },
+          { label: "Change Background…", onSelect: () => launch("settings", { section: "wallpaper" }) },
+          { label: "Display Settings", onSelect: () => launch("settings", { section: "display" }) },
+          { label: "Settings", onSelect: () => launch("settings") },
+        ])
+      }
+    >
+      <div className="pointer-events-none absolute bottom-3 right-3 flex flex-col items-end gap-2">
+        {items.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            className="ub-desktop-icon pointer-events-auto"
+            data-on={selected === item.id}
+            onClick={() => setSelected(item.id)}
+            onDoubleClick={item.open}
+            onKeyDown={(e) => e.key === "Enter" && item.open()}
+          >
+            <span className="grid h-[52px] place-items-center drop-shadow-[0_2px_4px_rgb(0_0_0/0.4)]">{item.icon}</span>
+            <span className="ub-desktop-label">{item.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Desktop() {
   const { panel, toggle, close } = usePanel<Panel>();
   const overview = useWM((s) => s.overview);
@@ -546,6 +590,7 @@ function Desktop() {
 
   return (
     <>
+      <DesktopIcons />
       <AnimatePresence>
         {overview && (
           <motion.div

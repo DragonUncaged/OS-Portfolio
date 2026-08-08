@@ -313,6 +313,34 @@
   border: none;
 }
 
+[data-os="ubuntu"] .ub-desktop-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 88px;
+  padding: 5px 2px;
+  border-radius: 8px;
+}
+
+[data-os="ubuntu"] .ub-desktop-icon:hover {
+  background: rgb(255 255 255 / 0.12);
+}
+
+[data-os="ubuntu"] .ub-desktop-icon[data-on="true"] {
+  background: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+[data-os="ubuntu"] .ub-desktop-label {
+  max-width: 100%;
+  padding: 0 4px;
+  color: #fff;
+  font-size: 13px;
+  text-align: center;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.8);
+  overflow-wrap: anywhere;
+}
+
 [data-os="ubuntu"] .ub-header {
   background: var(--header);
   border-bottom: 1px solid var(--line);
