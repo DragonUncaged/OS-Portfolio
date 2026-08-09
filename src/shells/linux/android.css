@@ -169,6 +169,25 @@
   color: var(--fg);
 }
 
+[data-os="android"] .md-field {
+  border-radius: 999px;
+  background: var(--ctl-2);
+}
+
+[data-os="android"] .md-result {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 20px;
+}
+
+[data-os="android"] .md-result[data-on="true"],
+[data-os="android"] .md-result:active {
+  background: var(--ctl-2);
+}
+
 [data-os="android"] .md-text-btn {
   padding: 6px 12px;
   border-radius: 999px;

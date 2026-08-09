@@ -14,8 +14,8 @@ import {
   Triangle,
 } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
-import { useRef } from "react";
-import { appName } from "@/apps/registry";
+import { useRef, useState } from "react";
+import { appName, launchable } from "@/apps/registry";
 import { AppIcon } from "@/components/app-icon";
 import { Banner } from "@/components/notifications";
 import { PhoneHost } from "@/components/phone-host";
@@ -23,6 +23,7 @@ import { ShellRoot, ShellWallpaper } from "@/components/shell-root";
 import { BatteryGlyph, WifiGlyph } from "@/components/status-glyphs";
 import { currentJob, profile } from "@/data/portfolio";
 import { useBootTimer } from "@/hooks/use-boot-timer";
+import { useLauncher } from "@/hooks/use-launcher";
 import { useNow } from "@/hooks/use-now";
 import { usePanel } from "@/hooks/use-panel";
 import { useWelcome } from "@/hooks/use-welcome";
@@ -183,6 +184,95 @@ function Home({ openPanel }: { openPanel: (p: Panel) => void }) {
   );
 }
 
+function Drawer({ onClose }: { onClose: () => void }) {
+  const [query, setQuery] = useState("");
+  const apps = launchable("android")
+    .map((id) => ({ id, name: appName(id, "android") }))
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .filter((a) => a.name.toLowerCase().includes(query.trim().toLowerCase()));
+  return (
+    <motion.div
+      className="md-sheet fixed inset-0 z-[2700] flex flex-col"
+      style={{ paddingTop: "calc(var(--sb-h) + 8px)", paddingBottom: "var(--nav-h)" }}
+      role="dialog"
+      aria-label="All apps"
+      data-panel
+      initial={{ y: "100%" }}
+      animate={{ y: 0 }}
+      exit={{ y: "100%" }}
+      transition={{ duration: 0.3, ease: [0.2, 0, 0, 1] }}
+    >
+      <button type="button" className="mx-auto mb-2 grid h-5 w-20 shrink-0 place-items-center" aria-label="Close app drawer" onClick={onClose}>
+        <span className="h-1 w-9 rounded-full bg-fg3" />
+      </button>
+      <label className="md-field mx-4 flex h-[52px] shrink-0 items-center gap-3 px-5">
+        <MagnifyingGlass size={20} className="shrink-0 text-fg2" />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search apps"
+          aria-label="Search apps"
+          className="min-w-0 flex-1 bg-transparent text-[16px] outline-none placeholder:text-fg2"
+          autoComplete="off"
+          spellCheck={false}
+        />
+      </label>
+      <div className="mx-auto grid min-h-0 w-full max-w-[440px] flex-1 grid-cols-4 content-start gap-y-5 overflow-y-auto px-3 py-6">
+        {apps.map((a) => (
+          <AppButton key={a.id} id={a.id} onOpen={onClose} />
+        ))}
+        {apps.length === 0 && <p className="col-span-4 py-10 text-center text-[15px] text-fg2">No apps match &quot;{query}&quot;</p>}
+      </div>
+    </motion.div>
+  );
+}
+
+function Search({ onClose }: { onClose: () => void }) {
+  const l = useLauncher(onClose, 8);
+  return (
+    <motion.div
+      className="md-sheet fixed inset-0 z-[2800] flex flex-col"
+      style={{ paddingTop: "calc(var(--sb-h) + 10px)", paddingBottom: "var(--nav-h)" }}
+      role="dialog"
+      aria-label="Search"
+      data-panel
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 30 }}
+      transition={{ duration: 0.22, ease: [0.2, 0, 0, 1] }}
+    >
+      <label className="md-field mx-4 flex h-[52px] shrink-0 items-center gap-3 px-5">
+        <MagnifyingGlass size={20} className="shrink-0 text-fg2" />
+        <input
+          autoFocus
+          value={l.query}
+          onChange={(e) => l.setQuery(e.target.value)}
+          onKeyDown={l.onKeyDown}
+          placeholder="Search apps and more"
+          aria-label="Search"
+          className="min-w-0 flex-1 bg-transparent text-[16px] outline-none placeholder:text-fg2"
+          autoComplete="off"
+          spellCheck={false}
+          enterKeyHint="search"
+        />
+      </label>
+      <div className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
+        {!l.query.trim() && <p className="px-5 py-6 text-[15px] text-fg2">Search apps, projects, skills, files and settings.</p>}
+        {l.query.trim() && l.hits.length === 0 && <p className="px-5 py-6 text-[15px] text-fg2">No results for &quot;{l.query}&quot;</p>}
+        {l.hits.map((h, i) => (
+          <button key={h.id} type="button" className="md-result" data-on={i === l.index} onClick={() => l.run(h)}>
+            <AppIcon id={h.app} size={42} />
+            <span className="min-w-0 flex-1 text-left">
+              <span className="block truncate text-[16px]">{h.title}</span>
+              <span className="block truncate text-[13px] text-fg2">{h.subtitle}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 function NavBar({ panel, close, tone }: { panel: Panel | null; close: () => void; tone: "light" | "auto" }) {
   return (
     <div className="md-nav fixed inset-x-0 bottom-0 z-[3100] flex items-center justify-around px-10" data-tone={tone} role="toolbar" aria-label="Navigation">
@@ -231,6 +321,8 @@ function Phone() {
       <StatusBar tone={overWallpaper ? "light" : "auto"} onOpen={() => toggle("shade")} />
       <Banner className="fixed inset-x-3" style={{ top: "calc(var(--sb-h) + 4px)" }} from={{ y: -70 }} />
       <AnimatePresence>
+        {panel === "drawer" && <Drawer key="drawer" onClose={close} />}
+        {panel === "search" && <Search key="search" onClose={close} />}
       </AnimatePresence>
       <NavBar panel={panel} close={close} tone={overWallpaper ? "light" : "auto"} />
     </>
