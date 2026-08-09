@@ -43,6 +43,165 @@
   font-size: 15px;
 }
 
+[data-os="android"] .md-dots {
+  display: flex;
+  gap: 9px;
+}
+
+[data-os="android"] .md-dots i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  animation: md-bounce 1s ease-in-out infinite;
+}
+
+[data-os="android"] .md-dots i:nth-child(1) {
+  background: #e95420;
+}
+
+[data-os="android"] .md-dots i:nth-child(2) {
+  background: #f99b11;
+  animation-delay: 0.12s;
+}
+
+[data-os="android"] .md-dots i:nth-child(3) {
+  background: #77216f;
+  animation-delay: 0.24s;
+}
+
+[data-os="android"] .md-dots i:nth-child(4) {
+  background: #5e2750;
+  animation-delay: 0.36s;
+}
+
+@keyframes md-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-11px);
+  }
+}
+
+[data-os="android"] .md-lock-clock {
+  font-size: clamp(96px, 34vw, 150px);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  color: color-mix(in srgb, var(--accent) 35%, #fff);
+  text-shadow: 0 2px 22px rgb(0 0 0 / 0.25);
+}
+
+[data-os="android"] .md-status {
+  height: var(--sb-h);
+  color: var(--fg);
+  transition: color 0.2s;
+}
+
+[data-os="android"] .md-status[data-tone="light"] {
+  color: #fff;
+}
+
+[data-os="android"] .md-nav {
+  height: var(--nav-h);
+  background: var(--bg);
+  color: var(--fg-2);
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+[data-os="android"] .md-nav[data-tone="light"] {
+  background: transparent;
+  color: #fff;
+}
+
+[data-os="android"] .md-nav-key {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 36px;
+  border-radius: 999px;
+  transition: background-color 0.15s;
+}
+
+[data-os="android"] .md-nav-key:active {
+  background: color-mix(in srgb, currentColor 22%, transparent);
+}
+
+[data-os="android"] .md-app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  transition: transform 0.15s;
+}
+
+[data-os="android"] .md-app:active {
+  transform: scale(0.9);
+}
+
+[data-os="android"] .md-app-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12.5px;
+}
+
+[data-os="android"] .md-home .md-app-label {
+  color: #fff;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.55);
+}
+
+[data-os="android"] .md-searchbar {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 16%, var(--icon-plate));
+  color: var(--fg);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.18);
+}
+
+[data-os="android"] .md-sheet {
+  background: var(--bg-2);
+  color: var(--fg);
+}
+
+[data-os="android"] .md-text-btn {
+  padding: 6px 12px;
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+[data-os="android"] .md-text-btn:active {
+  background: var(--accent-soft);
+}
+
+[data-os="android"] .os-banner,
+[data-os="android"] .os-notice {
+  border: none;
+  border-radius: 24px;
+  background: var(--bg-3);
+  backdrop-filter: none;
+}
+
+[data-os="android"] .phone-switcher-bg {
+  background: rgb(0 0 0 / 0.5);
+}
+
+[data-os="android"] .phone-card-label {
+  justify-content: center;
+  font-weight: 500;
+}
+
+[data-os="android"] .phone-card-label span {
+  flex: none;
+}
+
 [data-os="android"] .md-icon-btn {
   display: grid;
   place-items: center;
@@ -208,4 +367,8 @@
 
 [data-os="android"] .browser-tab {
   border-radius: 999px;
+}
+
+[data-os="android"] [inert] .md-nav {
+  visibility: hidden;
 }

@@ -14,7 +14,7 @@ function Blank() {
   return <div className="fixed inset-0 bg-black" />;
 }
 
-const SHELLS: Partial<Record<Family, Partial<Record<Form, ComponentType>>>> = {
+const SHELLS: Record<Family, Record<Form, ComponentType>> = {
   macos: {
     desktop: dynamic(() => import("@/shells/macos/desktop"), { ssr: false, loading: Blank }),
     phone: dynamic(() => import("@/shells/macos/phone"), { ssr: false, loading: Blank }),
@@ -25,6 +25,7 @@ const SHELLS: Partial<Record<Family, Partial<Record<Form, ComponentType>>>> = {
   },
   linux: {
     desktop: dynamic(() => import("@/shells/linux/desktop"), { ssr: false, loading: Blank }),
+    phone: dynamic(() => import("@/shells/linux/phone"), { ssr: false, loading: Blank }),
   },
 };
 
@@ -46,7 +47,7 @@ export function Root() {
 
   if (!mounted) return <Blank />;
 
-  const Shell = family ? (SHELLS[family]?.[form] ?? null) : null;
+  const Shell = family ? SHELLS[family][form] : null;
   const running = phase === "boot" || phase === "login" || phase === "desktop";
   const screen = running && Shell ? `shell:${family}` : phase;
 
