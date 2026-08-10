@@ -5,11 +5,18 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import "./android.css";
 import {
+  ArrowClockwise,
   CaretUp,
   Circle,
+  GearSix,
   LockSimple,
   MagnifyingGlass,
+  Moon,
+  Play,
+  Pause,
+  Power,
   Square,
+  SunDim,
   TerminalWindow,
   Triangle,
 } from "@phosphor-icons/react";
@@ -17,21 +24,27 @@ import { AnimatePresence, motion } from "motion/react";
 import { useRef, useState } from "react";
 import { appName, launchable } from "@/apps/registry";
 import { AppIcon } from "@/components/app-icon";
-import { Banner } from "@/components/notifications";
+import { Slider } from "@/components/kit";
+import { Banner, NoticeList } from "@/components/notifications";
 import { PhoneHost } from "@/components/phone-host";
 import { ShellRoot, ShellWallpaper } from "@/components/shell-root";
 import { BatteryGlyph, WifiGlyph } from "@/components/status-glyphs";
 import { currentJob, profile } from "@/data/portfolio";
 import { useBootTimer } from "@/hooks/use-boot-timer";
+import { useDark } from "@/hooks/use-dark";
 import { useLauncher } from "@/hooks/use-launcher";
 import { useNow } from "@/hooks/use-now";
+import { useOnline } from "@/hooks/use-online";
 import { usePanel } from "@/hooks/use-panel";
 import { useWelcome } from "@/hooks/use-welcome";
 import { useWindowEvent } from "@/hooks/use-window-event";
 import { DAYS, MONTHS } from "@/lib/format";
 import { launch, originOf, phoneBack } from "@/lib/launch";
+import { TRACKS } from "@/lib/synth";
 import { usePhone } from "@/stores/phone";
+import { usePlayer } from "@/stores/player";
 import { useSession } from "@/stores/session";
+import { useSettings } from "@/stores/settings";
 import type { AppId } from "@/types";
 
 type Panel = "drawer" | "shade" | "search" | "power";
@@ -273,6 +286,126 @@ function Search({ onClose }: { onClose: () => void }) {
   );
 }
 
+function Shade({ onClose, onPower }: { onClose: () => void; onPower: () => void }) {
+  const dark = useDark();
+  const online = useOnline();
+  const settings = useSettings();
+  const has = useSession((s) => s.notices.length > 0);
+  const index = usePlayer((s) => s.index);
+  const playing = usePlayer((s) => s.playing);
+  const now = useNow(60_000);
+  return (
+    <motion.div
+      className="md-sheet md-shade fixed inset-0 z-[2900] flex flex-col"
+      style={{ paddingTop: "calc(var(--sb-h) + 6px)", paddingBottom: "var(--nav-h)" }}
+      role="dialog"
+      aria-label="Notifications and quick settings"
+      data-panel
+      initial={{ y: "-100%" }}
+      animate={{ y: 0 }}
+      exit={{ y: "-100%" }}
+      transition={{ duration: 0.3, ease: [0.2, 0, 0, 1] }}
+    >
+      <div className="shrink-0 px-4 pb-1 pt-1 text-[15px] text-fg2">{shortDate(now)}</div>
+      <div className="grid shrink-0 grid-cols-2 gap-2.5 px-4 py-2">
+        <div className="md-qs" data-on={online}>
+          <WifiGlyph size={20} />
+          <span className="min-w-0">
+            <span className="block truncate text-[14px] font-medium">Internet</span>
+            <span className="block text-[12px] opacity-75">{online ? "Connected" : "Offline"}</span>
+          </span>
+        </div>
+        <button type="button" className="md-qs" data-on={dark} aria-pressed={dark} onClick={() => settings.setTheme(dark ? "light" : "dark")}>
+          <Moon size={20} weight="fill" />
+          <span className="min-w-0">
+            <span className="block truncate text-[14px] font-medium">Dark theme</span>
+            <span className="block text-[12px] opacity-75">{dark ? "On" : "Off"}</span>
+          </span>
+        </button>
+        <button type="button" className="md-qs" data-on={settings.nightLight} aria-pressed={settings.nightLight} onClick={() => settings.setNightLight(!settings.nightLight)}>
+          <SunDim size={21} weight="fill" />
+          <span className="min-w-0">
+            <span className="block truncate text-[14px] font-medium">Night Light</span>
+            <span className="block text-[12px] opacity-75">{settings.nightLight ? "On" : "Off"}</span>
+          </span>
+        </button>
+        <button type="button" className="md-qs" data-on={playing} aria-pressed={playing} onClick={usePlayer.getState().toggle}>
+          {playing ? <Pause size={20} weight="fill" /> : <Play size={20} weight="fill" />}
+          <span className="min-w-0">
+            <span className="block truncate text-[14px] font-medium">{TRACKS[index].title}</span>
+            <span className="block text-[12px] opacity-75">{playing ? "Playing" : "Music"}</span>
+          </span>
+        </button>
+      </div>
+      <div className="flex shrink-0 items-center gap-3 px-5 py-2">
+        <SunDim size={20} weight="fill" className="shrink-0 text-fg2" />
+        <Slider label="Brightness" value={settings.brightness} min={0.35} max={1} onChange={settings.setBrightness} />
+      </div>
+      <div className="flex shrink-0 items-center justify-between px-4 pb-1 pt-3">
+        <span className="text-[14px] font-medium">Notifications</span>
+        {has && (
+          <button type="button" className="md-text-btn" onClick={() => useSession.getState().clearNotices()}>
+            Clear all
+          </button>
+        )}
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-3">
+        <NoticeList empty="No notifications" onOpen={onClose} />
+      </div>
+      <div className="flex shrink-0 items-center justify-end gap-2 px-4 pb-2">
+        <button
+          type="button"
+          className="md-icon-btn"
+          aria-label="Settings"
+          onClick={() => {
+            onClose();
+            launch("settings");
+          }}
+        >
+          <GearSix size={22} weight="fill" />
+        </button>
+        <button type="button" className="md-icon-btn" aria-label="Power" onClick={onPower}>
+          <Power size={22} weight="bold" />
+        </button>
+      </div>
+      <button type="button" className="mx-auto mb-1 grid h-5 w-20 shrink-0 place-items-center" aria-label="Close" onClick={onClose}>
+        <span className="h-1 w-9 rounded-full bg-fg3" />
+      </button>
+    </motion.div>
+  );
+}
+
+function PowerMenu({ onClose }: { onClose: () => void }) {
+  const { power } = useSession.getState();
+  return (
+    <motion.div
+      className="fixed inset-0 z-[3200] grid place-items-center bg-black/55 p-8"
+      role="dialog"
+      aria-label="Power menu"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <motion.div className="md-power grid w-full max-w-[300px] grid-cols-2 gap-3 p-4" data-panel initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.92 }}>
+        <button type="button" autoFocus className="md-power-btn" onClick={() => power("shutdown")}>
+          <Power size={28} weight="bold" />
+          Power off
+        </button>
+        <button type="button" className="md-power-btn" onClick={() => power("restart")}>
+          <ArrowClockwise size={28} weight="bold" />
+          Restart
+        </button>
+        <button type="button" className="md-power-btn col-span-2 !h-12 !flex-row" onClick={() => power("lock")}>
+          <LockSimple size={20} weight="fill" />
+          Lock
+        </button>
+        <p className="col-span-2 text-center text-[12.5px] text-fg2">Restart to choose another operating system.</p>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function NavBar({ panel, close, tone }: { panel: Panel | null; close: () => void; tone: "light" | "auto" }) {
   return (
     <div className="md-nav fixed inset-x-0 bottom-0 z-[3100] flex items-center justify-around px-10" data-tone={tone} role="toolbar" aria-label="Navigation">
@@ -323,6 +456,8 @@ function Phone() {
       <AnimatePresence>
         {panel === "drawer" && <Drawer key="drawer" onClose={close} />}
         {panel === "search" && <Search key="search" onClose={close} />}
+        {panel === "shade" && <Shade key="shade" onClose={close} onPower={() => openPanel("power")} />}
+        {panel === "power" && <PowerMenu key="power" onClose={close} />}
       </AnimatePresence>
       <NavBar panel={panel} close={close} tone={overWallpaper ? "light" : "auto"} />
     </>

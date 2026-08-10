@@ -188,6 +188,27 @@
   background: var(--ctl-2);
 }
 
+[data-os="android"] .md-qs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  height: 68px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: var(--ctl-2);
+  text-align: left;
+  transition:
+    background-color 0.2s,
+    border-radius 0.2s;
+}
+
+[data-os="android"] .md-qs[data-on="true"] {
+  border-radius: 22px;
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
 [data-os="android"] .md-text-btn {
   padding: 6px 12px;
   border-radius: 999px;
@@ -200,12 +221,42 @@
   background: var(--accent-soft);
 }
 
+[data-os="android"] .md-power {
+  border-radius: 32px;
+  background: var(--bg-3);
+  color: var(--fg);
+}
+
+[data-os="android"] .md-power-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 108px;
+  border-radius: 28px;
+  background: var(--ctl-2);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+[data-os="android"] .md-power-btn:active,
+[data-os="android"] .md-power-btn:focus-visible {
+  background: var(--accent);
+  color: var(--accent-fg);
+  outline: none;
+}
+
 [data-os="android"] .os-banner,
 [data-os="android"] .os-notice {
   border: none;
   border-radius: 24px;
   background: var(--bg-3);
   backdrop-filter: none;
+}
+
+[data-os="android"] .md-shade .os-notice {
+  background: var(--ctl);
 }
 
 [data-os="android"] .phone-switcher-bg {
