@@ -8,6 +8,7 @@ import { isPhoneSize, useViewport } from "@/hooks/use-viewport";
 import { useSession } from "@/stores/session";
 import { useSettings } from "@/stores/settings";
 import type { Family, Form } from "@/types";
+import { OffScreen } from "./extras";
 import { Picker } from "./picker";
 
 function Blank() {
@@ -65,6 +66,8 @@ export function Root() {
           >
             {running && Shell ? (
               <Shell />
+            ) : phase === "off" ? (
+              <OffScreen />
             ) : (
               <Picker />
             )}
