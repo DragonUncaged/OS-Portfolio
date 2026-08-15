@@ -977,6 +977,72 @@
   color: var(--tint);
 }
 
+.dragon-overlay {
+  animation: dragon-veil 3.6s ease-in-out both;
+}
+
+.dragon-flight {
+  animation: dragon-fly 3.2s cubic-bezier(0.4, 0.1, 0.5, 1) both;
+}
+
+.dragon-body {
+  display: inline-block;
+  transform: scaleX(-1);
+  animation: dragon-bob 0.5s ease-in-out infinite alternate;
+}
+
+.dragon-fire {
+  animation: k-blink 0.24s steps(2) infinite;
+}
+
+.dragon-caption {
+  text-shadow: 0 2px 14px rgb(0 0 0 / 0.7);
+  animation: dragon-caption 3.6s ease-in-out both;
+}
+
+@keyframes dragon-veil {
+  0%,
+  100% {
+    background: rgb(0 0 0 / 0);
+  }
+  20%,
+  75% {
+    background: rgb(20 0 0 / 0.45);
+  }
+}
+
+@keyframes dragon-fly {
+  from {
+    transform: translateX(-340px);
+  }
+  to {
+    transform: translateX(calc(100vw + 60px));
+  }
+}
+
+@keyframes dragon-bob {
+  from {
+    translate: 0 -10px;
+  }
+  to {
+    translate: 0 10px;
+  }
+}
+
+@keyframes dragon-caption {
+  0%,
+  12%,
+  100% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  28%,
+  78% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @media print {
   .app-root,
   #plain {

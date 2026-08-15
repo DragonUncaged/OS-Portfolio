@@ -106,3 +106,19 @@ export function Panic({ family }: { family: Family }) {
     </button>
   );
 }
+
+export function DragonOverlay() {
+  const dragon = useSession((s) => s.dragon);
+  if (!dragon) return null;
+  return (
+    <div key={dragon} className="dragon-overlay pointer-events-none fixed inset-0 z-[9500] overflow-hidden" aria-hidden="true">
+      <div className="dragon-flight absolute left-0 top-[28%] flex items-center gap-1 whitespace-nowrap text-[72px]">
+        <span className="dragon-fire text-[40px]">🔥🔥🔥</span>
+        <span className="dragon-body">🐉</span>
+      </div>
+      <div className="dragon-caption absolute inset-x-0 top-[52%] text-center text-[22px] font-semibold tracking-wide text-white">
+        @{profile.handle}, the dragon is uncaged
+      </div>
+    </div>
+  );
+}

@@ -2,13 +2,14 @@
 
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import dynamic from "next/dynamic";
-import { useEffect, type ComponentType } from "react";
+import { useEffect, useRef, type ComponentType } from "react";
 import { useMounted } from "@/hooks/use-mounted";
 import { isPhoneSize, useViewport } from "@/hooks/use-viewport";
+import { isTyping, useWindowEvent } from "@/hooks/use-window-event";
 import { useSession } from "@/stores/session";
 import { useSettings } from "@/stores/settings";
 import type { Family, Form } from "@/types";
-import { OffScreen, Panic } from "./extras";
+import { DragonOverlay, OffScreen, Panic } from "./extras";
 import { Picker } from "./picker";
 
 function Blank() {
@@ -30,12 +31,15 @@ const SHELLS: Record<Family, Record<Form, ComponentType>> = {
   },
 };
 
+const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+
 export function Root() {
   const mounted = useMounted();
   const { w, h } = useViewport();
   const phase = useSession((s) => s.phase);
   const family = useSession((s) => s.family);
   const form: Form = isPhoneSize(w, h) ? "phone" : "desktop";
+  const konami = useRef(0);
 
   useEffect(() => {
     useSession.getState().setForm(form);
@@ -45,6 +49,16 @@ export function Root() {
     const last = useSettings.getState().lastFamily;
     if (last && useSession.getState().family === null) useSession.getState().start(last);
   }, []);
+
+  useWindowEvent("keydown", (e) => {
+    if (isTyping(e)) return;
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    konami.current = key === KONAMI[konami.current] ? konami.current + 1 : key === KONAMI[0] ? 1 : 0;
+    if (konami.current === KONAMI.length) {
+      konami.current = 0;
+      useSession.getState().uncage();
+    }
+  });
 
   if (!mounted) return <Blank />;
 
@@ -75,6 +89,7 @@ export function Root() {
             )}
           </motion.div>
         </AnimatePresence>
+        <DragonOverlay />
       </div>
     </MotionConfig>
   );
