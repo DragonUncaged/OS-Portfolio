@@ -94,6 +94,15 @@ const contactMd = [
   ...links.map((l) => `- ${l.label}: ${l.href.replace("mailto:", "")}`),
 ].join("\n");
 
+export const DRAGON_ART = String.raw`
+   ~~~ ___/\_______/\_______/\_______/\__
+  ~~~ <                               o  \__,
+   ~~~ \___  ______  ______  ______  ____ __/  ~ ~ ~
+           \/      \/      \/      \/
+
+   the dragon is uncaged.  (try: dragon)
+`;
+
 export const HOME: VDir = dir("~", [
   file("about.md", "markdown", aboutMd),
   file("resume.md", "markdown", resumeMd),
@@ -141,6 +150,7 @@ export const HOME: VDir = dir("~", [
     ...links.map((l) => link(l.label, l.href)),
     link(previousPortfolio.name, previousPortfolio.live),
   ]),
+  file(".dragon", "text", DRAGON_ART, { hidden: true }),
 ]);
 
 export type VPath = string[];

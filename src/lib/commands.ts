@@ -7,7 +7,7 @@ import { useSettings } from "@/stores/settings";
 import type { AppId, Family, Platform, Theme } from "@/types";
 import { span } from "./format";
 import { launch, openExternal } from "./launch";
-import { HOME, canonical, parsePath, resolve, sizeOf, type VDir, type VPath } from "./vfs";
+import { DRAGON_ART, HOME, canonical, parsePath, resolve, sizeOf, type VDir, type VPath } from "./vfs";
 import { WALLPAPERS } from "./wallpapers";
 
 export type Tone = "dim" | "ok" | "err" | "accent" | "bold" | "warn";
@@ -488,6 +488,25 @@ const COMMANDS: Command[] = [
     },
   },
   {
+    name: "sudo",
+    usage: "sudo hire-me",
+    about: "worth a try",
+    run: (args) => {
+      if (args.join(" ") === "hire-me" || args.join(" ") === "hire me") {
+        launch("contact");
+        useSession.getState().notify({
+          app: "contact",
+          title: "Access granted",
+          body: `${profile.firstName} replies ${profile.responseTime}.`,
+          open: { app: "contact" },
+        });
+        return out(line("[sudo] password for recruiter: ********", "dim"), line("access granted, opening contact channel…", "ok"));
+      }
+      if (args[0] === "rm" && args.includes("/") ) return panic();
+      return err(`guest is not in the sudoers file. This incident will be reported (to ${profile.firstName}).`);
+    },
+  },
+  {
     name: "reboot",
     about: "restart and choose another OS",
     aliases: ["restart"],
@@ -515,6 +534,16 @@ const COMMANDS: Command[] = [
     },
   },
   { name: "exit", about: "close the terminal", aliases: ["quit", "logout"], run: () => ({ lines: [], exit: true }) },
+  {
+    name: "rm",
+    about: "remove files",
+    aliases: ["del", "rmdir"],
+    secret: true,
+    run: (args) => {
+      if (args.some((a) => /^-.*r/.test(a)) && args.some((a) => a === "/" || a === "/*" || a === "~" || a === "C:\\")) return panic();
+      return err("rm: read-only file system, the portfolio is load-bearing");
+    },
+  },
   ...["mkdir", "touch", "mv", "cp", "chmod"].map(
     (name): Command => ({ name, about: "", secret: true, run: () => err(`${name}: read-only file system`) }),
   ),
@@ -534,6 +563,27 @@ const COMMANDS: Command[] = [
       run: () => out(line(`${name}: the network is sandboxed. Try \`open <url>\` instead.`, "dim")),
     }),
   ),
+  {
+    name: "dragon",
+    about: "uncage it",
+    aliases: ["uncage"],
+    secret: true,
+    run: () => {
+      useSession.getState().uncage();
+      return out(...DRAGON_ART.split("\n").map((t) => line(t, "accent")));
+    },
+  },
+  {
+    name: "dragonsay",
+    usage: "dragonsay <text>",
+    about: "a dragon says it",
+    secret: true,
+    run: (args) => {
+      const text = args.join(" ") || "rawr";
+      const bar = "─".repeat(text.length + 2);
+      return out(line(`╭${bar}╮`), line(`│ ${text} │`), line(`╰${bar}╯`), line("   \\"), line("    \\  🐉", "accent"));
+    },
+  },
   ...(["snake", "mines"] as const).map(
     (id): Command => ({
       name: id,
@@ -546,6 +596,11 @@ const COMMANDS: Command[] = [
     }),
   ),
 ];
+
+function panic(): ExecResult {
+  window.setTimeout(() => useSession.getState().panic(), 700);
+  return out(line("rm: removing everything…", "err"), line("rm: wait, that was load-bearing", "err"));
+}
 
 function lookup(name: string): Command | undefined {
   const n = name.toLowerCase();
