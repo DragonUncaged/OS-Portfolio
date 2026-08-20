@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowSquareOut,
+  Code,
   House,
   LockSimple,
   MagnifyingGlass,
@@ -14,6 +15,7 @@ import {
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { AppFrame } from "@/components/app-frame";
+import { LinkedInGlyph, TechIcon } from "@/components/tech-icon";
 import { links, previousPortfolio, profile, projects } from "@/data/portfolio";
 import { useInstance, useRelaunch } from "@/hooks/use-instance";
 import { openExternal } from "@/lib/launch";
@@ -23,15 +25,16 @@ interface Favorite {
   name: string;
   url: string;
   note: string;
+  icon?: "github" | "linkedin" | "codechef" | "portfolio";
   embed: boolean;
 }
 
 const FAVORITES: Favorite[] = [
   ...projects.map((p) => ({ name: p.name, url: p.live, note: p.tech.join(" · "), embed: p.embed })),
-  { name: previousPortfolio.name, url: previousPortfolio.live, note: "Previous portfolio", embed: true },
-  ...links
-    .filter((l) => l.id !== "email")
-    .map((l) => ({ name: l.label, url: l.href, note: l.handle, embed: false })),
+  { name: previousPortfolio.name, url: previousPortfolio.live, note: "Previous portfolio", embed: true, icon: "portfolio" },
+  ...links.flatMap((l): Favorite[] =>
+    l.id === "email" ? [] : [{ name: l.label, url: l.href, note: l.handle, embed: false, icon: l.id }],
+  ),
 ];
 
 const NO_FRAME = /(^|\.)(github\.com|linkedin\.com|codechef\.com|streamlit\.app|google\.com|youtube\.com|x\.com|twitter\.com|facebook\.com|instagram\.com|stackoverflow\.com|reddit\.com)$/i;
@@ -147,8 +150,14 @@ function Content({ entry, rev, onGo }: { entry: string | null; rev: number; onGo
                 {project ? (
                   <Cover project={project} className="h-[72px] w-full [&_svg]:!size-7" />
                 ) : (
-                  <div className="grid h-[72px] w-full place-items-center bg-ctl text-[22px] font-semibold text-fg2">
-                    {f.name.slice(0, 1)}
+                  <div className="grid h-[72px] w-full place-items-center bg-ctl text-fg2">
+                    {f.icon === "linkedin" ? (
+                      <LinkedInGlyph size={30} />
+                    ) : f.icon === "portfolio" ? (
+                      <Code size={30} weight="duotone" />
+                    ) : (
+                      <TechIcon name={f.icon ?? "github"} size={30} mono />
+                    )}
                   </div>
                 )}
                 <span className="p-2.5">
