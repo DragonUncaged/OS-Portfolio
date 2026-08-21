@@ -120,9 +120,14 @@ export default function Mines() {
           <span className="w-16 text-right text-[15px] font-semibold tabular-nums">{String(Math.min(999, seconds)).padStart(3, "0")}</span>
         </div>
 
+        <div className="grid min-h-0 w-full flex-1 place-items-center [container-type:size]">
         <div
-          className="os-mines grid aspect-square w-full max-w-[380px] shrink gap-[3px]"
-          style={{ gridTemplateColumns: `repeat(${SIZE}, minmax(0, 1fr))`, maxHeight: "100%" }}
+          className="os-mines grid gap-[3px]"
+          style={{
+            gridTemplateColumns: `repeat(${SIZE}, minmax(0, 1fr))`,
+            width: "min(100cqw, 100cqh, 400px)",
+            height: "min(100cqw, 100cqh, 400px)",
+          }}
           role="grid"
           aria-label="Minefield"
           onContextMenu={(e) => e.preventDefault()}
@@ -132,7 +137,7 @@ export default function Mines() {
               key={i}
               type="button"
               role="gridcell"
-              className="os-mine-cell grid aspect-square place-items-center text-[15px] font-bold"
+              className="os-mine-cell grid place-items-center text-[15px] font-bold"
               data-open={cell.open}
               data-boom={cell.open && cell.mine}
               aria-label={cell.open ? (cell.mine ? "Mine" : `${cell.n} nearby`) : cell.flag ? "Flagged" : "Hidden"}
@@ -156,6 +161,7 @@ export default function Mines() {
               )}
             </button>
           ))}
+        </div>
         </div>
 
         <div className="flex shrink-0 flex-wrap items-center justify-center gap-2">

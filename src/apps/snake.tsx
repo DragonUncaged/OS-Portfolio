@@ -161,9 +161,10 @@ export default function Snake() {
           </span>
         </div>
 
+        <div className="grid min-h-0 w-full flex-1 place-items-center [container-type:size]">
         <div
-          className="os-snake relative aspect-square w-full max-w-[400px] shrink touch-none overflow-hidden rounded-card"
-          style={{ maxHeight: "100%" }}
+          className="os-snake relative touch-none overflow-hidden rounded-card"
+          style={{ width: "min(100cqw, 100cqh, 420px)", height: "min(100cqw, 100cqh, 420px)" }}
           role="img"
           aria-label={`Snake board, score ${game.score}`}
           onPointerDown={(e) => (swipe.current = { x: e.clientX, y: e.clientY })}
@@ -197,7 +198,7 @@ export default function Snake() {
             />
           ))}
           {!playing && (
-            <div className="absolute inset-0 grid place-items-center bg-black/45 p-4 text-center text-white backdrop-blur-[2px]">
+            <div className="absolute inset-0 grid place-items-center bg-black/65 p-4 text-center text-white backdrop-blur-[3px]">
               <div>
                 <div className="text-[20px] font-semibold">
                   {game.status === "over" ? "Game over" : game.status === "paused" ? "Paused" : "Snake"}
@@ -211,6 +212,7 @@ export default function Snake() {
               </div>
             </div>
           )}
+        </div>
         </div>
 
         <div className="grid shrink-0 grid-cols-3 gap-1.5 @min-[520px]:hidden" style={{ width: 168 }}>
