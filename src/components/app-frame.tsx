@@ -344,6 +344,7 @@ export function AppFrame(props: FrameProps) {
 
   if (platform === "ios") {
     const inline = Boolean(onBack) || compact;
+    const crowded = (actions?.length ?? 0) > 2 && !onBack;
     return (
       <div className="flex h-full flex-col bg-bg text-fg" data-theme={tone} style={{ paddingTop: "var(--sb-h)" }}>
         <header className="relative shrink-0 px-4 pb-2">
@@ -358,12 +359,12 @@ export function AppFrame(props: FrameProps) {
                 Back
               </button>
             )}
-            {inline && (
+            {inline && !crowded && (
               <div className="pointer-events-none absolute inset-x-16 truncate text-center text-[17px] font-semibold">
                 {title}
               </div>
             )}
-            <div className="flex-1" />
+            {inline && crowded ? <div className="min-w-0 flex-1 truncate text-[17px] font-semibold">{title}</div> : <div className="flex-1" />}
             <Actions actions={actions} size={22} cls="ios-action" />
           </div>
           {!inline && <h1 className="truncate text-[32px] font-bold leading-[1.15] tracking-tight">{title}</h1>}
