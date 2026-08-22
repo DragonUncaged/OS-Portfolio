@@ -19,8 +19,8 @@
   --ctl-2: rgb(0 0 0 / 0.16);
   --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
   --menu-bg: #f2f2f2;
-  --tile: var(--accent);
-  --tile-fg: var(--accent-fg);
+  --tile: var(--accent-raw, var(--accent));
+  --tile-fg: var(--accent-raw-fg, var(--accent-fg));
 }
 
 [data-os="wp"][data-theme="dark"],

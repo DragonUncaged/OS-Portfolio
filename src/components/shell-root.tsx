@@ -21,7 +21,8 @@ export function ShellRoot({ platform, children }: { platform: Platform; children
     family,
     useSettings((s) => s.prefs[family].accent),
   );
-  const accent = dark && platform === "windows" ? { hex: lighten(chosen.hex, 0.5), fg: "#0b0b0b" } : chosen;
+  const lift = !dark ? 0 : platform === "windows" ? 0.5 : platform === "wp" ? 0.42 : 0;
+  const accent = lift ? { hex: lighten(chosen.hex, lift), fg: "#0b0b0b" } : chosen;
   const brightness = useSettings((s) => s.brightness);
   const nightLight = useSettings((s) => s.nightLight);
   return (
@@ -29,7 +30,14 @@ export function ShellRoot({ platform, children }: { platform: Platform; children
       className="os-root fixed inset-0 overflow-hidden"
       data-os={platform}
       data-theme={dark ? "dark" : "light"}
-      style={{ "--accent": accent.hex, "--accent-fg": accent.fg } as CSSProperties}
+      style={
+        {
+          "--accent": accent.hex,
+          "--accent-fg": accent.fg,
+          "--accent-raw": chosen.hex,
+          "--accent-raw-fg": chosen.fg,
+        } as CSSProperties
+      }
     >
       {children}
       <MenuHost />
