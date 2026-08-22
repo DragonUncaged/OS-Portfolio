@@ -278,6 +278,8 @@ export function Window({
         data-app={win.appId}
         data-focused={focused}
         data-mode={win.mode}
+        // the terminal is dark in both themes
+        data-theme={win.appId === "terminal" ? "dark" : undefined}
         inert={!shown}
         initial={{ opacity: 0, scale: 0.92 }}
         animate={
