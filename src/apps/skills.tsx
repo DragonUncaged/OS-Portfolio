@@ -36,7 +36,7 @@ export default function Skills() {
             <div key={s.name} className="os-tile k-card flex flex-col items-start gap-3 p-3.5">
               <TechIcon name={s.icon} size={30} />
               <div className="min-w-0">
-                <div className="selectable truncate text-[13.5px] font-semibold">{s.name}</div>
+                <div className="selectable text-[13.5px] font-semibold leading-tight">{s.name}</div>
                 <div className="text-[11.5px] text-fg3">{skillKinds[s.kind]}</div>
               </div>
             </div>
