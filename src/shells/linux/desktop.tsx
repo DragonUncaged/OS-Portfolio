@@ -285,7 +285,7 @@ function OverviewSearch({ onDone, children }: { onDone: () => void; children?: R
   const l = useLauncher(onDone, 9);
   return (
     <>
-      <label className="ub-search relative z-[2] mx-auto mt-5 flex h-10 w-[min(420px,calc(100%-32px))] shrink-0 items-center gap-2.5 px-4">
+      <label className="ub-search pointer-events-auto relative z-[2] mx-auto mt-5 flex h-10 w-[min(420px,calc(100%-32px))] shrink-0 items-center gap-2.5 px-4">
         <MagnifyingGlass size={16} className="shrink-0 opacity-70" />
         <input
           autoFocus
@@ -300,7 +300,7 @@ function OverviewSearch({ onDone, children }: { onDone: () => void; children?: R
         />
       </label>
       {l.query.trim() ? (
-        <div className="ub-results relative z-[60] mx-auto mt-5 w-[min(680px,calc(100%-32px))] overflow-y-auto p-2" style={{ maxHeight: "calc(100% - 110px)" }}>
+        <div className="ub-results pointer-events-auto relative z-[60] mx-auto mt-5 w-[min(680px,calc(100%-32px))] overflow-y-auto p-2" style={{ maxHeight: "calc(100% - 110px)" }}>
           {l.hits.length === 0 && <p className="p-6 text-center text-[14px] text-white/70">No results.</p>}
           {grouped(l.hits).map((g) => (
             <div key={g.kind} className="ub-result-group flex gap-3 py-1.5">
@@ -593,24 +593,18 @@ function Desktop() {
       <DesktopIcons />
       <AnimatePresence>
         {overview && (
-          <motion.div
+          <motion.button
+            type="button"
             key="activities"
-            className="ub-overview fixed bottom-0 right-0 z-[9] flex flex-col"
+            aria-label="Leave the Activities overview"
+            className="ub-overview fixed bottom-0 right-0 z-[9] cursor-default"
             style={{ top: BAR_H, left: DOCK_W }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={(e) => e.target === e.currentTarget && useWM.getState().setOverview(false)}
-          >
-            <OverviewSearch onDone={() => useWM.getState().setOverview(false)}>
-              {count === 0 && (
-                <button type="button" className="m-auto text-[15px] text-white/70" onClick={() => useWM.getState().setOverview(false)}>
-                  No open windows. Type to search, or click to go back
-                </button>
-              )}
-            </OverviewSearch>
-          </motion.div>
+            onClick={() => useWM.getState().setOverview(false)}
+          />
         )}
       </AnimatePresence>
       <WindowLayer
@@ -618,6 +612,17 @@ function Desktop() {
         insets={{ top: BAR_H, right: 0, bottom: 0, left: DOCK_W }}
         overviewInsets={{ top: BAR_H + 96, right: 48, bottom: 64, left: DOCK_W + 48 }}
       />
+      {overview && (
+        <div className="pointer-events-none fixed bottom-0 right-0 z-[30] flex flex-col" style={{ top: BAR_H, left: DOCK_W }}>
+          <OverviewSearch onDone={() => useWM.getState().setOverview(false)}>
+            {count === 0 && (
+              <button type="button" className="pointer-events-auto m-auto text-[15px] text-white/70" onClick={() => useWM.getState().setOverview(false)}>
+                No open windows. Type to search, or click to go back
+              </button>
+            )}
+          </OverviewSearch>
+        </div>
+      )}
       <TopBar panel={panel} toggle={toggle} />
       <Dock panel={panel} toggle={toggle} />
       <Banner className="fixed left-1/2 w-[440px] max-w-[calc(100vw-24px)] -translate-x-1/2" style={{ top: BAR_H + 8 }} from={{ y: -50 }} />
