@@ -282,7 +282,7 @@ function StartMenu({ onClose }: { onClose: () => void }) {
   return (
     <motion.div
       className="win-flyout win-start fixed left-1/2 z-[1800] flex w-[640px] max-w-[calc(100vw-16px)] flex-col"
-      style={{ bottom: TASKBAR_H + 12, maxHeight: `calc(100vh - ${TASKBAR_H + 24}px)` }}
+      style={{ bottom: TASKBAR_H + 12, height: `min(700px, calc(100vh - ${TASKBAR_H + 24}px))` }}
       data-panel
       role="dialog"
       aria-label="Start"
@@ -536,8 +536,8 @@ function DesktopIcons() {
   const [selected, setSelected] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const items = [
-    { id: "pc", label: "This PC", icon: <DesktopGlyph size={44} weight="duotone" className="text-[#7cc4ff]" />, open: () => launch("files") },
-    { id: "bin", label: "Recycle Bin", icon: <Trash size={44} weight="duotone" className="text-white" />, open: () => launch("files", { section: "trash" }) },
+    { id: "pc", label: "This PC", icon: <DesktopGlyph size={44} weight="fill" className="text-[#4aa8ff]" />, open: () => launch("files") },
+    { id: "bin", label: "Recycle Bin", icon: <Trash size={44} weight="fill" className="text-[#eaf2ff]" />, open: () => launch("files", { section: "trash" }) },
     { id: "projects", label: "Projects", icon: <Folder size={46} weight="fill" className="text-[#f8c84a]" />, open: () => launch("files", { path: "Projects" }) },
     { id: "resume", label: "Resume", icon: <AppIcon id="resume" size={42} />, open: () => launch("resume") },
     { id: "about", label: "About me", icon: <AppIcon id="about" size={42} />, open: () => launch("about") },
@@ -588,7 +588,7 @@ function DesktopIcons() {
             onDoubleClick={item.open}
             onKeyDown={(e) => e.key === "Enter" && item.open()}
           >
-            <span className="grid h-[48px] place-items-center drop-shadow-[0_2px_3px_rgb(0_0_0/0.4)]">{item.icon}</span>
+            <span className="win-desktop-glyph grid h-[48px] place-items-center">{item.icon}</span>
             <span className="win-desktop-label">{item.label}</span>
           </button>
         ))}

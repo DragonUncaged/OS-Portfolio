@@ -294,6 +294,10 @@
   border-color: rgb(255 255 255 / 0.3);
 }
 
+[data-os="windows"] .win-desktop-glyph {
+  filter: drop-shadow(0 1px 1px rgb(0 18 60 / 0.6)) drop-shadow(0 3px 7px rgb(0 18 60 / 0.35));
+}
+
 [data-os="windows"] .win-desktop-label {
   max-width: 100%;
   color: #fff;
@@ -543,6 +547,12 @@
 [data-os="windows"] .os-calc-key[data-kind="op"] {
   background: var(--ctl);
   color: var(--fg);
+}
+
+[data-os="windows"] .os-calc-key[data-kind="eq"] {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: transparent;
 }
 
 [data-os="windows"] .os-snap-hint {
