@@ -123,7 +123,7 @@ function Lock() {
           >
             <Flashlight size={24} weight="fill" />
           </button>
-          <button type="button" autoFocus className="ios-unlock pb-1 text-[15px] font-medium" onClick={unlock}>
+          <button type="button" autoFocus className="ios-unlock pb-1 text-[15px] font-medium outline-none" onClick={unlock}>
             Swipe up or tap to unlock
           </button>
           <span className="size-[50px]" />
@@ -534,6 +534,7 @@ function HomeBar() {
     <button
       type="button"
       className="ios-home-hit fixed bottom-0 left-1/2 z-[2400] flex h-[26px] w-[220px] -translate-x-1/2 touch-none items-center justify-center"
+      data-light={switcher || current === "terminal" || undefined}
       aria-label="Home, hold for the app switcher"
       onPointerDown={(e) => {
         down.current = { y: e.clientY, t: e.timeStamp };

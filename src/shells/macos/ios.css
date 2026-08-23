@@ -121,7 +121,7 @@
   opacity: 0.85;
 }
 
-[data-os="ios"] .phone-host[data-switcher] ~ .ios-home-hit .ios-home-bar {
+[data-os="ios"] .ios-home-hit[data-light] .ios-home-bar {
   background: #fff;
 }
 
