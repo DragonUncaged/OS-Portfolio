@@ -82,7 +82,7 @@ export const TRACKS: Track[] = [
   },
 ];
 
-export const TRACK_BARS = 16;
+export const TRACK_BARS = 32;
 export const TOTAL_STEPS = TRACK_BARS * 16;
 
 const freq = (midi: number) => 440 * Math.pow(2, (midi - 69) / 12);
