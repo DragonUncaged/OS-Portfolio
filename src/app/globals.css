@@ -66,6 +66,17 @@
     -webkit-user-select: text;
   }
 
+  input,
+  textarea,
+  [contenteditable="true"] {
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  [data-wm-drag] {
+    touch-action: none;
+  }
+
   button,
   [role="button"] {
     cursor: default;
