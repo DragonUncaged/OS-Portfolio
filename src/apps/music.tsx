@@ -63,10 +63,10 @@ export default function Music() {
 
   return (
     <AppFrame compact flush>
-      <div className="flex h-full flex-col @min-[620px]:flex-row">
-        <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-4 p-5">
+      <div className="flex h-full flex-col overflow-y-auto @min-[620px]:flex-row @min-[620px]:overflow-hidden">
+        <div className="flex shrink-0 flex-col items-center justify-center gap-4 p-5 @min-[620px]:min-h-0 @min-[620px]:flex-1 @min-[620px]:shrink @min-[620px]:overflow-y-auto">
           <div
-            className="os-art relative aspect-square w-full max-w-[250px] shrink overflow-hidden rounded-card shadow-[0_12px_32px_rgb(0_0_0/0.3)]"
+            className="os-art relative aspect-square w-[168px] shrink-0 overflow-hidden rounded-card shadow-[0_12px_32px_rgb(0_0_0/0.3)] @min-[620px]:w-full @min-[620px]:max-w-[250px]"
             style={{ background: `linear-gradient(140deg, ${track.color[0]}, ${track.color[1]})` }}
           >
             <Waveform size={56} weight="bold" className="absolute left-4 top-4 text-white/85" />
@@ -104,7 +104,7 @@ export default function Music() {
             <Slider label="Volume" value={volume} onChange={useSettings.getState().setVolume} />
           </div>
         </div>
-        <div className="os-tracklist shrink-0 overflow-y-auto border-t border-line @min-[620px]:w-[250px] @min-[620px]:border-l @min-[620px]:border-t-0">
+        <div className="os-tracklist shrink-0 border-t border-line pb-2 @min-[620px]:w-[250px] @min-[620px]:overflow-y-auto @min-[620px]:border-l @min-[620px]:border-t-0">
           <div className="k-label px-4 pb-1.5 pt-3.5">Up next</div>
           {TRACKS.map((t, i) => (
             <button key={t.id} type="button" className="k-row !gap-3 !border-0 !py-2" data-on={i === index} onClick={() => play(i)}>
