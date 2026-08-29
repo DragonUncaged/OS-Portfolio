@@ -1,7 +1,7 @@
 "use client";
 
 import { Command, Power } from "@phosphor-icons/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { profile } from "@/data/portfolio";
 import { useWindowEvent } from "@/hooks/use-window-event";
 import { useSession } from "@/stores/session";
@@ -82,7 +82,7 @@ export function Panic({ family }: { family: Family }) {
     return (
       <button
         type="button"
-        className="block h-full w-full cursor-default overflow-hidden bg-black p-5 text-left font-mono text-[12.5px] leading-relaxed text-[#d7d7d7]"
+        className="flex h-full w-full cursor-default flex-col items-start justify-start overflow-hidden bg-black p-5 text-left font-mono text-[12.5px] leading-relaxed text-[#d7d7d7]"
         onClick={reboot}
       >
         {lines.map((l, i) => (
@@ -109,9 +109,15 @@ export function Panic({ family }: { family: Family }) {
 
 export function DragonOverlay() {
   const dragon = useSession((s) => s.dragon);
-  if (!dragon) return null;
+  const [done, setDone] = useState(0);
+  if (!dragon || dragon === done) return null;
   return (
-    <div key={dragon} className="dragon-overlay pointer-events-none fixed inset-0 z-[9500] overflow-hidden" aria-hidden="true">
+    <div
+      key={dragon}
+      className="dragon-overlay pointer-events-none fixed inset-0 z-[9500] overflow-hidden"
+      aria-hidden="true"
+      onAnimationEnd={(e) => e.animationName === "dragon-veil" && setDone(dragon)}
+    >
       <div className="dragon-flight absolute left-0 top-[28%] flex items-center gap-1 whitespace-nowrap text-[72px]">
         <span className="dragon-fire text-[40px]">🔥🔥🔥</span>
         <span className="dragon-body">🐉</span>
