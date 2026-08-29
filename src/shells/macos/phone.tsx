@@ -100,6 +100,7 @@ function Lock() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ y: "-100%", transition: { duration: 0.38, ease: [0.3, 0, 0.2, 1] } }}
+      onClick={unlock}
       onPointerDown={(e) => (start.current = e.clientY)}
       onPointerUp={(e) => {
         if (start.current !== null && start.current - e.clientY > 60) unlock();
@@ -119,12 +120,15 @@ function Lock() {
             data-on={torch}
             aria-label="Torch"
             aria-pressed={torch}
-            onClick={() => setTorch((v) => !v)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setTorch((v) => !v);
+            }}
           >
             <Flashlight size={24} weight="fill" />
           </button>
-          <button type="button" autoFocus className="ios-unlock pb-1 text-[15px] font-medium outline-none" onClick={unlock}>
-            Swipe up or tap to unlock
+          <button type="button" autoFocus className="pb-1 text-[15px] font-medium outline-none">
+            <span className="ios-unlock block">Swipe up or tap to unlock</span>
           </button>
           <span className="size-[50px]" />
         </div>

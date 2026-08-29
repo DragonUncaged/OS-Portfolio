@@ -445,3 +445,42 @@
   background: #ff9f0a;
   color: #fff;
 }
+
+@media (max-height: 520px) and (orientation: landscape) {
+  [data-os="ios"] {
+    --sb-h: 30px;
+    --nav-h: 18px;
+  }
+
+  [data-os="ios"] .ios-island,
+  [data-os="ios"] .ios-search-pill {
+    display: none;
+  }
+
+  [data-os="ios"] .ios-status {
+    padding-top: 0;
+  }
+
+  [data-os="ios"] .ios-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    grid-auto-rows: 78px;
+    gap: 8px 0;
+    max-width: 780px;
+  }
+
+  [data-os="ios"] .ios-app,
+  [data-os="ios"] .ios-dock button {
+    zoom: 0.78;
+  }
+
+  [data-os="ios"] .ios-dock {
+    margin-bottom: 6px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    border-radius: 22px;
+  }
+
+  [data-os="ios"] .ios-lock-time {
+    font-size: 64px;
+  }
+}
