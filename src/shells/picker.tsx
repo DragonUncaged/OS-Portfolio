@@ -221,7 +221,7 @@ export function Picker() {
                       </span>
                       <div className="min-w-0">
                         <div className="text-[19px] font-semibold leading-tight">{small ? label.phone : label.desktop}</div>
-                        <div className="truncate text-[12.5px] text-white/50">
+                        <div className="text-[12.5px] leading-snug text-white/50">
                           {small ? `${label.desktop} on a big screen` : `becomes ${label.phone} on a phone`}
                         </div>
                       </div>
