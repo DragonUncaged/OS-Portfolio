@@ -482,3 +482,19 @@
 [data-os="wp"] [inert] .wp-nav {
   visibility: hidden;
 }
+
+@media (max-height: 520px) and (orientation: landscape) {
+  [data-os="wp"] {
+    --nav-h: 40px;
+  }
+
+  [data-os="wp"] .wp-tiles {
+    --unit: calc((min(100vw - 24px, 720px) - 56px) / 8);
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    max-width: 720px;
+  }
+
+  [data-os="wp"] .wp-pivot {
+    font-size: 30px;
+  }
+}

@@ -442,3 +442,45 @@
 [data-os="android"] [inert] .md-nav {
   visibility: hidden;
 }
+
+[data-os="android"] .md-home {
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+@media (max-height: 520px) and (orientation: landscape) {
+  [data-os="android"] {
+    --sb-h: 26px;
+    --nav-h: 36px;
+  }
+
+  [data-os="android"] .md-home {
+    padding-top: calc(var(--sb-h) + 6px) !important;
+  }
+
+  [data-os="android"] .md-home > .grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    max-width: 720px;
+  }
+
+  [data-os="android"] .md-home .md-app {
+    zoom: 0.8;
+  }
+
+  [data-os="android"] .md-searchbar {
+    height: 40px;
+  }
+
+  [data-os="android"] .md-lock-clock {
+    top: 12%;
+    font-size: 84px;
+  }
+
+  [data-os="android"] .md-lock-clock span {
+    display: inline;
+  }
+
+  [data-os="android"] .md-lock-clock span + span::before {
+    content: ":";
+  }
+}
