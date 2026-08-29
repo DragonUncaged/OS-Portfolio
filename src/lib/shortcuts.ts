@@ -50,7 +50,7 @@ export const SHORTCUTS: Record<Platform, Shortcut[]> = {
     { keys: "Tap the left of the status bar", does: "Notifications" },
     { keys: "Swipe the home screen", does: "Change page. The last page is the App Library" },
     { keys: "Search pill above the Dock", does: "Search apps and content" },
-    { keys: "Hold the side-button icon in Control Centre", does: "Power off or restart" },
+    { keys: "Power tile in Control Centre", does: "Power off, or restart into another system" },
   ],
   wp: [
     { keys: "⊞ Start button", does: "Go to the Start screen" },
