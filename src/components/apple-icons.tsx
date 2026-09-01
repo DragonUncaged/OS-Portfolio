@@ -1,6 +1,8 @@
 "use client";
 
 import { useId, type ComponentType } from "react";
+import { useNow } from "@/hooks/use-now";
+import { DAYS } from "@/lib/format";
 import type { AppId } from "@/types";
 
 function squircle(size: number, exponent: number): string {
@@ -191,6 +193,133 @@ const Settings = ({ u }: ArtProps) => (
   </>
 );
 
+const Notes = ({ u }: ArtProps) => (
+  <>
+    <defs>
+      <linearGradient id={`${u}f`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#ffe975" />
+        <stop offset="1" stopColor="#ffc400" />
+      </linearGradient>
+    </defs>
+    <rect width="120" height="40" fill={`url(#${u}f)`} />
+    <g fill="#a67c00" opacity="0.5">
+      {Array.from({ length: 13 }, (_, i) => (
+        <circle key={i} cx={6 + i * 9} cy="40" r="1.6" />
+      ))}
+    </g>
+    <g fill="#d5d5d0">
+      <rect x="16" y="57" width="88" height="2.6" rx="1.3" />
+      <rect x="16" y="73" width="88" height="2.6" rx="1.3" />
+      <rect x="16" y="89" width="88" height="2.6" rx="1.3" />
+      <rect x="16" y="105" width="58" height="2.6" rx="1.3" />
+    </g>
+  </>
+);
+
+const KEYS = [56, 78, 100].flatMap((y, row) =>
+  [27.5, 49, 70.5, 92].map((x, col) => ({ x, y, fill: col === 3 ? "#ff9f0a" : row === 0 ? "#a6a6ab" : "#636368" })),
+);
+
+const Calculator = () => (
+  <>
+    <rect x="17" y="15" width="86" height="25" rx="8" fill="#2a2a2e" />
+    <text x="96" y="34" textAnchor="end" fontFamily={FONT} fontSize="18" fontWeight="300" fill="#fff">
+      128
+    </text>
+    {KEYS.map((k) => (
+      <circle key={`${k.x}-${k.y}`} cx={k.x} cy={k.y} r="9.5" fill={k.fill} />
+    ))}
+  </>
+);
+
+function Calendar() {
+  const d = new Date(useNow(60_000));
+  return (
+    <>
+      <text x="60" y="38" textAnchor="middle" fontFamily={FONT} fontSize="19" fontWeight="700" letterSpacing="0.6" fill="#ff3b30">
+        {DAYS[d.getDay()].slice(0, 3).toUpperCase()}
+      </text>
+      <text x="60" y="95" textAnchor="middle" fontFamily={FONT} fontSize="62" fontWeight="300" fill="#1c1c1e">
+        {d.getDate()}
+      </text>
+    </>
+  );
+}
+
+const HOUR_MARKS = Array.from({ length: 12 }, (_, i) => i);
+
+function Clock({ u }: ArtProps) {
+  const now = useNow(1000);
+  const d = new Date(now);
+  const seconds = d.getSeconds();
+  const minutes = d.getMinutes() + seconds / 60;
+  const hours = (d.getHours() % 12) + minutes / 60;
+  // the angle keeps growing so the hand never spins backwards at :00
+  const sweep = (Math.floor(now / 1000) % 86_400) * 6;
+  const hand = (deg: number, sweeping = false) => ({
+    transform: `rotate(${deg}deg)`,
+    transformOrigin: "60px 60px",
+    transformBox: "view-box" as const,
+    transition: sweeping ? "transform 1s linear" : undefined,
+  });
+  return (
+    <>
+      <defs>
+        <linearGradient id={`${u}f`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#fff" />
+          <stop offset="1" stopColor="#e9ebf0" />
+        </linearGradient>
+      </defs>
+      <circle cx="60" cy="60" r="48" fill={`url(#${u}f)`} />
+      <g stroke="#1c1c1e" strokeLinecap="round">
+        {HOUR_MARKS.map((i) => (
+          <line key={i} x1="60" y1="17" x2="60" y2={i % 3 === 0 ? 25 : 21.5} strokeWidth={i % 3 === 0 ? 3 : 1.8} transform={`rotate(${i * 30} 60 60)`} />
+        ))}
+      </g>
+      <line x1="60" y1="60" x2="60" y2="36" stroke="#1c1c1e" strokeWidth="5.5" strokeLinecap="round" style={hand(hours * 30)} />
+      <line x1="60" y1="60" x2="60" y2="24" stroke="#1c1c1e" strokeWidth="4" strokeLinecap="round" style={hand(minutes * 6)} />
+      <line x1="60" y1="70" x2="60" y2="19" stroke="#ff9500" strokeWidth="1.8" strokeLinecap="round" style={hand(sweep, true)} />
+      <circle cx="60" cy="60" r="4" fill="#1c1c1e" />
+      <circle cx="60" cy="60" r="2" fill="#ff9500" />
+    </>
+  );
+}
+
+const Music = ({ g }: ArtProps) => (
+  <>
+    <path d="M50 34 92 24v13L50 47Z" fill={g} />
+    <rect x="50" y="36" width="6.5" height="50" fill={g} />
+    <rect x="85.5" y="27" width="6.5" height="49" fill={g} />
+    <ellipse cx="44" cy="87" rx="13" ry="9.5" transform="rotate(-18 44 87)" fill={g} />
+    <ellipse cx="79.5" cy="77" rx="13" ry="9.5" transform="rotate(-18 79.5 77)" fill={g} />
+  </>
+);
+
+const PETALS = ["#ff3b30", "#ff9500", "#ffcc00", "#34c759", "#0a84ff", "#af52de"];
+
+const Photos = () => (
+  <g style={{ mixBlendMode: "multiply" }}>
+    {PETALS.map((fill, k) => (
+      <ellipse key={fill} cx="60" cy="36" rx="14" ry="23" fill={fill} opacity="0.88" transform={`rotate(${k * 60} 60 60)`} style={{ mixBlendMode: "multiply" }} />
+    ))}
+  </g>
+);
+
+const Paint = ({ u }: ArtProps) => (
+  <>
+    <defs>
+      <linearGradient id={`${u}f`} x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stopColor="#34c8ff" />
+        <stop offset="0.55" stopColor="#0a84ff" />
+        <stop offset="1" stopColor="#7d5cff" />
+      </linearGradient>
+    </defs>
+    <rect x="18" y="20" width="24" height="24" rx="6" fill="#ff6fae" transform="rotate(-10 30 32)" />
+    <circle cx="88" cy="88" r="12" fill="#ffcc00" />
+    <path d="M20 80C33 40 49 102 62 64S86 30 100 56" fill="none" stroke={`url(#${u}f)`} strokeWidth="9" strokeLinecap="round" />
+  </>
+);
+
 const ART: Record<string, IconArt> = {
   about: { bg: ["#bcc5d3", "#7d8696"], art: About },
   projects: { bg: ["#ffb54d", "#ff3a5c"], art: Projects },
@@ -202,6 +331,13 @@ const ART: Record<string, IconArt> = {
   files: { bg: ["#ffffff", "#eceff5"], light: true, art: Files },
   browser: { bg: ["#ffffff", "#eceff5"], light: true, art: Browser },
   settings: { bg: ["#dcdee3", "#8a8e98"], art: Settings },
+  notes: { bg: ["#ffffff", "#f4f4ef"], light: true, art: Notes },
+  calculator: { bg: ["#4c4c52", "#121214"], art: Calculator },
+  calendar: { bg: ["#ffffff", "#eceff5"], light: true, art: Calendar },
+  clock: { bg: ["#2e2e31", "#000000"], art: Clock },
+  music: { bg: ["#ff7389", "#fa1c42"], art: Music },
+  photos: { bg: ["#ffffff", "#eceff5"], light: true, art: Photos },
+  paint: { bg: ["#ffffff", "#eceff5"], light: true, art: Paint },
 };
 
 export default function AppleIcon({ id, size, className }: { id: AppId; size: number; className?: string }) {
