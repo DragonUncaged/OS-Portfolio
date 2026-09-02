@@ -320,7 +320,68 @@ const Paint = ({ u }: ArtProps) => (
   </>
 );
 
-const ART: Record<string, IconArt> = {
+const Mines = ({ u }: ArtProps) => (
+  <>
+    <defs>
+      <linearGradient id={`${u}f`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#ff6f63" />
+        <stop offset="1" stopColor="#dd2218" />
+      </linearGradient>
+    </defs>
+    <g stroke="#fff" strokeWidth="2" opacity="0.2">
+      <path d="M40 0v120M80 0v120M0 40h120M0 80h120" />
+    </g>
+    <text x="20" y="108" textAnchor="middle" fontFamily={FONT} fontSize="24" fontWeight="800" fill="#fff" opacity="0.75">
+      1
+    </text>
+    <text x="100" y="29" textAnchor="middle" fontFamily={FONT} fontSize="24" fontWeight="800" fill="#fff" opacity="0.75">
+      2
+    </text>
+    <ellipse cx="53" cy="93" rx="26" ry="8" fill="#256d31" />
+    <path d="M56 27l39 15.5L56 58Z" fill={`url(#${u}f)`} />
+    <rect x="50" y="23" width="6.5" height="68" rx="3.25" fill="#fff" />
+  </>
+);
+
+const Snake = () => (
+  <>
+    <circle cx="90" cy="31" r="9" fill="#ff453a" />
+    <path d="M90 22q4-7 9-5-2 6-9 5" fill="#6de38b" />
+    <path d="M24 90h44a15 15 0 0 0 15-15V63a15 15 0 0 0-15-15H44" fill="none" stroke="#7df0ae" strokeWidth="15" strokeLinecap="round" />
+    <path d="M30 48h-8m0 0-3-3.5m3 3.5-3 3.5" stroke="#ff5d7a" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+    <circle cx="41" cy="48" r="10.5" fill="#a6ffcf" />
+    <circle cx="38" cy="45" r="2.4" fill="#23137a" />
+  </>
+);
+
+const Tips = ({ g }: ArtProps) => (
+  <>
+    <path d="M60 20C42 20 30 33 30 49c0 11 6 18 12 25 3 4 5 7 5 12h26c0-5 2-8 5-12 6-7 12-14 12-25 0-16-12-29-30-29Z" fill={g} />
+    <path d="M51 56l9 11 9-11M60 67v19" fill="none" stroke="#ffb800" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+    <rect x="47.5" y="90" width="25" height="6.5" rx="3.25" fill="#fff" />
+    <rect x="51" y="99.5" width="18" height="6.5" rx="3.25" fill="#fff" opacity="0.9" />
+  </>
+);
+
+const Viewer = ({ g }: ArtProps) => (
+  <>
+    <path d="M18 60c14-20 28-29 42-29s28 9 42 29c-14 20-28 29-42 29S32 80 18 60Z" fill={g} />
+    <circle cx="60" cy="60" r="17" fill="#0a84ff" />
+    <circle cx="60" cy="60" r="7.5" fill="#0b1020" />
+    <circle cx="54" cy="54" r="3.4" fill="#fff" opacity="0.9" />
+  </>
+);
+
+const Monitor = () => (
+  <>
+    <g stroke="#fff" strokeWidth="1.2" opacity="0.1">
+      <path d="M30 0v120M60 0v120M90 0v120M0 30h120M0 60h120M0 90h120" />
+    </g>
+    <path d="M10 66h24l9-27 11 48 10-35 8 19h13l6-12 6 7h13" fill="none" stroke="#30d158" strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" />
+  </>
+);
+
+const ART: Record<AppId, IconArt> = {
   about: { bg: ["#bcc5d3", "#7d8696"], art: About },
   projects: { bg: ["#ffb54d", "#ff3a5c"], art: Projects },
   experience: { bg: ["#c9a8ff", "#6a3bf0"], art: Experience },
@@ -338,6 +399,11 @@ const ART: Record<string, IconArt> = {
   music: { bg: ["#ff7389", "#fa1c42"], art: Music },
   photos: { bg: ["#ffffff", "#eceff5"], light: true, art: Photos },
   paint: { bg: ["#ffffff", "#eceff5"], light: true, art: Paint },
+  mines: { bg: ["#a7e27c", "#3a9847"], art: Mines },
+  snake: { bg: ["#8d75ff", "#381dbc"], art: Snake },
+  monitor: { bg: ["#3e4553", "#0e1015"], art: Monitor },
+  viewer: { bg: ["#a3a9b4", "#494c56"], art: Viewer },
+  tips: { bg: ["#ffe65e", "#ffb000"], art: Tips },
 };
 
 export default function AppleIcon({ id, size, className }: { id: AppId; size: number; className?: string }) {
