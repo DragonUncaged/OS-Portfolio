@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { Suspense, lazy, useId } from "react";
 import { APPS, DARK_GLYPH } from "@/apps/registry";
 import { usePlatform } from "@/stores/session";
 import type { AppId, Platform } from "@/types";
@@ -14,6 +14,8 @@ const WIN_TINT: Partial<Record<AppId, [string, string]>> = {
   monitor: ["#7ee0b0", "#12a56a"],
   settings: ["#c3cad6", "#7b8696"],
 };
+
+const AppleIcon = lazy(() => import("./apple-icons"));
 
 export function AppIcon({
   id,
@@ -105,19 +107,8 @@ export function AppIcon({
   }
 
   return (
-    <span
-      className={`inline-grid place-items-center ${className ?? ""}`}
-      style={{
-        ...base,
-        borderRadius: size * 0.225,
-        background: `linear-gradient(180deg, ${c0}, ${c1})`,
-        boxShadow:
-          "inset 0 0 0 0.5px rgb(255 255 255 / 0.22), inset 0 1px 0.5px rgb(255 255 255 / 0.45), 0 1px 2px rgb(0 0 0 / 0.28)",
-        color: glyphColor,
-      }}
-      aria-hidden="true"
-    >
-      <Glyph size={size * 0.58} weight="fill" style={{ filter: "drop-shadow(0 1px 1px rgb(0 0 0 / 0.18))" }} />
-    </span>
+    <Suspense fallback={<span className={`inline-block ${className ?? ""}`} style={base} aria-hidden="true" />}>
+      <AppleIcon id={id} size={size} className={className} />
+    </Suspense>
   );
 }
