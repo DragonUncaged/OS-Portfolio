@@ -4,7 +4,7 @@
   --os-r: 10px;
   --os-r-lg: 14px;
   --ctl-h: 36px;
-  --sb-h: 52px;
+  --sb-h: 54px;
   --nav-h: 26px;
   --folder: #3b9eff;
 
@@ -42,7 +42,7 @@
 
 [data-os="ios"] .ios-status {
   height: var(--sb-h);
-  padding-top: 6px;
+  padding-top: 8px;
   color: var(--fg);
   pointer-events: none;
   transition: color 0.25s;
@@ -65,16 +65,16 @@
   align-items: center;
   justify-content: flex-end;
   flex: none;
-  width: 108px;
-  height: 31px;
-  padding: 0 10px;
+  width: 122px;
+  height: 35px;
+  padding: 0 11px;
   border-radius: 999px;
   background: #000;
   transition: width 0.35s cubic-bezier(0.3, 1.4, 0.5, 1);
 }
 
 [data-os="ios"] .ios-island[data-live] {
-  width: 150px;
+  width: 158px;
 }
 
 [data-os="ios"] .ios-lock-time {
@@ -125,11 +125,16 @@
   background: #fff;
 }
 
+[data-os="ios"] .ios-home {
+  --icon: 60px;
+  --row: calc(var(--icon) + 29px);
+}
+
 [data-os="ios"] .ios-page {
   flex: none;
   width: 100%;
   height: 100%;
-  padding: 6px 20px 0;
+  padding: 0 max(10px, 2.82vw);
   overflow-y: auto;
   scroll-snap-align: start;
   scrollbar-width: none;
@@ -138,9 +143,8 @@
 [data-os="ios"] .ios-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-auto-rows: 86px;
-  gap: 16px 0;
-  max-width: 400px;
+  grid-auto-rows: var(--row);
+  max-width: 408px;
   margin: 0 auto;
 }
 
@@ -150,41 +154,59 @@
   align-items: center;
   gap: 5px;
   min-width: 0;
-  transition: transform 0.15s;
+  transition:
+    transform 0.15s,
+    filter 0.15s;
 }
 
 [data-os="ios"] .ios-app:active,
 [data-os="ios"] .ios-dock button:active,
 [data-os="ios"] .ios-pod button:active {
   transform: scale(0.9);
-  filter: brightness(0.8);
+  filter: brightness(0.78);
 }
 
 [data-os="ios"] .ios-app-label {
-  max-width: 100%;
+  max-width: calc(100% - 4px);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: #fff;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 500;
-  text-shadow: 0 1px 3px rgb(0 0 0 / 0.45);
+  line-height: 14px;
+  letter-spacing: -0.01em;
+  text-shadow: 0 0.5px 2px rgb(0 0 0 / 0.28);
+}
+
+[data-os="ios"] .ios-widget-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
 }
 
 [data-os="ios"] .ios-widget {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin: 0 9px;
+  width: calc(100% - (25% - var(--icon)));
+  height: calc(var(--row) + var(--icon));
   padding: 14px;
-  border-radius: 22px;
-  background: rgb(30 30 40 / 0.42);
-  border: 0.5px solid rgb(255 255 255 / 0.18);
-  backdrop-filter: blur(30px) saturate(1.6);
+  border-radius: 24px;
+  background: rgb(28 28 38 / 0.42);
+  border: 0.5px solid rgb(255 255 255 / 0.2);
+  box-shadow: inset 0 1px 0.5px rgb(255 255 255 / 0.22);
+  backdrop-filter: blur(30px) saturate(1.7);
   color: #fff;
   text-align: left;
   overflow: hidden;
   transition: transform 0.15s;
+}
+
+[data-os="ios"] .ios-widget-cell.col-span-2 .ios-widget {
+  width: calc(100% - (50% - var(--icon)));
 }
 
 [data-os="ios"] .ios-widget:active {
@@ -192,10 +214,23 @@
 }
 
 [data-os="ios"] .ios-dock {
-  border-radius: 34px;
-  background: rgb(255 255 255 / 0.24);
-  border: 0.5px solid rgb(255 255 255 / 0.22);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  justify-items: center;
+  width: min(calc(100% - 24px), 400px);
+  margin: 0 auto 14px;
+  padding: 17px 0;
+  border-radius: 36px;
+  background: rgb(255 255 255 / 0.26);
+  border: 0.5px solid rgb(255 255 255 / 0.3);
+  box-shadow: inset 0 1px 0.5px rgb(255 255 255 / 0.35);
   backdrop-filter: blur(30px) saturate(1.8);
+}
+
+[data-os="ios"] .ios-dock button {
+  transition:
+    transform 0.15s,
+    filter 0.15s;
 }
 
 [data-os="ios"] .ios-search-pill {
@@ -205,15 +240,16 @@
   height: 30px;
   padding: 0 13px;
   border-radius: 999px;
-  background: rgb(255 255 255 / 0.22);
-  backdrop-filter: blur(20px);
+  background: rgb(255 255 255 / 0.24);
+  border: 0.5px solid rgb(255 255 255 / 0.25);
+  backdrop-filter: blur(20px) saturate(1.6);
   color: #fff;
   font-size: 13.5px;
 }
 
 [data-os="ios"] .ios-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: rgb(255 255 255 / 0.4);
 }
@@ -223,8 +259,9 @@
 }
 
 [data-os="ios"] .ios-pod {
-  border-radius: 26px;
+  border-radius: 28px;
   background: rgb(255 255 255 / 0.2);
+  border: 0.5px solid rgb(255 255 255 / 0.18);
   backdrop-filter: blur(24px);
 }
 
@@ -461,22 +498,22 @@
     padding-top: 0;
   }
 
-  [data-os="ios"] .ios-grid {
-    grid-template-columns: repeat(8, minmax(0, 1fr));
-    grid-auto-rows: 78px;
-    gap: 8px 0;
-    max-width: 780px;
+  [data-os="ios"] .ios-home {
+    --row: calc(var(--icon) + 24px);
   }
 
-  [data-os="ios"] .ios-app,
-  [data-os="ios"] .ios-dock button {
-    zoom: 0.78;
+  [data-os="ios"] .ios-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    max-width: 760px;
+  }
+
+  [data-os="ios"] .ios-widget-cell.col-span-2 .ios-widget {
+    width: calc(100% - (25% - var(--icon)) * 2);
   }
 
   [data-os="ios"] .ios-dock {
     margin-bottom: 6px;
-    padding-top: 6px;
-    padding-bottom: 6px;
+    padding: 6px 0;
     border-radius: 22px;
   }
 

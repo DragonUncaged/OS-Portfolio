@@ -33,6 +33,7 @@ import { useLauncher } from "@/hooks/use-launcher";
 import { useNow } from "@/hooks/use-now";
 import { useOnline } from "@/hooks/use-online";
 import { usePanel } from "@/hooks/use-panel";
+import { useViewport } from "@/hooks/use-viewport";
 import { useWelcome } from "@/hooks/use-welcome";
 import { useWindowEvent } from "@/hooks/use-window-event";
 import { DAYS, MONTHS, dateLong, time12 } from "@/lib/format";
@@ -74,14 +75,14 @@ function StatusBar({ tone, toggle }: { tone: "light" | "auto"; toggle: (p: Panel
   const now = useNow(1000);
   const playing = usePlayer((s) => s.playing);
   return (
-    <div className="ios-status fixed inset-x-0 top-0 z-[3000] flex items-center justify-between px-7" data-tone={tone}>
-      <button type="button" className="ios-status-side justify-start" aria-label="Notifications" data-panel-trigger onClick={() => toggle("notifications")}>
-        <span className="text-[16px] font-semibold tabular-nums">{time12(now)}</span>
+    <div className="ios-status fixed inset-x-0 top-0 z-[3000] flex items-center justify-between px-3" data-tone={tone}>
+      <button type="button" className="ios-status-side justify-center" aria-label="Notifications" data-panel-trigger onClick={() => toggle("notifications")}>
+        <span className="text-[17px] font-semibold tabular-nums">{time12(now)}</span>
       </button>
       <div className="ios-island" data-live={playing || undefined} aria-hidden="true">
         {playing && <Waveform size={15} weight="bold" className="text-[#ff7ab8]" />}
       </div>
-      <button type="button" className="ios-status-side justify-end gap-1.5" aria-label="Control Centre" data-panel-trigger onClick={() => toggle("control")}>
+      <button type="button" className="ios-status-side justify-center gap-1.5" aria-label="Control Centre" data-panel-trigger onClick={() => toggle("control")}>
         <WifiGlyph size={17} />
         <BatteryGlyph size={25} />
       </button>
@@ -138,7 +139,12 @@ function Lock() {
   );
 }
 
-function Tile({ id, size = 62 }: { id: AppId; size?: number }) {
+function useIconSize(): number {
+  const { w, h } = useViewport();
+  return Math.round(Math.min(60, Math.max(50, Math.min(w, h * 0.62) * 0.1538)));
+}
+
+function Tile({ id, size }: { id: AppId; size: number }) {
   return (
     <button type="button" className="ios-app" onClick={(e) => open(id, e.currentTarget.firstElementChild)}>
       <AppIcon id={id} size={size} />
@@ -160,9 +166,13 @@ function Home({ toggle }: { toggle: (p: Panel) => void }) {
     apps: launchable("ios").filter((id) => APPS[id].category === c),
   }));
   const pages = 3;
+  const icon = useIconSize();
 
   return (
-    <div className="ios-home absolute inset-0 flex flex-col text-white" style={{ paddingTop: "calc(var(--sb-h) + 8px)" }}>
+    <div
+      className="ios-home absolute inset-0 flex flex-col text-white"
+      style={{ paddingTop: "calc(var(--sb-h) + 14px)", ["--icon" as string]: `${icon}px` }}
+    >
       <div
         ref={scroller}
         className="flex min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto overflow-y-hidden [scrollbar-width:none]"
@@ -170,40 +180,49 @@ function Home({ toggle }: { toggle: (p: Panel) => void }) {
       >
         <section className="ios-page" aria-label="Home screen page 1">
           <div className="ios-grid">
-            <button type="button" className="ios-widget col-span-2 row-span-2" onClick={(e) => open("about", e.currentTarget)}>
-              <Avatar size={44} />
-              <span className="mt-auto block text-[16px] font-semibold leading-tight">{profile.name}</span>
-              <span className="block text-[12.5px] opacity-75">{profile.role}</span>
-              <span className="mt-0.5 block truncate text-[11.5px] opacity-60">@ {currentJob.company}</span>
-            </button>
-            <button type="button" className="ios-widget col-span-2 row-span-2" onClick={(e) => open("calendar", e.currentTarget)}>
-              <span className="block text-[12px] font-bold uppercase text-[#ff453a]">{DAYS[today.getDay()]}</span>
-              <span className="block text-[44px] font-light leading-none">{today.getDate()}</span>
-              <span className="mt-auto block text-[12.5px] opacity-75">{MONTHS[today.getMonth()]}</span>
-              <span className="block text-[11.5px] opacity-60">Tap for calendar</span>
-            </button>
+            <div className="ios-widget-cell col-span-2 row-span-2">
+              <button type="button" className="ios-widget" onClick={(e) => open("about", e.currentTarget)}>
+                <Avatar size={44} />
+                <span className="mt-auto block max-w-full truncate text-[16px] font-semibold leading-tight">{profile.name}</span>
+                <span className="block max-w-full truncate text-[12.5px] opacity-75">{profile.role}</span>
+                <span className="mt-0.5 block max-w-full truncate text-[11.5px] opacity-60">@ {currentJob.company}</span>
+              </button>
+              <span className="ios-app-label">{appName("about", "ios")}</span>
+            </div>
+            <div className="ios-widget-cell col-span-2 row-span-2">
+              <button type="button" className="ios-widget" onClick={(e) => open("calendar", e.currentTarget)}>
+                <span className="block text-[12px] font-bold uppercase text-[#ff453a]">{DAYS[today.getDay()]}</span>
+                <span className="block text-[44px] font-light leading-none">{today.getDate()}</span>
+                <span className="mt-auto block text-[12.5px] opacity-75">{MONTHS[today.getMonth()]}</span>
+                <span className="block text-[11.5px] opacity-60">No events today</span>
+              </button>
+              <span className="ios-app-label">{appName("calendar", "ios")}</span>
+            </div>
             {PAGE_ONE.map((id) => (
-              <Tile key={id} id={id} />
+              <Tile key={id} id={id} size={icon} />
             ))}
           </div>
         </section>
         <section className="ios-page" aria-label="Home screen page 2">
           <div className="ios-grid">
-            <button type="button" className="ios-widget col-span-4 row-span-2 !flex-row !items-center gap-3.5" onClick={(e) => open("music", e.currentTarget)}>
-              <span
-                className="grid aspect-square h-full max-h-[104px] shrink-0 place-items-center rounded-[14px]"
-                style={{ background: `linear-gradient(140deg, ${TRACKS[index].color[0]}, ${TRACKS[index].color[1]})` }}
-              >
-                <Waveform size={34} weight="bold" />
-              </span>
-              <span className="min-w-0 text-left">
-                <span className="block text-[11.5px] font-bold uppercase opacity-60">{playing ? "Now playing" : "Music"}</span>
-                <span className="block truncate text-[18px] font-semibold">{TRACKS[index].title}</span>
-                <span className="block truncate text-[12.5px] opacity-70">{TRACKS[index].mood}</span>
-              </span>
-            </button>
+            <div className="ios-widget-cell col-span-4 row-span-2">
+              <button type="button" className="ios-widget !flex-row !items-center gap-3.5" onClick={(e) => open("music", e.currentTarget)}>
+                <span
+                  className="grid aspect-square h-full shrink-0 place-items-center rounded-[14px]"
+                  style={{ background: `linear-gradient(140deg, ${TRACKS[index].color[0]}, ${TRACKS[index].color[1]})` }}
+                >
+                  <Waveform size={34} weight="bold" />
+                </span>
+                <span className="min-w-0 text-left">
+                  <span className="block text-[11.5px] font-bold uppercase opacity-60">{playing ? "Now playing" : "Music"}</span>
+                  <span className="block truncate text-[18px] font-semibold">{TRACKS[index].title}</span>
+                  <span className="block truncate text-[12.5px] opacity-70">{TRACKS[index].mood}</span>
+                </span>
+              </button>
+              <span className="ios-app-label">{appName("music", "ios")}</span>
+            </div>
             {rest.map((id) => (
-              <Tile key={id} id={id} />
+              <Tile key={id} id={id} size={icon} />
             ))}
           </div>
         </section>
@@ -218,7 +237,7 @@ function Home({ toggle }: { toggle: (p: Panel) => void }) {
                 <div className="ios-pod grid grid-cols-2 gap-2.5 p-3">
                   {g.apps.slice(0, 4).map((id) => (
                     <button key={id} type="button" aria-label={appName(id, "ios")} onClick={(e) => open(id, e.currentTarget)}>
-                      <AppIcon id={id} size={54} className="mx-auto" />
+                      <AppIcon id={id} size={Math.round(icon * 0.92)} className="mx-auto" />
                     </button>
                   ))}
                 </div>
@@ -227,7 +246,7 @@ function Home({ toggle }: { toggle: (p: Panel) => void }) {
                   <div className="mt-2 flex flex-wrap justify-center gap-2">
                     {g.apps.slice(4).map((id) => (
                       <button key={id} type="button" aria-label={appName(id, "ios")} onClick={(e) => open(id, e.currentTarget)}>
-                        <AppIcon id={id} size={34} />
+                        <AppIcon id={id} size={Math.round(icon * 0.58)} />
                       </button>
                     ))}
                   </div>
@@ -258,10 +277,10 @@ function Home({ toggle }: { toggle: (p: Panel) => void }) {
           ))}
         </div>
       </div>
-      <div className="ios-dock mx-3 mb-3 flex shrink-0 justify-around px-2 py-3.5">
+      <div className="ios-dock shrink-0">
         {DOCK.map((id) => (
           <button key={id} type="button" aria-label={appName(id, "ios")} onClick={(e) => open(id, e.currentTarget)}>
-            <AppIcon id={id} size={62} />
+            <AppIcon id={id} size={icon} />
           </button>
         ))}
       </div>
@@ -271,6 +290,7 @@ function Home({ toggle }: { toggle: (p: Panel) => void }) {
 
 function Search({ onClose }: { onClose: () => void }) {
   const l = useLauncher(onClose, 8);
+  const icon = useIconSize();
   const apps = launchable("ios").slice(0, 8);
   return (
     <motion.div
@@ -332,7 +352,7 @@ function Search({ onClose }: { onClose: () => void }) {
                     open(id, e.currentTarget);
                   }}
                 >
-                  <AppIcon id={id} size={52} />
+                  <AppIcon id={id} size={icon} />
                   <span className="ios-app-label">{appName(id, "ios")}</span>
                 </button>
               ))}
