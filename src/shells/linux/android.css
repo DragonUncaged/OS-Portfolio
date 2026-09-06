@@ -1,275 +1,334 @@
 [data-os="android"] {
-  --os-font: "Roboto", "Google Sans", system-ui, sans-serif;
-  --os-mono: "Roboto Mono", "JetBrains Mono Variable", monospace;
+  --os-font: "Google Sans Flex Variable", "Google Sans", "Roboto", system-ui, sans-serif;
+  --os-mono: "Google Sans Code", "Roboto Mono", "JetBrains Mono Variable", monospace;
   --os-r: 20px;
-  --os-r-lg: 24px;
+  --os-r-lg: 26px;
   --ctl-h: 40px;
-  --sb-h: 34px;
-  --nav-h: 44px;
+  --sb-h: 46px;
+  --nav-h: 22px;
   --folder: var(--accent);
   --icon-plate: #ffffff;
   --icon-ink: #16161a;
 
-  --bg: color-mix(in srgb, var(--accent) 5%, #fdfcff);
-  --bg-2: color-mix(in srgb, var(--accent) 9%, #f6f4f8);
-  --bg-3: color-mix(in srgb, var(--accent) 12%, #f0eef3);
+  --bg: color-mix(in srgb, var(--accent) 4%, #fdfcff);
+  --bg-2: color-mix(in srgb, var(--accent) 8%, #f5f3f7);
+  --bg-3: color-mix(in srgb, var(--accent) 11%, #eeecf1);
   --fg: #1b1b1f;
-  --fg-2: rgb(27 27 31 / 0.68);
+  --fg-2: rgb(27 27 31 / 0.7);
   --fg-3: rgb(27 27 31 / 0.44);
   --line: rgb(27 27 31 / 0.12);
   --ctl: color-mix(in srgb, var(--accent) 12%, rgb(27 27 31 / 0.06));
-  --ctl-2: color-mix(in srgb, var(--accent) 22%, rgb(27 27 31 / 0.08));
+  --ctl-2: color-mix(in srgb, var(--accent) 20%, rgb(27 27 31 / 0.08));
   --accent-soft: color-mix(in srgb, var(--accent) 20%, transparent);
-  --menu-bg: color-mix(in srgb, var(--accent) 10%, #f3f1f6);
+  --menu-bg: color-mix(in srgb, var(--accent) 9%, #f3f1f6);
+  --sheet: color-mix(in srgb, color-mix(in srgb, var(--accent) 9%, #f4f2f6) 84%, transparent);
+  --tile: color-mix(in srgb, var(--accent) 10%, #e7e5ea);
 }
 
 [data-os="android"][data-theme="dark"],
 [data-os="android"] [data-theme="dark"] {
   --icon-plate: #25232a;
   --icon-ink: #ffffff;
-  --bg: color-mix(in srgb, var(--accent) 6%, #121114);
-  --bg-2: color-mix(in srgb, var(--accent) 9%, #19181c);
-  --bg-3: color-mix(in srgb, var(--accent) 13%, #201f24);
-  --fg: #e6e1e6;
-  --fg-2: rgb(230 225 230 / 0.7);
-  --fg-3: rgb(230 225 230 / 0.44);
-  --line: rgb(230 225 230 / 0.13);
-  --ctl: color-mix(in srgb, var(--accent) 16%, rgb(230 225 230 / 0.07));
-  --ctl-2: color-mix(in srgb, var(--accent) 28%, rgb(230 225 230 / 0.1));
-  --menu-bg: color-mix(in srgb, var(--accent) 12%, #232227);
+  --bg: color-mix(in srgb, var(--accent) 5%, #111014);
+  --bg-2: color-mix(in srgb, var(--accent) 8%, #18171b);
+  --bg-3: color-mix(in srgb, var(--accent) 12%, #201f24);
+  --fg: #e7e2e7;
+  --fg-2: rgb(231 226 231 / 0.72);
+  --fg-3: rgb(231 226 231 / 0.44);
+  --line: rgb(231 226 231 / 0.13);
+  --ctl: color-mix(in srgb, var(--accent) 16%, rgb(231 226 231 / 0.07));
+  --ctl-2: color-mix(in srgb, var(--accent) 26%, rgb(231 226 231 / 0.1));
+  --menu-bg: color-mix(in srgb, var(--accent) 11%, #222126);
+  --sheet: color-mix(in srgb, color-mix(in srgb, var(--accent) 9%, #1a191d) 80%, transparent);
+  --tile: color-mix(in srgb, var(--accent) 12%, #2c2b31);
 }
 
 [data-os="android"] {
   font-size: 15px;
 }
 
-[data-os="android"] .md-dots {
-  display: flex;
-  gap: 9px;
+[data-os="android"] .px-corners {
+  border-radius: 34px;
+  box-shadow: 0 0 0 60px #000;
 }
 
-[data-os="android"] .md-dots i {
-  width: 11px;
-  height: 11px;
+[data-os="android"] .px-camera {
+  width: 23px;
+  height: 23px;
   border-radius: 50%;
-  animation: md-bounce 1s ease-in-out infinite;
+  background: radial-gradient(circle at 38% 34%, #2a2d3a 0 16%, #0a0a0d 30%, #000 100%);
+  box-shadow: 0 0 0 1.5px #050506;
 }
 
-[data-os="android"] .md-dots i:nth-child(1) {
-  background: #e95420;
+[data-os="android"] .px-boot-bar {
+  display: block;
+  width: 132px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.18);
+  overflow: hidden;
 }
 
-[data-os="android"] .md-dots i:nth-child(2) {
-  background: #f99b11;
-  animation-delay: 0.12s;
+[data-os="android"] .px-boot-bar i {
+  display: block;
+  width: 40%;
+  height: 100%;
+  border-radius: inherit;
+  background: #fff;
+  animation: px-boot 1.1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-[data-os="android"] .md-dots i:nth-child(3) {
-  background: #77216f;
-  animation-delay: 0.24s;
-}
-
-[data-os="android"] .md-dots i:nth-child(4) {
-  background: #5e2750;
-  animation-delay: 0.36s;
-}
-
-@keyframes md-bounce {
-  0%,
-  60%,
-  100% {
-    transform: translateY(0);
+@keyframes px-boot {
+  from {
+    transform: translateX(-110%);
   }
-  30% {
-    transform: translateY(-11px);
+  to {
+    transform: translateX(260%);
   }
 }
 
-[data-os="android"] .md-lock-clock {
-  font-size: clamp(96px, 34vw, 150px);
-  font-weight: 400;
-  line-height: 0.92;
+[data-os="android"] .px-clock {
+  font-variation-settings: "ROND" 100;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
-  color: color-mix(in srgb, var(--accent) 35%, #fff);
-  text-shadow: 0 2px 22px rgb(0 0 0 / 0.25);
+  color: color-mix(in srgb, var(--accent) 34%, #fff);
+  text-shadow: 0 2px 22px rgb(0 0 0 / 0.22);
 }
 
-[data-os="android"] .md-status {
+[data-os="android"] .px-clock-big {
+  font-size: clamp(104px, 37vw, 168px);
+  line-height: 0.86;
+}
+
+[data-os="android"] .px-lock-shortcut,
+[data-os="android"] .px-fingerprint {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgb(20 20 26 / 0.42);
+  backdrop-filter: blur(18px);
+  transition:
+    background-color 0.2s,
+    border-radius 0.25s cubic-bezier(0.2, 0, 0, 1),
+    transform 0.15s;
+}
+
+[data-os="android"] .px-lock-shortcut {
+  width: 56px;
+  height: 56px;
+}
+
+[data-os="android"] .px-lock-shortcut:active,
+[data-os="android"] .px-fingerprint:active {
+  transform: scale(0.92);
+}
+
+[data-os="android"] .px-lock-shortcut[data-on="true"] {
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--accent) 45%, #fff);
+  color: #16161a;
+}
+
+[data-os="android"] .px-fingerprint {
+  width: 68px;
+  height: 68px;
+  border: 1.5px solid rgb(255 255 255 / 0.32);
+}
+
+[data-os="android"] .px-lock-notices .os-notice {
+  background: rgb(26 24 30 / 0.62);
+  backdrop-filter: blur(20px);
+  color: #fff;
+}
+
+[data-os="android"] .px-status {
   height: var(--sb-h);
+  padding-top: 2px;
   color: var(--fg);
   transition: color 0.2s;
 }
 
-[data-os="android"] .md-status[data-tone="light"] {
+[data-os="android"] .px-status[data-tone="light"] {
   color: #fff;
 }
 
-[data-os="android"] .md-nav {
-  height: var(--nav-h);
-  background: var(--bg);
-  color: var(--fg-2);
-  transition:
-    background-color 0.2s,
-    color 0.2s;
-}
-
-[data-os="android"] .md-nav[data-tone="light"] {
-  background: transparent;
-  color: #fff;
-}
-
-[data-os="android"] .md-nav-key {
+[data-os="android"] .px-gesture {
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 36px;
+  width: min(62vw, 260px);
+  height: 24px;
+}
+
+[data-os="android"] .px-gesture span {
+  width: 108px;
+  height: 4.5px;
   border-radius: 999px;
-  transition: background-color 0.15s;
+  background: var(--fg);
+  opacity: 0.72;
+  transition:
+    background-color 0.2s,
+    transform 0.15s;
 }
 
-[data-os="android"] .md-nav-key:active {
-  background: color-mix(in srgb, currentColor 22%, transparent);
+[data-os="android"] .px-gesture[data-light] span {
+  background: #fff;
+  opacity: 0.92;
 }
 
-[data-os="android"] .md-app {
+[data-os="android"] .px-gesture:active span {
+  transform: scaleX(0.9) scaleY(1.3);
+}
+
+[data-os="android"] [inert] .px-gesture {
+  visibility: hidden;
+}
+
+[data-os="android"] .px-home {
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+[data-os="android"] .px-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  row-gap: 18px;
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 0 14px;
+}
+
+[data-os="android"] .px-dock {
+  padding-bottom: 18px;
+}
+
+[data-os="android"] .px-app {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
   min-width: 0;
-  transition: transform 0.15s;
+  transition: transform 0.2s cubic-bezier(0.3, 1.5, 0.5, 1);
 }
 
-[data-os="android"] .md-app:active {
-  transform: scale(0.9);
+[data-os="android"] .px-app:active {
+  transform: scale(0.88);
 }
 
-[data-os="android"] .md-app-label {
+[data-os="android"] .px-app-label {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 12.5px;
+  line-height: 16px;
 }
 
-[data-os="android"] .md-home .md-app-label {
+[data-os="android"] .px-home .px-app-label {
   color: #fff;
   text-shadow: 0 1px 3px rgb(0 0 0 / 0.55);
 }
 
-[data-os="android"] .md-searchbar {
+[data-os="android"] .px-searchbar {
+  height: 56px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--accent) 16%, var(--icon-plate));
+  background: color-mix(in srgb, var(--accent) 14%, var(--icon-plate));
+  color: var(--fg-2);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.2);
+  transition: transform 0.15s;
+}
+
+[data-os="android"] .px-searchbar:active {
+  transform: scale(0.98);
+}
+
+[data-os="android"] .px-sheet {
+  background: var(--sheet);
   color: var(--fg);
-  box-shadow: 0 2px 10px rgb(0 0 0 / 0.18);
 }
 
-[data-os="android"] .md-sheet {
-  background: var(--bg-2);
+[data-os="android"] .px-blur {
+  backdrop-filter: blur(34px) saturate(1.4);
+}
+
+[data-os="android"] .px-pill {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: var(--tile);
   color: var(--fg);
-}
-
-[data-os="android"] .md-field {
-  border-radius: 999px;
-  background: var(--ctl-2);
-}
-
-[data-os="android"] .md-result {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  width: 100%;
-  padding: 10px 14px;
-  border-radius: 20px;
-}
-
-[data-os="android"] .md-result[data-on="true"],
-[data-os="android"] .md-result:active {
-  background: var(--ctl-2);
-}
-
-[data-os="android"] .md-qs {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-  height: 68px;
-  padding: 0 18px;
-  border-radius: 999px;
-  background: var(--ctl-2);
-  text-align: left;
-  transition:
-    background-color 0.2s,
-    border-radius 0.2s;
-}
-
-[data-os="android"] .md-qs[data-on="true"] {
-  border-radius: 22px;
-  background: var(--accent);
-  color: var(--accent-fg);
-}
-
-[data-os="android"] .md-text-btn {
-  padding: 6px 12px;
-  border-radius: 999px;
-  color: var(--accent);
   font-size: 14px;
   font-weight: 500;
 }
 
-[data-os="android"] .md-text-btn:active {
-  background: var(--accent-soft);
-}
-
-[data-os="android"] .md-power {
-  border-radius: 32px;
-  background: var(--bg-3);
-  color: var(--fg);
-}
-
-[data-os="android"] .md-power-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  height: 108px;
-  border-radius: 28px;
+[data-os="android"] .px-pill:active {
   background: var(--ctl-2);
-  font-size: 14px;
-  font-weight: 500;
 }
 
-[data-os="android"] .md-power-btn:active,
-[data-os="android"] .md-power-btn:focus-visible {
-  background: var(--accent);
-  color: var(--accent-fg);
-  outline: none;
+[data-os="android"] .px-clear-all {
+  bottom: calc(var(--nav-h) + 26px);
+  background: rgb(40 38 46 / 0.72);
+  color: #fff;
+  backdrop-filter: blur(16px);
 }
 
 [data-os="android"] .os-banner,
 [data-os="android"] .os-notice {
   border: none;
-  border-radius: 24px;
+  border-radius: 26px;
   background: var(--bg-3);
   backdrop-filter: none;
 }
 
-[data-os="android"] .md-shade .os-notice {
-  background: var(--ctl);
-}
-
 [data-os="android"] .phone-switcher-bg {
-  background: rgb(0 0 0 / 0.5);
+  background: rgb(0 0 0 / 0.42);
+  backdrop-filter: blur(30px) saturate(1.3);
 }
 
 [data-os="android"] .phone-card-label {
   justify-content: center;
+  padding-bottom: 12px;
   font-weight: 500;
+  text-shadow: none;
+}
+
+[data-os="android"] .phone-card-label > :first-child {
+  margin-left: 12px;
+}
+
+[data-os="android"] .phone-card-label::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  width: min(100%, 230px);
+  height: 40px;
+  border-radius: 999px;
+  background: rgb(40 38 46 / 0.72);
+  backdrop-filter: blur(16px);
+  transform: translateX(-50%);
+  z-index: -1;
+}
+
+[data-os="android"] .phone-card-label {
+  width: min(100%, 230px);
+  left: 50%;
+  right: auto;
+  height: 52px;
+  transform: translateX(-50%);
+  z-index: 0;
 }
 
 [data-os="android"] .phone-card-label span {
-  flex: none;
+  flex: 0 1 auto;
+}
+
+[data-os="android"] .phone-card-close {
+  width: 28px;
+  height: 28px;
+  margin-right: 8px;
+  background: rgb(255 255 255 / 0.16);
 }
 
 [data-os="android"] .md-icon-btn {
@@ -280,6 +339,9 @@
   height: 44px;
   border-radius: 50%;
   color: var(--fg);
+  transition:
+    background-color 0.15s,
+    border-radius 0.2s;
 }
 
 [data-os="android"] .md-icon-btn:disabled {
@@ -300,7 +362,7 @@
   position: relative;
   flex: 1 0 auto;
   min-width: 82px;
-  height: 46px;
+  height: 48px;
   padding: 0 14px;
   color: var(--fg-2);
   font-size: 14px;
@@ -315,28 +377,73 @@
 [data-os="android"] .md-tab[data-on="true"]::after {
   content: "";
   position: absolute;
-  left: 22%;
-  right: 22%;
+  left: 24%;
+  right: 24%;
   bottom: 0;
   height: 3px;
   border-radius: 3px 3px 0 0;
   background: var(--accent);
 }
 
+[data-os="android"] .md-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px 16px 24px;
+}
+
+[data-os="android"] .md-nav-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 76px;
+  padding: 12px 18px;
+  border-radius: 6px;
+  background: var(--bg-3);
+  text-align: left;
+  transition: background-color 0.15s;
+}
+
+[data-os="android"] .md-nav-row:first-child {
+  border-radius: 26px 26px 6px 6px;
+}
+
+[data-os="android"] .md-nav-row:last-child {
+  border-radius: 6px 6px 26px 26px;
+}
+
+[data-os="android"] .md-nav-row:only-child {
+  border-radius: 26px;
+}
+
+[data-os="android"] .md-nav-row:active {
+  background: var(--ctl-2);
+}
+
+[data-os="android"] .md-nav-badge {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #fff;
+}
+
 [data-os="android"] .md-search .k-input,
 [data-os="android"] .os-search .k-input {
-  min-height: 48px;
+  min-height: 52px;
   border-radius: 999px;
-  background: var(--ctl-2);
+  background: var(--tile);
   font-size: 16px;
 }
 
 [data-os="android"] .os-search svg:first-child {
-  left: 16px;
+  left: 14px;
 }
 
 [data-os="android"] .os-search .k-input {
-  padding-left: 44px !important;
+  text-indent: 10px;
 }
 
 [data-os="android"] .k-card {
@@ -346,10 +453,18 @@
 
 [data-os="android"] .k-btn {
   min-height: 40px;
-  padding: 0 20px;
+  padding: 0 22px;
   border-radius: 999px;
-  background: var(--ctl-2);
+  background: var(--tile);
   font-size: 14px;
+  transition:
+    background-color 0.15s,
+    border-radius 0.25s cubic-bezier(0.2, 0, 0, 1),
+    transform 0.1s;
+}
+
+[data-os="android"] .k-btn:active {
+  border-radius: 14px;
 }
 
 [data-os="android"] .k-btn-primary {
@@ -363,7 +478,7 @@
 }
 
 [data-os="android"] .k-input {
-  border-radius: 14px;
+  border-radius: 16px;
   font-size: 16px;
 }
 
@@ -416,13 +531,13 @@
 }
 
 [data-os="android"] .os-slider::-webkit-slider-runnable-track {
-  height: 14px;
+  height: 16px;
 }
 
 [data-os="android"] .os-slider::-webkit-slider-thumb {
-  width: 6px;
-  height: 30px;
-  margin-top: -8px;
+  width: 5px;
+  height: 34px;
+  margin-top: -9px;
   border-radius: 3px;
   background: var(--accent);
   border: none;
@@ -433,54 +548,57 @@
   min-height: 60px;
   border-radius: 999px;
   font-size: 24px;
+  transition:
+    background-color 0.12s,
+    border-radius 0.2s cubic-bezier(0.2, 0, 0, 1),
+    transform 0.08s;
+}
+
+[data-os="android"] .os-calc-key:active {
+  border-radius: 18px;
 }
 
 [data-os="android"] .browser-tab {
   border-radius: 999px;
 }
 
-[data-os="android"] [inert] .md-nav {
-  visibility: hidden;
-}
-
-[data-os="android"] .md-home {
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-
 @media (max-height: 520px) and (orientation: landscape) {
   [data-os="android"] {
-    --sb-h: 26px;
-    --nav-h: 36px;
+    --sb-h: 28px;
+    --nav-h: 18px;
   }
 
-  [data-os="android"] .md-home {
-    padding-top: calc(var(--sb-h) + 6px) !important;
+  [data-os="android"] .px-camera {
+    display: none;
   }
 
-  [data-os="android"] .md-home > .grid {
+  [data-os="android"] .px-home {
+    padding-top: calc(var(--sb-h) + 4px) !important;
+  }
+
+  [data-os="android"] .px-home .px-grid {
     grid-template-columns: repeat(8, minmax(0, 1fr));
     max-width: 720px;
   }
 
-  [data-os="android"] .md-home .md-app {
+  [data-os="android"] .px-home .px-app {
     zoom: 0.8;
   }
 
-  [data-os="android"] .md-searchbar {
+  [data-os="android"] .px-searchbar {
     height: 40px;
   }
 
-  [data-os="android"] .md-lock-clock {
-    top: 12%;
-    font-size: 84px;
+  [data-os="android"] .px-clock-big {
+    margin-top: 0;
+    font-size: 80px;
   }
 
-  [data-os="android"] .md-lock-clock span {
+  [data-os="android"] .px-clock-big span {
     display: inline;
   }
 
-  [data-os="android"] .md-lock-clock span + span::before {
+  [data-os="android"] .px-clock-big span + span::before {
     content: ":";
   }
 }
