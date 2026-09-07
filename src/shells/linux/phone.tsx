@@ -17,7 +17,7 @@ import {
 } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRef, useState } from "react";
-import { appName } from "@/apps/registry";
+import { appName, launchable } from "@/apps/registry";
 import { AppIcon } from "@/components/app-icon";
 import { Banner, NoticeList } from "@/components/notifications";
 import { PhoneHost } from "@/components/phone-host";
@@ -25,6 +25,7 @@ import { ShellRoot, ShellWallpaper } from "@/components/shell-root";
 import { BatteryGlyph, WifiGlyph } from "@/components/status-glyphs";
 import { profile } from "@/data/portfolio";
 import { useBootTimer } from "@/hooks/use-boot-timer";
+import { useLauncher } from "@/hooks/use-launcher";
 import { useNow } from "@/hooks/use-now";
 import { usePanel } from "@/hooks/use-panel";
 import { useWelcome } from "@/hooks/use-welcome";
@@ -284,6 +285,105 @@ function Home({ openPanel }: { openPanel: (p: Panel) => void }) {
   );
 }
 
+function Drawer({ onClose }: { onClose: () => void }) {
+  const [query, setQuery] = useState("");
+  const q = query.trim().toLowerCase();
+  const apps = launchable("android")
+    .map((id) => ({ id, name: appName(id, "android") }))
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .filter((a) => a.name.toLowerCase().includes(q));
+  return (
+    <motion.div
+      className="px-sheet px-blur fixed inset-0 z-[2700] flex flex-col"
+      style={{ paddingTop: "calc(var(--sb-h) + 10px)", paddingBottom: "var(--nav-h)" }}
+      role="dialog"
+      aria-label="All apps"
+      data-panel
+      initial={{ y: "100%" }}
+      animate={{ y: 0 }}
+      exit={{ y: "100%", transition: { duration: 0.22, ease: [0.3, 0, 0.8, 0.15] } }}
+      transition={SPRING}
+    >
+      <label className="px-field mx-4 flex h-14 shrink-0 items-center gap-3 px-5">
+        <MagnifyingGlass size={21} className="shrink-0 text-fg2" />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search apps"
+          aria-label="Search apps"
+          className="min-w-0 flex-1 bg-transparent text-[16px] outline-none placeholder:text-fg2"
+          autoComplete="off"
+          spellCheck={false}
+        />
+      </label>
+      <div className="min-h-0 flex-1 overflow-y-auto pb-6 pt-5">
+        {!q && (
+          <>
+            <div className="px-grid">
+              {SUGGESTED.map((id) => (
+                <AppButton key={id} id={id} onOpen={onClose} />
+              ))}
+            </div>
+            <div className="mx-6 my-5 h-px bg-line" />
+          </>
+        )}
+        <div className="px-grid gap-y-6">
+          {apps.map((a) => (
+            <AppButton key={a.id} id={a.id} onOpen={onClose} />
+          ))}
+        </div>
+        {apps.length === 0 && <p className="py-10 text-center text-[15px] text-fg2">No apps match &quot;{query}&quot;</p>}
+      </div>
+    </motion.div>
+  );
+}
+
+function Search({ onClose }: { onClose: () => void }) {
+  const l = useLauncher(onClose, 8);
+  return (
+    <motion.div
+      className="px-sheet px-blur fixed inset-0 z-[2800] flex flex-col"
+      style={{ paddingTop: "calc(var(--sb-h) + 10px)", paddingBottom: "var(--nav-h)" }}
+      role="dialog"
+      aria-label="Search"
+      data-panel
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 30, transition: { duration: 0.16 } }}
+      transition={SPRING}
+    >
+      <label className="px-field mx-4 flex h-14 shrink-0 items-center gap-3 px-5">
+        <MagnifyingGlass size={21} className="shrink-0 text-accent" />
+        <input
+          autoFocus
+          value={l.query}
+          onChange={(e) => l.setQuery(e.target.value)}
+          onKeyDown={l.onKeyDown}
+          placeholder="Search apps and more"
+          aria-label="Search"
+          className="min-w-0 flex-1 bg-transparent text-[16px] outline-none placeholder:text-fg2"
+          autoComplete="off"
+          spellCheck={false}
+          enterKeyHint="search"
+        />
+      </label>
+      <div className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
+        {!l.query.trim() && <p className="px-5 py-6 text-[15px] text-fg2">Search apps, projects, skills, files and settings.</p>}
+        {l.query.trim() && l.hits.length === 0 && <p className="px-5 py-6 text-[15px] text-fg2">No results for &quot;{l.query}&quot;</p>}
+        {l.hits.map((h, i) => (
+          <button key={h.id} type="button" className="px-result" data-on={i === l.index} onClick={() => l.run(h)}>
+            <AppIcon id={h.app} size={42} />
+            <span className="min-w-0 flex-1 text-left">
+              <span className="block truncate text-[16px]">{h.title}</span>
+              <span className="block truncate text-[13px] text-fg2">{h.subtitle}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 function GestureBar({ panel, close, openDrawer, light }: { panel: Panel | null; close: () => void; openDrawer: () => void; light: boolean }) {
   const down = useRef<{ y: number; t: number } | null>(null);
   const timer = useRef<number | undefined>(undefined);
@@ -370,6 +470,8 @@ function Phone() {
       <StatusBar tone={overWallpaper ? "light" : "auto"} onOpen={() => toggle("shade")} />
       <Banner className="fixed inset-x-3" style={{ top: "calc(var(--sb-h) + 4px)" }} from={{ y: -70 }} />
       <AnimatePresence>
+        {panel === "drawer" && <Drawer key="drawer" onClose={close} />}
+        {panel === "search" && <Search key="search" onClose={close} />}
       </AnimatePresence>
       <GestureBar panel={panel} close={close} openDrawer={() => openPanel("drawer")} light={overWallpaper} />
     </>

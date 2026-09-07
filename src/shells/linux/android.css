@@ -252,6 +252,25 @@
   backdrop-filter: blur(34px) saturate(1.4);
 }
 
+[data-os="android"] .px-field {
+  border-radius: 999px;
+  background: var(--tile);
+}
+
+[data-os="android"] .px-result {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 22px;
+}
+
+[data-os="android"] .px-result[data-on="true"],
+[data-os="android"] .px-result:active {
+  background: var(--ctl-2);
+}
+
 [data-os="android"] .px-pill {
   height: 40px;
   padding: 0 20px;
