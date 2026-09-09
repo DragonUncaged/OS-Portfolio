@@ -271,6 +271,119 @@
   background: var(--ctl-2);
 }
 
+[data-os="android"] .px-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-width: 0;
+  height: 72px;
+  padding: 0 16px;
+  border-radius: 36px;
+  background: var(--tile);
+  color: var(--fg);
+  transition:
+    background-color 0.25s,
+    color 0.25s,
+    border-radius 0.3s cubic-bezier(0.2, 0, 0, 1),
+    transform 0.15s;
+}
+
+[data-os="android"] .px-tile[data-wide] {
+  grid-column: span 2;
+  justify-content: flex-start;
+  padding: 0 18px;
+}
+
+[data-os="android"] button.px-tile:active {
+  transform: scale(0.95);
+}
+
+[data-os="android"] .px-tile[data-on="true"] {
+  border-radius: 20px;
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+[data-os="android"] .px-brightness {
+  position: relative;
+}
+
+[data-os="android"] .px-brightness .os-slider {
+  height: 52px;
+}
+
+[data-os="android"] .px-brightness .os-slider::-webkit-slider-runnable-track {
+  height: 52px;
+  border-radius: 26px;
+  background: linear-gradient(to right, var(--accent) var(--fill, 50%), var(--tile) var(--fill, 50%));
+}
+
+[data-os="android"] .px-brightness .os-slider::-moz-range-track {
+  height: 52px;
+  border-radius: 26px;
+  background: linear-gradient(to right, var(--accent) var(--fill, 50%), var(--tile) var(--fill, 50%));
+}
+
+[data-os="android"] .px-brightness .os-slider::-webkit-slider-thumb {
+  width: 5px;
+  height: 38px;
+  margin-top: 7px;
+  border-radius: 3px;
+  background: var(--fg);
+  border: none;
+  box-shadow: 0 0 0 5px transparent;
+}
+
+[data-os="android"] .px-brightness .os-slider::-moz-range-thumb {
+  width: 5px;
+  height: 38px;
+  border-radius: 3px;
+  background: var(--fg);
+  border: none;
+}
+
+[data-os="android"] .px-chip {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 40px;
+  border-radius: 20px;
+  background: var(--tile);
+  transition:
+    transform 0.15s,
+    border-radius 0.25s;
+}
+
+[data-os="android"] .px-chip:active {
+  transform: scale(0.93);
+  border-radius: 12px;
+}
+
+[data-os="android"] .px-media {
+  padding: 12px;
+  border-radius: 28px;
+  background: var(--tile);
+}
+
+[data-os="android"] .px-play {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  transition:
+    border-radius 0.25s cubic-bezier(0.2, 0, 0, 1),
+    transform 0.15s;
+}
+
+[data-os="android"] .px-play:active {
+  border-radius: 24px;
+  transform: scale(0.94);
+}
+
 [data-os="android"] .px-pill {
   height: 40px;
   padding: 0 20px;
@@ -298,6 +411,10 @@
   border-radius: 26px;
   background: var(--bg-3);
   backdrop-filter: none;
+}
+
+[data-os="android"] .px-shade .os-notice {
+  background: var(--tile);
 }
 
 [data-os="android"] .phone-switcher-bg {

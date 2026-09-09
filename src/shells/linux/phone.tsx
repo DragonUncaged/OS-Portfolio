@@ -3,37 +3,53 @@
 import "@fontsource-variable/google-sans-flex/rond.css";
 import "./android.css";
 import {
+  BellSimpleSlash,
   CaretUp,
   Fingerprint,
   Flashlight,
+  GearSix,
+  ImageSquare,
   MagnifyingGlass,
   Moon,
   MoonStars,
+  Pause,
+  Play,
+  Power,
+  SkipForward,
   SpeakerHigh,
   SpeakerSlash,
   Sun,
+  SunDim,
   TerminalWindow,
+  WifiHigh,
+  WifiSlash,
   type Icon,
 } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { appName, launchable } from "@/apps/registry";
 import { AppIcon } from "@/components/app-icon";
+import { Slider } from "@/components/kit";
 import { Banner, NoticeList } from "@/components/notifications";
 import { PhoneHost } from "@/components/phone-host";
 import { ShellRoot, ShellWallpaper } from "@/components/shell-root";
 import { BatteryGlyph, WifiGlyph } from "@/components/status-glyphs";
 import { profile } from "@/data/portfolio";
 import { useBootTimer } from "@/hooks/use-boot-timer";
+import { useDark } from "@/hooks/use-dark";
 import { useLauncher } from "@/hooks/use-launcher";
 import { useNow } from "@/hooks/use-now";
+import { useOnline } from "@/hooks/use-online";
 import { usePanel } from "@/hooks/use-panel";
 import { useWelcome } from "@/hooks/use-welcome";
 import { useWindowEvent } from "@/hooks/use-window-event";
 import { DAYS, MONTHS } from "@/lib/format";
 import { launch, originOf, phoneBack, phoneCanGoBack } from "@/lib/launch";
+import { TRACKS } from "@/lib/synth";
+import { WALLPAPERS } from "@/lib/wallpapers";
 import { usePhone } from "@/stores/phone";
-import { useSession } from "@/stores/session";
+import { usePlayer } from "@/stores/player";
+import { useFamily, useSession } from "@/stores/session";
 import { useSettings } from "@/stores/settings";
 import type { AppId } from "@/types";
 
@@ -384,6 +400,157 @@ function Search({ onClose }: { onClose: () => void }) {
   );
 }
 
+function Tile({
+  wide = false,
+  on,
+  icon: TileIcon,
+  label,
+  sub,
+  onClick,
+}: {
+  wide?: boolean;
+  on: boolean;
+  icon: Icon;
+  label: string;
+  sub?: string;
+  onClick?: () => void;
+}) {
+  const body: ReactNode = (
+    <>
+      <TileIcon size={22} weight={on ? "fill" : "regular"} className="shrink-0" />
+      {wide && (
+        <span className="min-w-0 text-left">
+          <span className="block truncate text-[14px] font-medium leading-5">{label}</span>
+          {sub && <span className="block truncate text-[12px] leading-4 opacity-75">{sub}</span>}
+        </span>
+      )}
+    </>
+  );
+  const props = { className: "px-tile", "data-on": on, "data-wide": wide || undefined };
+  return onClick ? (
+    <button type="button" {...props} aria-pressed={on} aria-label={wide ? undefined : label} title={label} onClick={onClick}>
+      {body}
+    </button>
+  ) : (
+    <div {...props} role="status" aria-label={`${label}: ${sub ?? (on ? "on" : "off")}`}>
+      {body}
+    </div>
+  );
+}
+
+function Shade({ onClose, onPower }: { onClose: () => void; onPower: () => void }) {
+  const family = useFamily();
+  const dark = useDark();
+  const online = useOnline();
+  const settings = useSettings();
+  const hasNotices = useSession((s) => s.notices.length > 0);
+  const index = usePlayer((s) => s.index);
+  const playing = usePlayer((s) => s.playing);
+  const now = useNow(60_000);
+  const from = useRef<number | null>(null);
+  const [torch, setTorch] = useState(false);
+  const muted = settings.volume === 0;
+
+  const nextWallpaper = () => {
+    const list = WALLPAPERS[family];
+    const at = list.findIndex((w) => w.id === settings.prefs[family].wallpaper);
+    settings.setWallpaper(family, list[(at + 1) % list.length].id);
+  };
+
+  return (
+    <motion.div
+      className="px-sheet px-shade px-blur fixed inset-0 z-[2900] flex flex-col"
+      style={{ paddingTop: "calc(var(--sb-h) + 4px)", paddingBottom: "var(--nav-h)" }}
+      role="dialog"
+      aria-label="Notifications and quick settings"
+      data-panel
+      initial={{ y: "-100%" }}
+      animate={{ y: 0 }}
+      exit={{ y: "-100%", transition: { duration: 0.22, ease: [0.3, 0, 0.8, 0.15] } }}
+      transition={SPRING}
+      onPointerDown={(e) => (from.current = e.clientY)}
+      onPointerUp={(e) => {
+        if (from.current !== null && from.current - e.clientY > 90 && !(e.target as Element).closest("input")) onClose();
+        from.current = null;
+      }}
+    >
+      {torch && <div className="pointer-events-none fixed inset-0 z-[1] bg-white/25 mix-blend-screen" />}
+      <div className="shrink-0 px-5 pb-2 text-[14px] text-fg2">{shortDate(now)}</div>
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-3">
+        <div className="grid grid-cols-4 gap-2">
+          <Tile wide on={online} icon={online ? WifiHigh : WifiSlash} label="Internet" sub={online ? "Connected" : "Offline"} />
+          <Tile wide on={dark} icon={Moon} label="Dark theme" sub={dark ? "On" : "Off"} onClick={() => settings.setTheme(dark ? "light" : "dark")} />
+          <Tile on={settings.nightLight} icon={MoonStars} label="Night Light" onClick={() => settings.setNightLight(!settings.nightLight)} />
+          <Tile on={torch} icon={Flashlight} label="Flashlight" onClick={() => setTorch((v) => !v)} />
+          <Tile on={muted} icon={muted ? SpeakerSlash : BellSimpleSlash} label="Mute" onClick={toggleMute} />
+          <Tile on={false} icon={ImageSquare} label="Next wallpaper" onClick={nextWallpaper} />
+        </div>
+
+        <div className="px-brightness mt-3 flex items-center gap-3">
+          <Slider label="Brightness" value={settings.brightness} min={0.35} max={1} onChange={settings.setBrightness} />
+          <SunDim size={20} weight="fill" className="pointer-events-none absolute left-4 text-accent-fg" />
+        </div>
+
+        <div className="mt-2 flex items-center justify-end gap-2">
+          <button
+            type="button"
+            className="px-chip"
+            aria-label="Settings"
+            onClick={() => {
+              onClose();
+              launch("settings");
+            }}
+          >
+            <GearSix size={19} weight="fill" />
+          </button>
+          <button type="button" className="px-chip" aria-label="Power" onClick={onPower}>
+            <Power size={19} weight="bold" />
+          </button>
+        </div>
+
+        <div className="px-media mt-3 flex items-center gap-3">
+          <button
+            type="button"
+            className="grid size-12 shrink-0 place-items-center rounded-2xl text-white"
+            style={{ background: `linear-gradient(140deg, ${TRACKS[index].color[0]}, ${TRACKS[index].color[1]})` }}
+            aria-label="Open Music"
+            onClick={() => {
+              onClose();
+              launch("music");
+            }}
+          >
+            <SpeakerHigh size={20} weight="fill" />
+          </button>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-[15px] font-medium">{TRACKS[index].title}</span>
+            <span className="block truncate text-[12.5px] text-fg2">{playing ? "Playing" : "Music"}</span>
+          </span>
+          <button type="button" className="px-play" aria-label={playing ? "Pause" : "Play"} onClick={usePlayer.getState().toggle}>
+            {playing ? <Pause size={20} weight="fill" /> : <Play size={20} weight="fill" />}
+          </button>
+          <button type="button" className="md-icon-btn" aria-label="Next track" onClick={usePlayer.getState().next}>
+            <SkipForward size={20} weight="fill" />
+          </button>
+        </div>
+
+        <div className="mt-4">
+          <NoticeList empty="No notifications" onOpen={onClose} />
+        </div>
+        {hasNotices && (
+          <div className="mt-3 flex justify-end">
+            <button type="button" className="px-pill" onClick={() => useSession.getState().clearNotices()}>
+              Clear all
+            </button>
+          </div>
+        )}
+      </div>
+      <button type="button" className="mx-auto grid h-6 w-24 shrink-0 place-items-center" aria-label="Close" onClick={onClose}>
+        <span className="h-1 w-10 rounded-full bg-fg3" />
+      </button>
+    </motion.div>
+  );
+}
+
 function GestureBar({ panel, close, openDrawer, light }: { panel: Panel | null; close: () => void; openDrawer: () => void; light: boolean }) {
   const down = useRef<{ y: number; t: number } | null>(null);
   const timer = useRef<number | undefined>(undefined);
@@ -472,6 +639,7 @@ function Phone() {
       <AnimatePresence>
         {panel === "drawer" && <Drawer key="drawer" onClose={close} />}
         {panel === "search" && <Search key="search" onClose={close} />}
+        {panel === "shade" && <Shade key="shade" onClose={close} onPower={() => openPanel("power")} />}
       </AnimatePresence>
       <GestureBar panel={panel} close={close} openDrawer={() => openPanel("drawer")} light={overWallpaper} />
     </>
