@@ -3,12 +3,15 @@
 import "@fontsource-variable/google-sans-flex/rond.css";
 import "./android.css";
 import {
+  ArrowClockwise,
+  ArrowLeft,
   BellSimpleSlash,
   CaretUp,
   Fingerprint,
   Flashlight,
   GearSix,
   ImageSquare,
+  LockSimple,
   MagnifyingGlass,
   Moon,
   MoonStars,
@@ -551,6 +554,43 @@ function Shade({ onClose, onPower }: { onClose: () => void; onPower: () => void 
   );
 }
 
+function PowerMenu({ onClose }: { onClose: () => void }) {
+  const { power } = useSession.getState();
+  const items: { label: string; icon: Icon; run: () => void }[] = [
+    { label: "Lock", icon: LockSimple, run: () => power("lock") },
+    { label: "Restart", icon: ArrowClockwise, run: () => power("restart") },
+    { label: "Power off", icon: Power, run: () => power("shutdown") },
+  ];
+  return (
+    <motion.div
+      className="fixed inset-0 z-[3200] grid place-items-center bg-black/55 p-6"
+      role="dialog"
+      aria-label="Power menu"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <motion.div className="px-power w-full max-w-[330px] p-5" data-panel initial={{ scale: 0.86 }} animate={{ scale: 1 }} exit={{ scale: 0.92 }} transition={SPRING}>
+        <div className="grid grid-cols-3 gap-3">
+          {items.map((item, i) => {
+            const ItemIcon = item.icon;
+            return (
+              <button key={item.label} type="button" autoFocus={i === 1} className="px-power-btn" onClick={item.run}>
+                <span>
+                  <ItemIcon size={26} weight="bold" />
+                </span>
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-4 text-center text-[13px] text-fg2">Restart to choose another operating system.</p>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function GestureBar({ panel, close, openDrawer, light }: { panel: Panel | null; close: () => void; openDrawer: () => void; light: boolean }) {
   const down = useRef<{ y: number; t: number } | null>(null);
   const timer = useRef<number | undefined>(undefined);
@@ -604,6 +644,56 @@ function GestureBar({ panel, close, openDrawer, light }: { panel: Panel | null; 
   );
 }
 
+function BackEdges({ onBack }: { onBack: () => void }) {
+  const [pull, setPull] = useState<{ side: "left" | "right"; dx: number; y: number } | null>(null);
+  const from = useRef<number | null>(null);
+  const edge = (side: "left" | "right") => (
+    <div
+      className={`fixed bottom-[12%] top-[16%] z-[3050] w-3.5 touch-none ${side === "left" ? "left-0" : "right-0"}`}
+      data-back-edge={side}
+      onPointerDown={(e) => {
+        from.current = e.clientX;
+        e.currentTarget.setPointerCapture(e.pointerId);
+        setPull({ side, dx: 0, y: e.clientY });
+      }}
+      onPointerMove={(e) => {
+        if (from.current === null) return;
+        const dx = Math.max(0, side === "left" ? e.clientX - from.current : from.current - e.clientX);
+        setPull({ side, dx, y: e.clientY });
+      }}
+      onPointerUp={() => {
+        if (pull && pull.dx > 36) onBack();
+        from.current = null;
+        setPull(null);
+      }}
+      onPointerCancel={() => {
+        from.current = null;
+        setPull(null);
+      }}
+    />
+  );
+  return (
+    <>
+      {edge("left")}
+      {edge("right")}
+      {pull && pull.dx > 4 && (
+        <div
+          className="px-back-arrow pointer-events-none fixed z-[3060] grid place-items-center"
+          data-armed={pull.dx > 36}
+          style={{
+            top: pull.y - 20,
+            [pull.side]: Math.min(22, pull.dx * 0.35) - 8,
+            opacity: Math.min(1, pull.dx / 30),
+            transform: `scale(${0.7 + Math.min(0.3, pull.dx / 120)})`,
+          }}
+        >
+          <ArrowLeft size={18} weight="bold" style={{ transform: pull.side === "right" ? "scaleX(-1)" : undefined }} />
+        </div>
+      )}
+    </>
+  );
+}
+
 function Phone() {
   const { panel, toggle, close, open: openPanel } = usePanel<Panel>();
   const current = usePhone((s) => s.current);
@@ -640,7 +730,9 @@ function Phone() {
         {panel === "drawer" && <Drawer key="drawer" onClose={close} />}
         {panel === "search" && <Search key="search" onClose={close} />}
         {panel === "shade" && <Shade key="shade" onClose={close} onPower={() => openPanel("power")} />}
+        {panel === "power" && <PowerMenu key="power" onClose={close} />}
       </AnimatePresence>
+      {canBack && <BackEdges onBack={back} />}
       <GestureBar panel={panel} close={close} openDrawer={() => openPanel("drawer")} light={overWallpaper} />
     </>
   );
