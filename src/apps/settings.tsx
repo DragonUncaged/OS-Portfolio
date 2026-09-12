@@ -30,10 +30,10 @@ import { ACCENTS, useSettings } from "@/stores/settings";
 import type { Family, Theme } from "@/types";
 
 const SECTIONS = [
-  { id: "appearance", label: "Appearance", icon: PaintBrush },
-  { id: "wallpaper", label: "Wallpaper", icon: ImageSquare },
-  { id: "display", label: "Display & Sound", icon: Desktop },
-  { id: "system", label: "System", icon: Info },
+  { id: "appearance", label: "Appearance", icon: PaintBrush, hint: "Light or dark, accent colour", tint: "#7c5cff" },
+  { id: "wallpaper", label: "Wallpaper", icon: ImageSquare, hint: "Home and lock screen", tint: "#e8710a" },
+  { id: "display", label: "Display & Sound", icon: Desktop, hint: "Brightness, night light, volume", tint: "#1a8f5a" },
+  { id: "system", label: "System", icon: Info, hint: "About, startup disk, power", tint: "#5f6672" },
 ];
 
 const THEMES: { id: Theme; label: string; icon: typeof Sun }[] = [
@@ -251,7 +251,7 @@ export default function Settings() {
   const [section, setSection] = useState(() => valid(args.section));
   useRelaunch((a) => a.section && setSection(valid(a.section)));
   return (
-    <AppFrame sections={SECTIONS} section={section} onSection={setSection}>
+    <AppFrame sections={SECTIONS} section={section} onSection={setSection} sectionNav="list">
       <Page>
         {section === "appearance" && <Appearance />}
         {section === "wallpaper" && <WallpaperPicker />}
