@@ -16,13 +16,13 @@ export type PhoneVariant = "ios" | "android" | "wp";
 
 const LOOK: Record<PhoneVariant, { scale: number; gap: number; radius: number; lift: number }> = {
   ios: { scale: 0.72, gap: 14, radius: 30, lift: 14 },
-  android: { scale: 0.68, gap: 22, radius: 26, lift: 18 },
+  android: { scale: 0.72, gap: 18, radius: 30, lift: 12 },
   wp: { scale: 0.6, gap: 26, radius: 0, lift: 26 },
 };
 
 const OPEN: Record<PhoneVariant, Transition> = {
   ios: { type: "spring", stiffness: 300, damping: 30, mass: 0.9 },
-  android: { duration: 0.28, ease: [0.2, 0, 0, 1] },
+  android: { type: "spring", stiffness: 340, damping: 32, mass: 0.9 },
   wp: { duration: 0.36, ease: [0.1, 0.9, 0.2, 1] },
 };
 
