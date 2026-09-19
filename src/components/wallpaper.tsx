@@ -238,7 +238,93 @@ function Grid({ sky, line, sun }: { sky: string[]; line: string; sun: string[] }
   );
 }
 
+function Folds({
+  base,
+  folds,
+  rim,
+  shade,
+}: {
+  base: [string, string];
+  folds: string[][];
+  rim: string;
+  shade: number;
+}) {
+  const id = useId();
+  const cover = "L-60,1060 L-60,-60 L1660,-60 Z";
+  const edges: { d: string; close: string; grad: [number, number, number, number] }[] = [
+    { d: "M470,-60 C580,190 430,380 225,505 C95,585 5,650 -60,720", close: "L-60,-60 Z", grad: [-20, 20, 400, 430] },
+    { d: "M1190,-60 C1350,215 1130,430 805,560 C520,672 200,805 -60,1050", close: cover, grad: [215, 265, 905, 640] },
+    { d: "M1660,105 C1500,420 1185,600 885,722 C625,830 425,930 300,1060", close: cover, grad: [720, 440, 1270, 715] },
+    { d: "M1660,555 C1425,700 1185,822 1000,1060", close: cover, grad: [1110, 640, 1470, 880] },
+  ];
+  const order = [3, 2, 1, 0];
+  return (
+    <Svg>
+      <defs>
+        <linearGradient id={`${id}b`} gradientUnits="userSpaceOnUse" x1="1250" y1="760" x2="1620" y2="1010">
+          <stop offset="0" stopColor={base[0]} />
+          <stop offset="1" stopColor={base[1]} />
+        </linearGradient>
+        {edges.map((e, i) => (
+          <linearGradient key={i} id={`${id}f${i}`} gradientUnits="userSpaceOnUse" x1={e.grad[0]} y1={e.grad[1]} x2={e.grad[2]} y2={e.grad[3]}>
+            {folds[i].map((c, n) => (
+              <stop key={n} offset={n / (folds[i].length - 1)} stopColor={c} />
+            ))}
+          </linearGradient>
+        ))}
+        <filter id={`${id}soft`} filterUnits="userSpaceOnUse" x="-200" y="-200" width="2000" height="1400">
+          <feGaussianBlur stdDeviation="34" />
+        </filter>
+        <filter id={`${id}glow`} filterUnits="userSpaceOnUse" x="-200" y="-200" width="2000" height="1400">
+          <feGaussianBlur stdDeviation="9" />
+        </filter>
+        <filter id={`${id}line`} filterUnits="userSpaceOnUse" x="-200" y="-200" width="2000" height="1400">
+          <feGaussianBlur stdDeviation="0.9" />
+        </filter>
+      </defs>
+      <rect width="1600" height="1000" fill={`url(#${id}b)`} />
+      {order.map((i) => {
+        const e = edges[i];
+        return (
+          <g key={i}>
+            <path d={e.d} fill="none" stroke="#000" strokeWidth="70" opacity={shade} transform="translate(26 30)" filter={`url(#${id}soft)`} />
+            <path d={`${e.d} ${e.close}`} fill={`url(#${id}f${i})`} />
+            <path d={e.d} fill="none" stroke={rim} strokeWidth="22" opacity="0.4" filter={`url(#${id}glow)`} />
+            <path d={e.d} fill="none" stroke={rim} strokeWidth="3.2" opacity="0.95" filter={`url(#${id}line)`} />
+          </g>
+        );
+      })}
+    </Svg>
+  );
+}
+
 const ART: Record<string, (p: ArtProps) => ReactNode> = {
+  gilt: ({ dark }) =>
+    dark ? (
+      <Folds
+        base={["#1a1730", "#2c2644"]}
+        rim="#f1d6a4"
+        shade={0.5}
+        folds={[
+          ["#3a3a66", "#2a2c55", "#4a4f86", "#7d7fae"],
+          ["#0c0e1e", "#1b1f42", "#343a70", "#6b6ea6"],
+          ["#0a0b18", "#1a1c3c", "#3a3764", "#7a6f96"],
+          ["#0c0a16", "#231d3a", "#4a3c5c", "#8a7388"],
+        ]}
+      />
+    ) : (
+      <Folds
+        base={["#5d5468", "#8f8a9c"]}
+        rim="#fffaf0"
+        shade={0.3}
+        folds={[
+          ["#a98860", "#c9aa7f", "#e6d3b3", "#f6ecda"],
+          ["#5f4735", "#8f7155", "#c9ac86", "#efe2cb"],
+          ["#59443a", "#8b7262", "#bfab98", "#e9dfd3"],
+          ["#4d4250", "#7b6f7e", "#a79fae", "#d6d1dc"],
+        ]}
+      />
+    ),
   dunes: () => (
     <Waves
       sky={["#27348b", "#7a3fc4", "#ff7e5f", "#feb47b"]}

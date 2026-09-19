@@ -7,6 +7,7 @@ export interface WallpaperMeta {
 
 export const WALLPAPERS: Record<Family, WallpaperMeta[]> = {
   macos: [
+    { id: "gilt", name: "Gilt" },
     { id: "dunes", name: "Dunes" },
     { id: "aurora", name: "Aurora" },
     { id: "ridge", name: "Ridge" },
