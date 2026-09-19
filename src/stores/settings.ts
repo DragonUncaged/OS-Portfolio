@@ -56,6 +56,7 @@ interface SettingsState {
   brightness: number;
   volume: number;
   nightLight: boolean;
+  glass: number;
   welcomed: Family[];
   setLastFamily: (f: Family | null) => void;
   setTheme: (t: Theme) => void;
@@ -64,6 +65,7 @@ interface SettingsState {
   setBrightness: (v: number) => void;
   setVolume: (v: number) => void;
   setNightLight: (v: boolean) => void;
+  setGlass: (v: number) => void;
   markWelcomed: (f: Family) => void;
 }
 
@@ -82,6 +84,7 @@ export const useSettings = create<SettingsState>()(
       brightness: 1,
       volume: 0.6,
       nightLight: false,
+      glass: 0.5,
       welcomed: [],
       setLastFamily: (lastFamily) => set({ lastFamily }),
       setTheme: (theme) => set({ theme }),
@@ -92,6 +95,7 @@ export const useSettings = create<SettingsState>()(
       setBrightness: (v) => set({ brightness: Math.min(1, Math.max(0.35, v)) }),
       setVolume: (v) => set({ volume: Math.min(1, Math.max(0, v)) }),
       setNightLight: (nightLight) => set({ nightLight }),
+      setGlass: (v) => set({ glass: Math.min(1, Math.max(0, v)) }),
       markWelcomed: (f) =>
         set((s) => (s.welcomed.includes(f) ? s : { welcomed: [...s.welcomed, f] })),
     }),

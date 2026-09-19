@@ -44,8 +44,36 @@ const THEMES: { id: Theme; label: string; icon: typeof Sun }[] = [
 
 const FAMILIES: Family[] = ["macos", "windows", "linux"];
 
+function LiquidGlass() {
+  const family = useFamily();
+  const dark = useDark();
+  const wallpaper = useSettings((s) => s.prefs[family].wallpaper);
+  const glass = useSettings((s) => s.glass);
+  const setGlass = useSettings((s) => s.setGlass);
+  return (
+    <>
+      <Heading>Liquid Glass</Heading>
+      <div className="k-card overflow-hidden">
+        <div className="relative grid h-[96px] place-items-center overflow-hidden">
+          <Wallpaper id={wallpaper} family={family} dark={dark} />
+          <span className="mac-glass mac-glass-sample relative">
+            <PaintBrush size={16} weight="fill" />
+            Liquid Glass
+          </span>
+        </div>
+        <div className="k-row">
+          <span className="shrink-0 text-[12.5px] text-fg2">Clear</span>
+          <Slider label="Liquid Glass, from clear to tinted" value={glass} onChange={setGlass} />
+          <span className="shrink-0 text-[12.5px] text-fg2">Tinted</span>
+        </div>
+      </div>
+    </>
+  );
+}
+
 function Appearance() {
   const family = useFamily();
+  const platform = usePlatform();
   const theme = useSettings((s) => s.theme);
   const accent = useSettings((s) => s.prefs[family].accent);
   const { setTheme, setAccent } = useSettings.getState();
@@ -80,6 +108,8 @@ function Appearance() {
           );
         })}
       </div>
+
+      {platform === "macos" && <LiquidGlass />}
 
       <Heading>Accent colour</Heading>
       <div className="k-card flex flex-wrap gap-3 p-4">
