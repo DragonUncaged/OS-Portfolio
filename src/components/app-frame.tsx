@@ -181,44 +181,47 @@ export function AppFrame(props: FrameProps) {
 
   if (platform === "macos") {
     return (
-      <div className="@container flex h-full bg-bg text-fg" data-theme={tone}>
+      <div className="mac-frame @container flex h-full text-fg" data-theme={tone} data-side={sections ? "" : undefined}>
         {sections && (
-          <aside className="mac-sidebar hidden w-[196px] shrink-0 flex-col gap-px px-2.5 pt-[52px] @min-[620px]:flex" data-wm-drag>
-            {nav("mac-side-item", 16, "fill")}
+          <aside className="mac-sidebar hidden w-[200px] shrink-0 flex-col @min-[620px]:flex" data-wm-drag>
+            <div className="mac-sidebar-list flex min-h-0 flex-1 flex-col gap-px overflow-y-auto">{nav("mac-side-item", 16, "fill")}</div>
           </aside>
         )}
-        <div className="flex min-w-0 flex-1 flex-col">
-          <header
-            data-wm-drag
-            className={`mac-toolbar flex h-[52px] shrink-0 items-center gap-1.5 pr-3 ${sections ? "pl-[78px] @min-[620px]:pl-4" : "pl-[78px]"}`}
-          >
+        <div className="mac-main flex min-w-0 flex-1 flex-col bg-bg">
+          <header data-wm-drag className="mac-toolbar flex h-[52px] shrink-0 items-center gap-2">
             {onBack && (
-              <button type="button" className="k-icon-btn" aria-label="Back" onClick={onBack}>
-                <CaretLeft size={16} weight="bold" />
-              </button>
+              <div className="mac-tool-group" data-no-drag>
+                <button type="button" className="mac-tool" aria-label="Back" onClick={onBack}>
+                  <CaretLeft size={16} weight="bold" />
+                </button>
+              </div>
             )}
             {center ? (
-              <div className="min-w-0 flex-1 px-1" data-no-drag>
+              <div className="min-w-0 flex-1" data-no-drag>
                 {center}
               </div>
             ) : (
               <>
                 <div className="min-w-0 px-1">
-                  <div className="truncate text-[13px] font-bold leading-tight">{title}</div>
-                  {subtitle && <div className="truncate text-[11px] leading-tight text-fg3">{subtitle}</div>}
+                  <div className="mac-title truncate">{title}</div>
+                  {subtitle && <div className="mac-subtitle truncate">{subtitle}</div>}
                 </div>
                 <div className="flex-1" />
               </>
             )}
-            <Actions actions={actions} size={17} />
-            {search && <SearchField search={search} className="ml-1 w-[170px] max-w-[40%]" />}
+            {actions?.length ? (
+              <div className="mac-tool-group" data-no-drag>
+                <Actions actions={actions} size={17} cls="mac-tool" />
+              </div>
+            ) : null}
+            {search && <SearchField search={search} className="mac-search w-[180px] max-w-[40%]" />}
           </header>
           {sections && (
             <Strip
               sections={sections}
               section={section}
               onSection={onSection}
-              className="gap-1 border-b border-line px-3 pb-2 @min-[620px]:hidden"
+              className="mac-strip gap-1 px-3 pb-2 @min-[620px]:hidden"
               itemClass="mac-seg"
             />
           )}
