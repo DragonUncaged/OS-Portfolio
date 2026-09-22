@@ -1,3 +1,5 @@
-export const MENU_H = 28;
+export const MENU_H = 30;
 
-export type Panel = "spotlight" | "launchpad" | "control" | "notifications";
+export const DOCK_H = 80;
+
+export type Panel = "spotlight" | "launchpad" | "apps" | "siri" | "control" | "notifications";
