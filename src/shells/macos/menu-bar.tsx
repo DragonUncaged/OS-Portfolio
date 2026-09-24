@@ -1,10 +1,11 @@
 "use client";
 
-import { Command, MagnifyingGlass, SlidersHorizontal } from "@phosphor-icons/react";
+import { Command } from "@phosphor-icons/react";
 import { appName } from "@/apps/registry";
 import { toggleDropdown, useMenu, type MenuItem } from "@/components/menu";
 import { BatteryGlyph, WifiGlyph } from "@/components/status-glyphs";
 import { profile } from "@/data/portfolio";
+import { useBattery } from "@/hooks/use-battery";
 import { useDark } from "@/hooks/use-dark";
 import { useNow } from "@/hooks/use-now";
 import { dateShort, time12m } from "@/lib/format";
@@ -13,6 +14,17 @@ import { useSession } from "@/stores/session";
 import { useSettings } from "@/stores/settings";
 import { useActiveApp, useWM } from "@/stores/window-manager";
 import { MENU_H, type Panel } from "./constants";
+import { ControlGlyph, SiriGlyph } from "./glyphs";
+
+function BatteryStatus() {
+  const battery = useBattery();
+  if (!battery) return null;
+  return (
+    <span className="mac-status">
+      <BatteryGlyph size={22} />
+    </span>
+  );
+}
 
 export function MenuBar({ panel, toggle }: { panel: Panel | null; toggle: (p: Panel) => void }) {
   const now = useNow(1000);
@@ -20,6 +32,7 @@ export function MenuBar({ panel, toggle }: { panel: Panel | null; toggle: (p: Pa
   const focus = useWM((s) => s.focus);
   const wins = useWM((s) => s.wins);
   const dark = useDark();
+  const openMenuKey = useMenu((s) => s.menu?.key ?? null);
   const session = useSession.getState();
   const wm = useWM.getState();
   const appLabel = active ? appName(active, "macos") : "Finder";
@@ -72,8 +85,8 @@ export function MenuBar({ panel, toggle }: { panel: Panel | null; toggle: (p: Pa
       label: "View",
       items: [
         { label: "Mission Control", shortcut: "⌃↑", onSelect: () => wm.setOverview(true) },
-        { label: "Launchpad", shortcut: "F4", onSelect: () => toggle("launchpad") },
-        { label: "Spotlight Search", shortcut: "⌘K", onSelect: () => toggle("spotlight") },
+        { label: "Apps", shortcut: "F4", onSelect: () => toggle("apps") },
+        { label: "Spotlight", shortcut: "⌘K", onSelect: () => toggle("spotlight") },
         { type: "separator" },
         {
           label: dark ? "Use Light Appearance" : "Use Dark Appearance",
@@ -109,17 +122,18 @@ export function MenuBar({ panel, toggle }: { panel: Panel | null; toggle: (p: Pa
   ];
 
   const openMenu = (el: Element, m: (typeof menus)[number]) =>
-    toggleDropdown(el, `mb:${m.id}`, m.items, { gap: 2, minWidth: 220 });
+    toggleDropdown(el, `mb:${m.id}`, m.items, { gap: 5, minWidth: 230 });
 
   return (
-    <div className="mac-menubar fixed inset-x-0 top-0 z-[1000] flex items-center justify-between px-2.5" style={{ height: MENU_H }}>
+    <div className="mac-menubar fixed inset-x-0 top-0 z-[1000] flex items-center justify-between px-2" style={{ height: MENU_H }}>
       <div className="flex min-w-0 items-center">
-        {menus.map((m, i) => (
+        {menus.map((m) => (
           <button
             key={m.id}
             type="button"
             data-menu-trigger
-            className={`mac-menu-title ${m.bold ? "font-bold" : ""} ${i > 2 ? "hidden md:block" : ""}`}
+            data-open={openMenuKey === `mb:${m.id}` || undefined}
+            className={`mac-menu-title ${m.bold ? "mac-menu-app" : ""}`}
             onClick={(e) => openMenu(e.currentTarget, m)}
             onPointerEnter={(e) => {
               const open = useMenu.getState().menu?.key;
@@ -131,15 +145,10 @@ export function MenuBar({ panel, toggle }: { panel: Panel | null; toggle: (p: Pa
         ))}
       </div>
       <div className="flex shrink-0 items-center">
-        <span className="mac-status hidden sm:inline-flex">
-          <BatteryGlyph size={20} />
-        </span>
+        <BatteryStatus />
         <span className="mac-status">
-          <WifiGlyph size={16} />
+          <WifiGlyph size={17} />
         </span>
-        <button type="button" className="mac-status" aria-label="Spotlight Search" data-panel-trigger onClick={() => toggle("spotlight")}>
-          <MagnifyingGlass size={15} weight="bold" />
-        </button>
         <button
           type="button"
           className="mac-status"
@@ -148,11 +157,21 @@ export function MenuBar({ panel, toggle }: { panel: Panel | null; toggle: (p: Pa
           data-panel-trigger
           onClick={() => toggle("control")}
         >
-          <SlidersHorizontal size={16} weight="bold" />
+          <ControlGlyph size={16} />
         </button>
         <button
           type="button"
-          className="mac-status tabular-nums"
+          className="mac-status"
+          aria-label="Spotlight: search, or ask Siri"
+          aria-expanded={panel === "spotlight" || panel === "siri"}
+          data-panel-trigger
+          onClick={() => toggle("spotlight")}
+        >
+          <SiriGlyph size={16} />
+        </button>
+        <button
+          type="button"
+          className="mac-status mac-clock tabular-nums"
           aria-label="Notification Centre"
           aria-expanded={panel === "notifications"}
           data-panel-trigger

@@ -114,6 +114,10 @@
     --bar-fg: #fff;
     --bar-hi: rgb(255 255 255 / 0.16);
   }
+
+  [data-os="macos"] .mac-menubar::before {
+    display: none;
+  }
 }
 
 /* own layer, so dragging a window does not repaint the wallpaper */
@@ -228,6 +232,53 @@
 
 [data-os="macos"] .mac-login-power:hover span {
   filter: brightness(1.35);
+}
+
+[data-os="macos"] .mac-menubar {
+  background: var(--bar-bg);
+  color: var(--bar-fg);
+  font-size: 13.5px;
+  font-weight: 500;
+  text-shadow: var(--bar-shadow);
+}
+
+[data-os="macos"] .mac-menubar::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -16px;
+  z-index: -1;
+  background: linear-gradient(rgb(0 0 0 / 0.22), rgb(0 0 0 / 0.1) 55%, transparent);
+  pointer-events: none;
+}
+
+[data-os="macos"] .mac-menubar svg {
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.22));
+}
+
+[data-os="macos"] .mac-menu-title,
+[data-os="macos"] .mac-status {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 7px;
+  white-space: nowrap;
+}
+
+[data-os="macos"] .mac-menu-app {
+  font-weight: 700;
+}
+
+[data-os="macos"] .mac-status {
+  padding: 0 8px;
+  border-radius: 999px;
+}
+
+[data-os="macos"] button.mac-menu-title:hover,
+[data-os="macos"] button.mac-status:hover,
+[data-os="macos"] .mac-menu-title[data-open],
+[data-os="macos"] .mac-status[aria-expanded="true"] {
+  background: var(--bar-hi);
 }
 
 [data-os="macos"] .os-menu {
@@ -604,34 +655,6 @@
   border-radius: 999px;
   font-size: 13px;
   font-weight: 500;
-}
-
-[data-os="macos"] .mac-menubar {
-  background: var(--bar-bg);
-  color: var(--bar-fg);
-  backdrop-filter: blur(30px) saturate(1.8);
-  font-size: 13.5px;
-  text-shadow: 0 0 1px rgb(255 255 255 / 0.08);
-}
-
-[data-os="macos"] .mac-menu-title,
-[data-os="macos"] .mac-status {
-  display: inline-flex;
-  align-items: center;
-  height: 22px;
-  padding: 0 9px;
-  border-radius: 5px;
-  white-space: nowrap;
-}
-
-[data-os="macos"] .mac-status {
-  padding: 0 7px;
-}
-
-[data-os="macos"] button.mac-menu-title:hover,
-[data-os="macos"] button.mac-status:hover,
-[data-os="macos"] .mac-status[aria-expanded="true"] {
-  background: color-mix(in srgb, var(--bar-fg) 16%, transparent);
 }
 
 [data-os="macos"] .mac-dock {
