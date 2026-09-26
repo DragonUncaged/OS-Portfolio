@@ -1,6 +1,5 @@
 "use client";
 
-import { Rocket, Trash } from "@phosphor-icons/react";
 import { useRef, useState } from "react";
 import { appName } from "@/apps/registry";
 import { AppIcon } from "@/components/app-icon";
@@ -9,8 +8,11 @@ import { launch } from "@/lib/launch";
 import { useWM } from "@/stores/window-manager";
 import type { AppId } from "@/types";
 import type { Panel } from "./constants";
+import { AppsIcon, TrashIcon } from "./glyphs";
 
 const DOCK_APPS: AppId[] = ["files", "about", "projects", "experience", "skills", "resume", "contact", "browser", "terminal", "notes", "music", "settings"];
+
+const ICON = 48;
 
 function DockItem({
   id,
@@ -53,12 +55,14 @@ export function Dock({ toggle }: { toggle: (p: Panel) => void }) {
   const running = new Set(wins.map((w) => w.appId));
   const extra = [...running].filter((id) => !DOCK_APPS.includes(id));
 
+  // written straight to the DOM, a render per mousemove is too slow
   const magnify = (x: number | null) => {
+    if (x !== null && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     ref.current?.querySelectorAll<HTMLElement>(".mac-dock-item").forEach((el) => {
       if (x === null) return el.style.setProperty("--s", "1");
       const b = el.getBoundingClientRect();
       const d = Math.abs(x - (b.left + b.width / 2));
-      el.style.setProperty("--s", String(1 + 0.55 * Math.max(0, 1 - d / 130) ** 2));
+      el.style.setProperty("--s", String(1 + 0.5 * Math.max(0, 1 - d / 132) ** 2));
     });
   };
 
@@ -86,41 +90,33 @@ export function Dock({ toggle }: { toggle: (p: Panel) => void }) {
     ]);
   };
 
+  const app = (id: AppId) => (
+    <DockItem key={id} id={id} label={appName(id, "macos")} running={running.has(id)} bouncing={bounce === id} onOpen={() => open(id)} onMenu={menu(id)}>
+      <AppIcon id={id} size={ICON} />
+    </DockItem>
+  );
+
   return (
-    <div className="mac-dock-wrap pointer-events-none fixed inset-x-0 bottom-0 z-[1000] flex justify-center px-2 pb-1.5">
+    <div className="mac-dock-wrap pointer-events-none fixed inset-x-0 bottom-0 z-[1000] flex justify-center px-2 pb-2">
       <div
         ref={ref}
-        className="mac-dock pointer-events-auto flex max-w-full items-end"
+        className="mac-dock mac-glass pointer-events-auto flex max-w-full items-end"
+        data-glass="clear"
         role="toolbar"
         aria-label="Dock"
         onMouseMove={(e) => magnify(e.clientX)}
         onMouseLeave={() => magnify(null)}
       >
-        <DockItem id="launchpad" label="Launchpad" running={false} bouncing={false} onOpen={() => toggle("launchpad")}>
-          <span className="mac-launchpad-icon grid size-full place-items-center">
-            <Rocket size={28} weight="fill" />
-          </span>
+        {app(DOCK_APPS[0])}
+        <DockItem id="apps" label="Apps" running={false} bouncing={false} onOpen={() => toggle("apps")}>
+          <AppsIcon size={ICON} />
         </DockItem>
-        {[...DOCK_APPS, ...extra].map((id, i) => (
-          <span key={id} className="contents">
-            {i === DOCK_APPS.length && <span className="mac-dock-sep" />}
-            <DockItem
-              id={id}
-              label={appName(id, "macos")}
-              running={running.has(id)}
-              bouncing={bounce === id}
-              onOpen={() => open(id)}
-              onMenu={menu(id)}
-            >
-              <AppIcon id={id} size={48} />
-            </DockItem>
-          </span>
-        ))}
+        {DOCK_APPS.slice(1).map(app)}
+        {extra.length > 0 && <span className="mac-dock-sep" />}
+        {extra.map(app)}
         <span className="mac-dock-sep" />
         <DockItem id="trash" label="Trash" running={false} bouncing={false} onOpen={() => launch("files", { section: "trash" })}>
-          <span className="mac-trash-icon grid size-full place-items-center">
-            <Trash size={30} weight="duotone" />
-          </span>
+          <TrashIcon size={ICON} />
         </DockItem>
       </div>
     </div>
