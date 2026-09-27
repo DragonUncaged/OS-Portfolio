@@ -1,13 +1,18 @@
 "use client";
 
 import {
+  Browsers,
+  FastForward,
+  LockSimple,
   Moon,
   Pause,
   Play,
-  SkipForward,
+  Rewind,
   SpeakerHigh,
+  SpeakerLow,
   Sun,
   SunDim,
+  SunHorizon,
 } from "@phosphor-icons/react";
 import { motion } from "motion/react";
 import { AppIcon } from "@/components/app-icon";
@@ -18,10 +23,62 @@ import { useOnline } from "@/hooks/use-online";
 import { launch } from "@/lib/launch";
 import { TRACKS } from "@/lib/synth";
 import { usePlayer } from "@/stores/player";
+import { useSession } from "@/stores/session";
 import { useSettings } from "@/stores/settings";
+import { useWM } from "@/stores/window-manager";
 import { MENU_H } from "./constants";
 
-export function ControlCentre() {
+const pop = {
+  hidden: { opacity: 0, scale: 0.86, y: -10 },
+  shown: { opacity: 1, scale: 1, y: 0 },
+};
+
+function Tile({ className = "", children, ...rest }: React.ComponentProps<typeof motion.div>) {
+  return (
+    <motion.div className={`mac-cc-tile mac-glass ${className}`} data-glass="smoke" variants={pop} {...rest}>
+      {children}
+    </motion.div>
+  );
+}
+
+function Toggle({
+  label,
+  detail,
+  on,
+  onClick,
+  children,
+}: {
+  label: string;
+  detail: string;
+  on: boolean;
+  onClick?: () => void;
+  children: React.ReactNode;
+}) {
+  const body = (
+    <>
+      <span className="mac-cc-round" data-on={on}>
+        {children}
+      </span>
+      <span className="min-w-0">
+        <span className="block truncate text-[13px] font-semibold leading-tight">{label}</span>
+        <span className="block truncate text-[12px] leading-tight opacity-70">{detail}</span>
+      </span>
+    </>
+  );
+  return (
+    <Tile className="col-span-2">
+      {onClick ? (
+        <button type="button" className="mac-cc-toggle" aria-pressed={on} onClick={onClick}>
+          {body}
+        </button>
+      ) : (
+        <div className="mac-cc-toggle">{body}</div>
+      )}
+    </Tile>
+  );
+}
+
+export function ControlCentre({ onClose }: { onClose: () => void }) {
   const dark = useDark();
   const online = useOnline();
   const settings = useSettings();
@@ -30,84 +87,79 @@ export function ControlCentre() {
   const player = usePlayer.getState();
   return (
     <motion.div
-      className="mac-panel fixed right-2 z-[1800] w-[320px] max-w-[calc(100vw-16px)] p-2.5"
-      style={{ top: MENU_H + 6 }}
+      className="mac-cc fixed right-2.5 z-[1800]"
+      style={{ top: MENU_H + 8 }}
       data-panel
       role="dialog"
       aria-label="Control Centre"
-      initial={{ opacity: 0, scale: 0.96, y: -8 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.97 }}
-      transition={{ duration: 0.16 }}
+      initial="hidden"
+      animate="shown"
+      exit={{ opacity: 0, scale: 0.97, transition: { duration: 0.12 } }}
+      transition={{ staggerChildren: 0.018 }}
     >
-      <div className="grid grid-cols-2 gap-2.5">
-        <div className="mac-cc-tile flex items-center gap-2.5">
-          <span className="mac-cc-round" data-on={online}>
-            <WifiGlyph size={16} />
-          </span>
-          <span className="min-w-0">
-            <span className="block text-[13px] font-semibold">Wi-Fi</span>
-            <span className="block truncate text-[11.5px] opacity-65">{online ? "Connected" : "Offline"}</span>
-          </span>
-        </div>
-        <button
-          type="button"
-          className="mac-cc-tile flex items-center gap-2.5 text-left"
-          aria-pressed={dark}
-          onClick={() => settings.setTheme(dark ? "light" : "dark")}
-        >
-          <span className="mac-cc-round" data-on={dark}>
-            {dark ? <Moon size={16} weight="fill" /> : <Sun size={16} weight="fill" />}
-          </span>
-          <span className="min-w-0">
-            <span className="block text-[13px] font-semibold">Dark Mode</span>
-            <span className="block text-[11.5px] opacity-65">{dark ? "On" : "Off"}</span>
-          </span>
+      <Toggle label="Wi-Fi" detail={online ? "Connected" : "Offline"} on={online}>
+        <WifiGlyph size={18} />
+      </Toggle>
+      <Tile className="mac-cc-playing col-span-2 row-span-2">
+        <button type="button" className="shrink-0 self-start" aria-label="Open Music" onClick={() => (onClose(), launch("music"))}>
+          <AppIcon id="music" size={40} />
         </button>
-        <button
-          type="button"
-          className="mac-cc-tile col-span-2 flex items-center gap-2.5 text-left"
-          aria-pressed={settings.nightLight}
-          onClick={() => settings.setNightLight(!settings.nightLight)}
-        >
-          <span className="mac-cc-round" data-on={settings.nightLight}>
-            <SunDim size={17} weight="fill" />
-          </span>
-          <span className="min-w-0">
-            <span className="block text-[13px] font-semibold">Night Shift</span>
-            <span className="block text-[11.5px] opacity-65">{settings.nightLight ? "On, warmer colours" : "Off"}</span>
-          </span>
-        </button>
-      </div>
-      <div className="mac-cc-tile mt-2.5">
-        <div className="mb-1.5 text-[12px] font-semibold">Display</div>
-        <div className="flex items-center gap-2">
-          <SunDim size={16} className="shrink-0 opacity-70" />
-          <Slider label="Brightness" value={settings.brightness} min={0.35} max={1} onChange={settings.setBrightness} />
-        </div>
-      </div>
-      <div className="mac-cc-tile mt-2.5">
-        <div className="mb-1.5 text-[12px] font-semibold">Sound</div>
-        <div className="flex items-center gap-2">
-          <SpeakerHigh size={16} className="shrink-0 opacity-70" />
-          <Slider label="Volume" value={settings.volume} onChange={settings.setVolume} />
-        </div>
-      </div>
-      <div className="mac-cc-tile mt-2.5 flex items-center gap-2.5">
-        <button type="button" className="shrink-0" aria-label="Open Music" onClick={() => launch("music")}>
-          <AppIcon id="music" size={38} />
-        </button>
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-[13px] font-semibold">{TRACKS[index].title}</span>
-          <span className="block truncate text-[11.5px] opacity-65">{playing ? "Playing" : "Music"}</span>
+        <span className="mt-auto block min-w-0">
+          <span className="block truncate text-[13px] font-semibold leading-tight">{playing ? TRACKS[index].title : "Not Playing"}</span>
+          <span className="block truncate text-[12px] leading-tight opacity-70">{playing ? "Music" : TRACKS[index].title}</span>
         </span>
-        <button type="button" className="k-icon-btn" aria-label={playing ? "Pause" : "Play"} onClick={player.toggle}>
-          {playing ? <Pause size={18} weight="fill" /> : <Play size={18} weight="fill" />}
+        <span className="mac-cc-transport">
+          <button type="button" aria-label="Previous track" onClick={player.prev}>
+            <Rewind size={18} weight="fill" />
+          </button>
+          <button type="button" aria-label={playing ? "Pause" : "Play"} onClick={player.toggle}>
+            {playing ? <Pause size={24} weight="fill" /> : <Play size={24} weight="fill" />}
+          </button>
+          <button type="button" aria-label="Next track" onClick={player.next}>
+            <FastForward size={18} weight="fill" />
+          </button>
+        </span>
+      </Tile>
+      <Toggle label="Dark Mode" detail={dark ? "On" : "Off"} on={dark} onClick={() => settings.setTheme(dark ? "light" : "dark")}>
+        {dark ? <Moon size={17} weight="fill" /> : <Sun size={17} weight="fill" />}
+      </Toggle>
+      <Toggle label="Night Shift" detail={settings.nightLight ? "On" : "Off"} on={settings.nightLight} onClick={() => settings.setNightLight(!settings.nightLight)}>
+        <SunHorizon size={18} weight="fill" />
+      </Toggle>
+      <Tile className="mac-cc-circle">
+        <button
+          type="button"
+          aria-label="Mission Control"
+          title="Mission Control"
+          onClick={() => {
+            onClose();
+            useWM.getState().setOverview(true);
+          }}
+        >
+          <Browsers size={24} />
         </button>
-        <button type="button" className="k-icon-btn" aria-label="Next track" onClick={player.next}>
-          <SkipForward size={18} weight="fill" />
+      </Tile>
+      <Tile className="mac-cc-circle">
+        <button type="button" aria-label="Lock Screen" title="Lock Screen" onClick={() => useSession.getState().power("lock")}>
+          <LockSimple size={23} weight="fill" />
         </button>
-      </div>
+      </Tile>
+      <Tile className="mac-cc-slider col-span-4">
+        <span className="block text-[13px] font-semibold">Display</span>
+        <span className="flex items-center gap-2.5">
+          <SunDim size={17} weight="fill" className="shrink-0" />
+          <Slider label="Brightness" value={settings.brightness} min={0.35} max={1} onChange={settings.setBrightness} />
+          <Sun size={19} weight="fill" className="shrink-0" />
+        </span>
+      </Tile>
+      <Tile className="mac-cc-slider col-span-4">
+        <span className="block text-[13px] font-semibold">Sound</span>
+        <span className="flex items-center gap-2.5">
+          <SpeakerLow size={17} weight="fill" className="shrink-0" />
+          <Slider label="Volume" value={settings.volume} onChange={settings.setVolume} />
+          <SpeakerHigh size={19} weight="fill" className="shrink-0" />
+        </span>
+      </Tile>
     </motion.div>
   );
 }

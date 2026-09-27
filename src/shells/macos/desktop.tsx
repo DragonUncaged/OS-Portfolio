@@ -129,7 +129,7 @@ function Desktop() {
       <AnimatePresence>
         {panel === "spotlight" && <Spotlight key="spotlight" onClose={close} />}
         {panel === "launchpad" && <Launchpad key="launchpad" onClose={close} />}
-        {panel === "control" && <ControlCentre key="control" />}
+        {panel === "control" && <ControlCentre key="control" onClose={close} />}
         {panel === "notifications" && <NotificationCentre key="nc" onClose={close} />}
       </AnimatePresence>
     </>

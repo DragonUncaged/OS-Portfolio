@@ -749,6 +749,109 @@
   background: color-mix(in srgb, var(--fg) 20%, transparent);
 }
 
+[data-os="macos"] .mac-cc {
+  display: grid;
+  grid-template-columns: repeat(4, 68px);
+  grid-auto-rows: 66px;
+  gap: 12px;
+  color: #fff;
+}
+
+[data-os="macos"] .mac-cc-tile {
+  --g-drop: 0 10px 28px rgb(0 0 0 / 0.22);
+  display: flex;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 32px;
+}
+
+[data-os="macos"] .mac-cc-toggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  height: 100%;
+  padding: 0 10px 0 11px;
+  text-align: left;
+}
+
+[data-os="macos"] .mac-cc-round {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.17);
+  color: #fff;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+[data-os="macos"] .mac-cc-round[data-on="true"] {
+  background: #fff;
+  color: var(--accent);
+}
+
+[data-os="macos"] button.mac-cc-toggle:active .mac-cc-round {
+  transform: scale(0.92);
+}
+
+[data-os="macos"] .mac-cc-playing {
+  flex-direction: column;
+  gap: 3px;
+  padding: 13px 13px 9px;
+  border-radius: 30px;
+}
+
+[data-os="macos"] .mac-cc-transport {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 5px;
+}
+
+[data-os="macos"] .mac-cc-transport button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 30px;
+  border-radius: 10px;
+}
+
+[data-os="macos"] .mac-cc-transport button:hover,
+[data-os="macos"] .mac-cc-circle button:hover {
+  background: rgb(255 255 255 / 0.14);
+}
+
+[data-os="macos"] .mac-cc-circle {
+  border-radius: 50%;
+}
+
+[data-os="macos"] .mac-cc-circle button {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+[data-os="macos"] .mac-cc-slider {
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  padding: 0 17px;
+  border-radius: 26px;
+}
+
+[data-os="macos"] .mac-cc .os-slider::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, #fff var(--fill, 50%), rgb(255 255 255 / 0.24) var(--fill, 50%));
+}
+
+[data-os="macos"] .mac-cc .os-slider::-moz-range-track {
+  background: linear-gradient(to right, #fff var(--fill, 50%), rgb(255 255 255 / 0.24) var(--fill, 50%));
+}
+
 [data-os="macos"] .mac-launchpad-icon {
   border-radius: 22.5%;
   background: linear-gradient(180deg, #d9dde6, #9aa2b3);
@@ -882,40 +985,6 @@
   background: rgb(255 255 255 / 0.16);
   color: #fff;
   font-size: 12.5px;
-}
-
-[data-os="macos"] .mac-panel {
-  border-radius: 18px;
-  background: var(--glass);
-  color: var(--fg);
-  border: 0.5px solid var(--glass-line);
-  box-shadow:
-    0 0 0 0.5px rgb(0 0 0 / 0.14),
-    0 18px 50px rgb(0 0 0 / 0.3);
-  backdrop-filter: blur(40px) saturate(1.8);
-  transform-origin: top right;
-}
-
-[data-os="macos"] .mac-cc-tile {
-  padding: 10px;
-  border-radius: 13px;
-  background: color-mix(in srgb, var(--bg) 62%, transparent);
-  box-shadow: 0 0 0 0.5px var(--line);
-}
-
-[data-os="macos"] .mac-cc-round {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--ctl-2);
-}
-
-[data-os="macos"] .mac-cc-round[data-on="true"] {
-  background: var(--accent);
-  color: var(--accent-fg);
 }
 
 [data-os="macos"] .mac-nc .os-notice,
