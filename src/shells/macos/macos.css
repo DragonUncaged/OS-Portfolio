@@ -274,6 +274,10 @@
   border-radius: 999px;
 }
 
+[data-os="macos"] .mac-clock {
+  padding: 0 10px;
+}
+
 [data-os="macos"] button.mac-menu-title:hover,
 [data-os="macos"] button.mac-status:hover,
 [data-os="macos"] .mac-menu-title[data-open],
@@ -749,6 +753,156 @@
   background: color-mix(in srgb, var(--fg) 20%, transparent);
 }
 
+[data-os="macos"] .mac-widget {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  aspect-ratio: 1;
+  padding: 13px 14px;
+  overflow: hidden;
+  border-radius: 24px;
+  background: var(--widget-bg);
+  color: var(--fg);
+  box-shadow:
+    var(--g-rim),
+    var(--g-edge),
+    0 10px 28px rgb(0 0 0 / 0.2);
+  text-align: left;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+[data-os="macos"] .mac-widget:active {
+  transform: scale(0.97);
+}
+
+[data-os="macos"] .mac-widget-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #ff3b30;
+}
+
+[data-os="macos"] .mac-widget-kicker[data-tone="quiet"] {
+  color: var(--fg-3);
+}
+
+[data-os="macos"] .mac-widget-date {
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1.08;
+}
+
+[data-os="macos"] .mac-widget-month {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-top: auto;
+  text-align: center;
+  font-size: 8.5px;
+  line-height: 11.5px;
+}
+
+[data-os="macos"] .mac-widget-month i {
+  font-style: normal;
+  opacity: 0.72;
+}
+
+[data-os="macos"] .mac-widget-month i[data-today] {
+  border-radius: 50%;
+  background: #ff3b30;
+  color: #fff;
+  font-weight: 700;
+  opacity: 1;
+}
+
+[data-os="macos"] .mac-widget[data-widget="clock"] {
+  padding: 9px;
+  background: #1c1c1e;
+  --face: #fff;
+  --hand: #1c1c1e;
+}
+
+[data-os="macos"][data-theme="dark"] .mac-widget[data-widget="clock"] {
+  --face: #2c2c2e;
+  --hand: #fff;
+}
+
+[data-os="macos"] .mac-clock-face {
+  fill: var(--face);
+}
+
+[data-os="macos"] .mac-clock-tick {
+  stroke: var(--hand);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  opacity: 0.55;
+}
+
+[data-os="macos"] .mac-clock-hand {
+  stroke: var(--hand);
+  stroke-linecap: round;
+}
+
+[data-os="macos"] .mac-clock-second {
+  stroke: #ff9f0a;
+  stroke-linecap: round;
+}
+
+[data-os="macos"] .mac-clock-pin {
+  fill: #ff9f0a;
+}
+
+[data-os="macos"] .mac-widget[data-widget="now"] {
+  grid-column: span 2;
+  aspect-ratio: auto;
+  min-height: 112px;
+}
+
+[data-os="macos"] .mac-widget-title {
+  margin-top: 5px;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+[data-os="macos"] .mac-widget-sub {
+  font-size: 13px;
+  color: var(--fg-2);
+}
+
+[data-os="macos"] .mac-widget-foot {
+  margin-top: auto;
+  padding-top: 6px;
+  font-size: 11px;
+  color: var(--fg-3);
+}
+
+[data-os="macos"] .mac-desk-widgets {
+  position: absolute;
+  top: 48px;
+  left: 18px;
+  display: flex;
+  gap: 14px;
+  transition:
+    opacity 0.45s,
+    filter 0.45s;
+}
+
+[data-os="macos"] .mac-desk-widgets .mac-widget {
+  width: 152px;
+}
+
+[data-os="macos"] .mac-desk-widgets[data-dim] {
+  opacity: 0.5;
+  filter: saturate(0.25);
+}
+
+@media (max-height: 640px), (max-width: 900px) {
+  [data-os="macos"] .mac-desk-widgets {
+    display: none;
+  }
+}
+
 [data-os="macos"] .mac-cc {
   display: grid;
   grid-template-columns: repeat(4, 68px);
@@ -850,6 +1004,45 @@
 
 [data-os="macos"] .mac-cc .os-slider::-moz-range-track {
   background: linear-gradient(to right, #fff var(--fill, 50%), rgb(255 255 255 / 0.24) var(--fill, 50%));
+}
+
+[data-os="macos"] .mac-nc {
+  width: 348px;
+  max-width: calc(100vw - 16px);
+  padding: 2px;
+  scrollbar-width: none;
+}
+
+[data-os="macos"] .mac-nc .os-notice,
+[data-os="macos"] .os-banner {
+  --g-drop: 0 10px 30px rgb(0 0 0 / 0.22);
+  padding: 12px;
+  border-radius: 22px;
+}
+
+[data-os="macos"] .mac-nc .os-notice-empty {
+  color: #fff;
+  text-shadow: 0 1px 4px rgb(0 0 0 / 0.45);
+  opacity: 0.9;
+}
+
+[data-os="macos"] .mac-nc-widgets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+[data-os="macos"] .mac-nc-clear {
+  --g-drop: 0 4px 12px rgb(0 0 0 / 0.18);
+  padding: 4px 13px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+[data-os="macos"] .mac-nc-clear:hover {
+  filter: brightness(1.3);
 }
 
 [data-os="macos"] .mac-launchpad-icon {
@@ -985,38 +1178,4 @@
   background: rgb(255 255 255 / 0.16);
   color: #fff;
   font-size: 12.5px;
-}
-
-[data-os="macos"] .mac-nc .os-notice,
-[data-os="macos"] .mac-widget,
-[data-os="macos"] .os-banner {
-  border-radius: 16px;
-  background: var(--menu-bg);
-  border: 0.5px solid var(--glass-line);
-  box-shadow:
-    0 0 0 0.5px rgb(0 0 0 / 0.1),
-    0 8px 26px rgb(0 0 0 / 0.2);
-  backdrop-filter: blur(36px) saturate(1.8);
-}
-
-[data-os="macos"] .mac-widget {
-  padding: 12px;
-  color: var(--fg);
-  aspect-ratio: 1;
-}
-
-[data-os="macos"] .mac-nc .os-notice-empty {
-  color: #fff;
-  text-shadow: 0 1px 3px rgb(0 0 0 / 0.4);
-}
-
-[data-os="macos"] .mac-nc-clear {
-  padding: 2px 9px;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.25);
-  font-size: 11.5px;
-}
-
-[data-os="macos"] .mac-nc-clear:hover {
-  background: rgb(255 255 255 / 0.4);
 }
