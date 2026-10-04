@@ -7,14 +7,14 @@ export interface Shortcut {
 
 export const SHORTCUTS: Record<Platform, Shortcut[]> = {
   macos: [
-    { keys: "⌘K  or  ⌃Space", does: "Open Spotlight search" },
+    { keys: "⌘K  or  ⌃Space", does: "Open Spotlight: search, or ask Siri" },
     { keys: "⌥W", does: "Close the front window" },
     { keys: "⌥M", does: "Minimise the front window" },
     { keys: "⌥↩", does: "Zoom the front window" },
     { keys: "⌥`", does: "Cycle through windows" },
     { keys: "⌃↑  or  F3", does: "Mission Control" },
-    { keys: "F4", does: "Launchpad" },
-    { keys: "esc", does: "Dismiss search, Launchpad or Mission Control" },
+    { keys: "F4", does: "Browse apps in Spotlight" },
+    { keys: "esc", does: "Dismiss Spotlight, Siri or Mission Control" },
     { keys: "Double-click a title bar", does: "Zoom the window" },
     { keys: "Right-click", does: "Context menus on the desktop, the Dock and files" },
   ],

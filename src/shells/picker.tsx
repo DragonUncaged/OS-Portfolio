@@ -15,7 +15,7 @@ import { useSettings } from "@/stores/settings";
 import type { Family } from "@/types";
 
 const OPTIONS: { family: Family; glyph: Icon; blurb: string; tint: string }[] = [
-  { family: "macos", glyph: Command, blurb: "Menu bar, Dock, Spotlight and Launchpad.", tint: "#b98cff" },
+  { family: "macos", glyph: Command, blurb: "Menu bar, Dock, Spotlight and Liquid Glass.", tint: "#b98cff" },
   { family: "windows", glyph: SquaresFour, blurb: "Taskbar, Start menu, snapping and live tiles.", tint: "#5aa9ff" },
   { family: "linux", glyph: TerminalWindow, blurb: "Ubuntu-style top bar, dock and Activities.", tint: "#ff8a5c" },
 ];

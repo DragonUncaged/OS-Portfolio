@@ -1,9 +1,8 @@
 "use client";
 
 import "./macos.css";
-import { FileText, Folder } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AppIcon } from "@/components/app-icon";
 import { showContextMenu } from "@/components/menu";
 import { Banner } from "@/components/notifications";
@@ -14,20 +13,50 @@ import { useWelcome } from "@/hooks/use-welcome";
 import { isTyping, useWindowEvent } from "@/hooks/use-window-event";
 import { launch } from "@/lib/launch";
 import { useSession } from "@/stores/session";
+import { DEFAULT_PREFS, useSettings } from "@/stores/settings";
 import { useWM } from "@/stores/window-manager";
-import { MENU_H, type Panel } from "./constants";
+import { askSiri } from "./answers";
+import { DESKTOP_WALLPAPER, DOCK_H, MENU_H, type Panel } from "./constants";
 import { ControlCentre } from "./control-centre";
 import { Dock } from "./dock";
-import { Launchpad } from "./launchpad";
+import { DocumentIcon, FolderIcon } from "./glyphs";
 import { Boot, Login } from "./login";
 import { MenuBar } from "./menu-bar";
 import { NotificationCentre } from "./notification-centre";
+import { Siri, type SiriTurn } from "./siri";
 import { Spotlight } from "./spotlight";
+import { DesktopWidgets } from "./widgets";
+
+const SEEDED_KEY = "os-portfolio:macos-desktop";
+
+function useDesktopWallpaper() {
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(SEEDED_KEY)) return;
+      localStorage.setItem(SEEDED_KEY, "1");
+    } catch {
+      return;
+    }
+    const settings = useSettings.getState();
+    if (settings.prefs.macos.wallpaper === DEFAULT_PREFS.macos.wallpaper) settings.setWallpaper("macos", DESKTOP_WALLPAPER);
+  }, []);
+}
+
+function useGlassAmount() {
+  const glass = useSettings((s) => s.glass);
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty("--mac-glass", String(glass));
+    return () => {
+      root.style.removeProperty("--mac-glass");
+    };
+  }, [glass]);
+}
 
 const DESKTOP_ITEMS = [
-  { id: "projects", label: "Projects", icon: <Folder size={54} weight="fill" className="text-[#5ab0ff]" />, open: () => launch("files", { path: "Projects" }) },
+  { id: "projects", label: "Projects", icon: <FolderIcon size={58} />, open: () => launch("files", { path: "Projects" }) },
   { id: "resume", label: "Resume", icon: <AppIcon id="resume" size={50} platform="macos" />, open: () => launch("resume") },
-  { id: "about", label: "about.md", icon: <FileText size={52} weight="duotone" className="text-white" />, open: () => launch("viewer", { path: "about.md" }) },
+  { id: "about", label: "about.md", icon: <DocumentIcon size={56} />, open: () => launch("viewer", { path: "about.md" }) },
 ];
 
 function DesktopIcons() {
@@ -35,7 +64,6 @@ function DesktopIcons() {
   return (
     <div
       className="absolute inset-0 z-[1]"
-      style={{ paddingTop: MENU_H + 14 }}
       onPointerDown={(e) => e.target === e.currentTarget && setSelected(null)}
       onContextMenu={(e) =>
         showContextMenu(e, [
@@ -49,7 +77,8 @@ function DesktopIcons() {
         ])
       }
     >
-      <div className="pointer-events-none absolute right-3 flex flex-col items-end gap-3" style={{ top: MENU_H + 14 }}>
+      <DesktopWidgets />
+      <div className="pointer-events-none absolute right-3 flex flex-col items-end gap-2.5" style={{ top: MENU_H + 12 }}>
         {DESKTOP_ITEMS.map((item) => (
           <button
             key={item.id}
@@ -60,7 +89,7 @@ function DesktopIcons() {
             onDoubleClick={item.open}
             onKeyDown={(e) => e.key === "Enter" && item.open()}
           >
-            <span className="grid h-[58px] place-items-center drop-shadow-[0_2px_4px_rgb(0_0_0/0.35)]">{item.icon}</span>
+            <span className="mac-desktop-art">{item.icon}</span>
             <span className="mac-desktop-label">{item.label}</span>
           </button>
         ))}
@@ -70,9 +99,17 @@ function DesktopIcons() {
 }
 
 function Desktop() {
-  const { panel, toggle, close } = usePanel<Panel>();
+  const { panel, open, toggle, close } = usePanel<Panel>();
+  const [siri, setSiri] = useState<SiriTurn | null>(null);
   const overview = useWM((s) => s.overview);
-  useWelcome("Press ⌘K to search everything, or open Launchpad from the Dock. Restart from the ⌘ menu to try another system.");
+  useWelcome("Press ⌘K to search this Mac or ask Siri, or open Apps from the Dock. Restart from the ⌘ menu to try another system.");
+
+  const ask = (question: string) => {
+    // askSiri has side effects, keep it out of the state updater
+    const reply = askSiri(question);
+    setSiri((prev) => ({ id: (prev?.id ?? 0) + 1, question, reply }));
+    open("siri");
+  };
 
   useWindowEvent("keydown", (e) => {
     if (useSession.getState().phase !== "desktop") return;
@@ -82,7 +119,7 @@ function Desktop() {
       toggle("spotlight");
     } else if (e.key === "F4") {
       e.preventDefault();
-      toggle("launchpad");
+      toggle("apps");
     } else if (e.key === "F3" || (e.key === "ArrowUp" && e.ctrlKey && !isTyping(e))) {
       e.preventDefault();
       close();
@@ -114,21 +151,25 @@ function Desktop() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
             onClick={() => useWM.getState().setOverview(false)}
           >
             <span className="mac-mission-bar absolute inset-x-0 flex justify-center" style={{ top: MENU_H }}>
-              <span className="mac-mission-desk">Desktop</span>
+              <span className="mac-mission-desk mac-glass" data-glass="smoke">
+                Desktop
+              </span>
             </span>
           </motion.button>
         )}
       </AnimatePresence>
-      <WindowLayer insets={{ top: MENU_H, right: 0, bottom: 82, left: 0 }} overviewInsets={{ top: 96, right: 56, bottom: 120, left: 56 }} />
+      <WindowLayer insets={{ top: MENU_H, right: 0, bottom: DOCK_H, left: 0 }} overviewInsets={{ top: 104, right: 56, bottom: 124, left: 56 }} />
       <MenuBar panel={panel} toggle={toggle} />
       <Dock toggle={toggle} />
-      <Banner className="fixed right-2.5 w-[344px] max-w-[calc(100vw-20px)]" style={{ top: MENU_H + 8 }} from={{ x: 60 }} />
+      <Banner className="mac-banner fixed right-2.5 w-[352px] max-w-[calc(100vw-20px)]" style={{ top: MENU_H + 8 }} from={{ x: 60 }} />
       <AnimatePresence>
-        {panel === "spotlight" && <Spotlight key="spotlight" onClose={close} />}
-        {panel === "launchpad" && <Launchpad key="launchpad" onClose={close} />}
+        {panel === "spotlight" && <Spotlight key="spotlight" initial="all" onClose={close} onAsk={ask} />}
+        {panel === "apps" && <Spotlight key="apps" initial="apps" onClose={close} onAsk={ask} />}
+        {panel === "siri" && siri && <Siri key={`siri${siri.id}`} first={siri} onClose={close} />}
         {panel === "control" && <ControlCentre key="control" onClose={close} />}
         {panel === "notifications" && <NotificationCentre key="nc" onClose={close} />}
       </AnimatePresence>
@@ -138,9 +179,11 @@ function Desktop() {
 
 export default function MacDesktop() {
   const phase = useSession((s) => s.phase);
+  useDesktopWallpaper();
+  useGlassAmount();
   return (
     <ShellRoot platform="macos">
-      <ShellWallpaper />
+      <ShellWallpaper className="mac-wallpaper" />
       {phase !== "boot" && (
         <div className="absolute inset-0" inert={phase !== "desktop"}>
           <Desktop />
