@@ -800,6 +800,18 @@
   background: color-mix(in srgb, var(--fg) 20%, transparent);
 }
 
+@media (max-width: 960px) {
+  [data-os="macos"] .mac-dock {
+    zoom: 0.84;
+  }
+}
+
+@media (max-width: 820px) {
+  [data-os="macos"] .mac-dock {
+    zoom: 0.74;
+  }
+}
+
 [data-os="macos"] .mac-desktop-icon {
   display: flex;
   flex-direction: column;
