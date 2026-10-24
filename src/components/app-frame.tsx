@@ -214,14 +214,14 @@ export function AppFrame(props: FrameProps) {
                 <Actions actions={actions} size={17} cls="mac-tool" />
               </div>
             ) : null}
-            {search && <SearchField search={search} className="mac-search w-[180px] max-w-[40%]" />}
+            {search && <SearchField search={search} className="w-[180px] max-w-[40%]" />}
           </header>
           {sections && (
             <Strip
               sections={sections}
               section={section}
               onSection={onSection}
-              className="mac-strip gap-1 px-3 pb-2 @min-[620px]:hidden"
+              className="gap-1 px-3 pb-2 @min-[620px]:hidden"
               itemClass="mac-seg"
             />
           )}

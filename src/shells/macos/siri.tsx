@@ -102,6 +102,7 @@ export function Siri({ first, onClose }: { first: SiriTurn; onClose: () => void 
         }}
       >
         <input
+          name="question"
           autoFocus
           value={draft}
           onChange={(e) => setDraft(e.target.value)}

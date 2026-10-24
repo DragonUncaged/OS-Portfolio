@@ -65,6 +65,7 @@ export function Login() {
           <div className="relative mt-3">
             <input
               type="password"
+              name="password"
               autoFocus
               autoComplete="off"
               placeholder="Enter Password"

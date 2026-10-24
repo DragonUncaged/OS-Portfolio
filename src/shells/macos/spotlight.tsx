@@ -283,6 +283,7 @@ export function Spotlight({
           <span className="relative min-w-0 flex-1">
             <input
               ref={input}
+              name="spotlight"
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}

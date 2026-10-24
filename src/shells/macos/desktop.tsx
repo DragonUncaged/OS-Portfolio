@@ -165,7 +165,7 @@ function Desktop() {
       <WindowLayer insets={{ top: MENU_H, right: 0, bottom: DOCK_H, left: 0 }} overviewInsets={{ top: 104, right: 56, bottom: 124, left: 56 }} />
       <MenuBar panel={panel} toggle={toggle} />
       <Dock toggle={toggle} />
-      <Banner className="mac-banner fixed right-2.5 w-[352px] max-w-[calc(100vw-20px)]" style={{ top: MENU_H + 8 }} from={{ x: 60 }} />
+      <Banner className="fixed right-2.5 w-[352px] max-w-[calc(100vw-20px)]" style={{ top: MENU_H + 8 }} from={{ x: 60 }} />
       <AnimatePresence>
         {panel === "spotlight" && <Spotlight key="spotlight" initial="all" onClose={close} onAsk={ask} />}
         {panel === "apps" && <Spotlight key="apps" initial="apps" onClose={close} onAsk={ask} />}
