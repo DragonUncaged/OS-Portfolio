@@ -55,6 +55,7 @@ function SearchField({ search, className = "" }: { search: FrameSearch; classNam
       <MagnifyingGlass size={14} className="pointer-events-none absolute left-2.5 text-fg3" />
       <input
         type="search"
+        name="search"
         value={search.value}
         onChange={(e) => search.onChange(e.target.value)}
         placeholder={search.placeholder ?? "Search"}

@@ -158,6 +158,7 @@ export default function Terminal() {
             </span>
             <input
               ref={inputRef}
+              name="command"
               value={input}
               onChange={(e) => {
                 setInput(e.target.value);

@@ -326,6 +326,7 @@ function Drawer({ onClose }: { onClose: () => void }) {
       <label className="px-field mx-4 flex h-14 shrink-0 items-center gap-3 px-5">
         <MagnifyingGlass size={21} className="shrink-0 text-fg2" />
         <input
+          name="apps"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search apps"
@@ -374,6 +375,7 @@ function Search({ onClose }: { onClose: () => void }) {
       <label className="px-field mx-4 flex h-14 shrink-0 items-center gap-3 px-5">
         <MagnifyingGlass size={21} className="shrink-0 text-accent" />
         <input
+          name="search"
           autoFocus
           value={l.query}
           onChange={(e) => l.setQuery(e.target.value)}

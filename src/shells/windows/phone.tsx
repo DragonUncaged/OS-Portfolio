@@ -249,6 +249,7 @@ function Search({ onClose }: { onClose: () => void }) {
         <div className="text-[13px] font-semibold uppercase tracking-[0.04em]">{profile.name}</div>
         <h1 className="-ml-0.5 text-[44px] font-light lowercase leading-[1.15]">search</h1>
         <input
+          name="search"
           autoFocus
           value={l.query}
           onChange={(e) => l.setQuery(e.target.value)}

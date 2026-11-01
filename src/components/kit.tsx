@@ -93,6 +93,7 @@ export function Slider({
   return (
     <input
       type="range"
+      name={label}
       className="os-slider"
       aria-label={label}
       min={min}

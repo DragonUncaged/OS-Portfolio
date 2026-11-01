@@ -308,6 +308,7 @@ function Search({ onClose }: { onClose: () => void }) {
         <label className="ios-search-field flex h-10 min-w-0 flex-1 items-center gap-2 px-3">
           <MagnifyingGlass size={17} className="shrink-0 opacity-70" />
           <input
+            name="search"
             autoFocus
             value={l.query}
             onChange={(e) => l.setQuery(e.target.value)}

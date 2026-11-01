@@ -294,6 +294,7 @@ function StartMenu({ onClose }: { onClose: () => void }) {
       <label className="win-start-search m-6 mb-2 flex h-9 shrink-0 items-center gap-2.5 px-3.5">
         <MagnifyingGlass size={16} className="shrink-0 text-accent" />
         <input
+          name="search"
           autoFocus
           value={l.query}
           onChange={(e) => l.setQuery(e.target.value)}

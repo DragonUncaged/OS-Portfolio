@@ -139,6 +139,7 @@ function Login() {
             <div className="relative">
               <input
                 type="password"
+                name="password"
                 autoFocus
                 autoComplete="off"
                 placeholder="Password"
@@ -288,6 +289,7 @@ function OverviewSearch({ onDone, children }: { onDone: () => void; children?: R
       <label className="ub-search pointer-events-auto relative z-[2] mx-auto mt-5 flex h-10 w-[min(420px,calc(100%-32px))] shrink-0 items-center gap-2.5 px-4">
         <MagnifyingGlass size={16} className="shrink-0 opacity-70" />
         <input
+          name="search"
           autoFocus
           value={l.query}
           onChange={(e) => l.setQuery(e.target.value)}

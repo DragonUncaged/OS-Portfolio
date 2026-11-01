@@ -245,6 +245,7 @@ export default function Browser() {
         {isUrl ? <LockSimple size={13} weight="fill" /> : <MagnifyingGlass size={13} />}
       </span>
       <input
+        name="address"
         className="k-input browser-address !pl-8 text-center focus:text-left"
         value={address}
         onChange={(e) => setDraft(e.target.value)}

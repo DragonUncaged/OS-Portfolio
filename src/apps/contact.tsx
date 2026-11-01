@@ -85,6 +85,7 @@ function Compose() {
       <label className="k-row !py-1.5">
         <span className="w-[62px] shrink-0 text-[13px] text-fg2">Subject</span>
         <input
+          name="subject"
           className="k-input !border-transparent !bg-transparent !px-0"
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
@@ -94,6 +95,7 @@ function Compose() {
       <label className="block border-t border-line">
         <span className="sr-only">Message</span>
         <textarea
+          name="message"
           className="k-input !min-h-[150px] resize-none !rounded-none !border-transparent !bg-transparent !px-3.5 !py-3 leading-relaxed"
           value={body}
           onChange={(e) => setBody(e.target.value)}

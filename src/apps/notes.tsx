@@ -125,6 +125,7 @@ export default function Notes() {
           {current ? (
             <textarea
               key={current.id}
+              name="note"
               className="os-note-editor selectable h-full w-full resize-none bg-transparent p-4 text-[14.5px] leading-relaxed outline-none @min-[600px]:p-5"
               value={current.body}
               onChange={(e) => edit(current.id, e.target.value)}
