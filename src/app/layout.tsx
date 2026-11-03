@@ -3,13 +3,11 @@ import "@fontsource-variable/jetbrains-mono";
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { profile, site } from "@/data/portfolio";
-
-const origin = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  : "http://localhost:3000";
+import { siteUrl } from "@/lib/site-url";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(origin),
+  metadataBase: new URL(siteUrl),
+  alternates: { canonical: "/" },
   title: site.title,
   description: site.description,
   applicationName: site.shortName,
