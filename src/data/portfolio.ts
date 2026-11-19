@@ -49,7 +49,6 @@ export const profile = {
   role: "Full Stack Developer",
   tagline: "I build things for the web",
   email: "emailforreal.ankit@gmail.com",
-  location: "Gurugram, Haryana, India",
   about: [
     "Hi! I'm Ankit, a full stack developer who enjoys turning ideas into fast, polished web applications. I work across the stack — from designing REST APIs and data models to crafting pixel-perfect, accessible UIs.",
     "Currently I'm a Full Stack Developer at Even Healthcare, building scalable applications with Next.js and Go. Before that I completed my B.Tech in Computer Science at Chandigarh University.",

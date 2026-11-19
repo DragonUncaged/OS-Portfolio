@@ -166,12 +166,15 @@ export function askSiri(question: string): SiriReply {
   }
 
   if (has("where", "location", "based", "city", "country")) {
-    return { text: [`${first} is based in ${profile.location}.`], actions: [open("Open About Me", () => launch("about"))] };
+    return {
+      text: [`${first} doesn't list a location on this site. The best way to reach ${first} is through Contact.`],
+      actions: [open("Open Contact", () => launch("contact"))],
+    };
   }
 
   if (has("who", "about", first.toLowerCase(), "yourself", "owner", "this site", "this mac", "introduce")) {
     return {
-      text: [profile.about[0], `${first} is a ${profile.role} based in ${profile.location}.`],
+      text: [profile.about[0], `${first} is a ${profile.role}.`],
       actions: [open("Open About Me", () => launch("about")), open("See projects", () => launch("projects"))],
     };
   }

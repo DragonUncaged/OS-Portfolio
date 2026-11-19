@@ -1,6 +1,6 @@
 "use client";
 
-import { Briefcase, GraduationCap, Handshake, MapPin, RocketLaunch, Timer } from "@phosphor-icons/react";
+import { Briefcase, GraduationCap, Handshake, RocketLaunch, Timer } from "@phosphor-icons/react";
 import { AppFrame } from "@/components/app-frame";
 import { Avatar, Fact, Heading, Page } from "@/components/kit";
 import { currentJob, education, profile, projects } from "@/data/portfolio";
@@ -51,9 +51,6 @@ export default function About() {
           </Fact>
           <Fact icon={Timer} label="Since">
             {currentJob.period.split(" — ")[0]} · {span(currentJob.start, null, now)}
-          </Fact>
-          <Fact icon={MapPin} label="Based in">
-            {profile.location}
           </Fact>
           <Fact icon={GraduationCap} label="Studied">
             {school.degree}, {school.institution}

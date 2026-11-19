@@ -7,9 +7,7 @@ export default function Page() {
       <Root />
       <main id="plain" className="sr-only">
         <h1>{profile.name}</h1>
-        <p>
-          {profile.role} · {profile.location}
-        </p>
+        <p>{profile.role}</p>
         {profile.about.map((p) => (
           <p key={p}>{p}</p>
         ))}

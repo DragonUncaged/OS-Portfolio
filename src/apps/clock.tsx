@@ -67,7 +67,6 @@ function World() {
         <span className="min-w-0 flex-1">
           <span className="block text-[14px] font-semibold">{profile.firstName}&apos;s time</span>
           <span className="block truncate text-[12.5px] text-fg2">
-            {profile.location} ·{" "}
             {diff === 0 ? "same as you" : `${Math.abs(diff)}h ${diff > 0 ? "ahead of" : "behind"} you`}
           </span>
         </span>

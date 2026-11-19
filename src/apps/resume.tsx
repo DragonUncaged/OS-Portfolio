@@ -12,9 +12,7 @@ function ResumeDoc() {
     <article className="resume-doc selectable">
       <header>
         <h1>{profile.name}</h1>
-        <p className="resume-role">
-          {profile.role} · {profile.location}
-        </p>
+        <p className="resume-role">{profile.role}</p>
         <p className="resume-links">
           {links.map((l) => (
             <a key={l.id} href={l.href} target={l.id === "email" ? undefined : "_blank"} rel="noreferrer">
