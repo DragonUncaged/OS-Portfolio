@@ -30,10 +30,12 @@ export default function Experience() {
                 <p className="selectable text-[14px] font-medium text-accent">{job.company}</p>
                 <p className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[12.5px] text-fg2">
                   <span>{job.period}</span>
-                  <span className="inline-flex items-center gap-1">
-                    <MapPin size={12} />
-                    {job.location}
-                  </span>
+                  {job.location && (
+                    <span className="inline-flex items-center gap-1">
+                      <MapPin size={12} />
+                      {job.location}
+                    </span>
+                  )}
                   {job.end === null && <span className="k-tag !bg-accent-soft !text-accent">Current</span>}
                 </p>
                 <ul className="selectable mt-2.5 space-y-1.5 text-[13.5px] leading-relaxed">

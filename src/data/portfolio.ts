@@ -22,7 +22,7 @@ export interface Job {
   period: string;
   start: string;
   end: string | null;
-  location: string;
+  location?: string;
   highlights: string[];
 }
 
@@ -171,7 +171,6 @@ export const experience: Job[] = [
     period: "Feb 2025 — Present",
     start: "2025-02",
     end: null,
-    location: "Gurugram, Haryana",
     highlights: [
       "Building scalable full-stack applications with Next.js and Go.",
       "Designing backend services and REST APIs.",

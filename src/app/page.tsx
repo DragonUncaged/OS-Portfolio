@@ -25,7 +25,7 @@ export default function Page() {
         <ul>
           {experience.map((j) => (
             <li key={j.company}>
-              {j.role}, {j.company} ({j.period}, {j.location}). {j.highlights.join(" ")}
+              {j.role}, {j.company} ({[j.period, j.location].filter(Boolean).join(", ")}). {j.highlights.join(" ")}
             </li>
           ))}
         </ul>
