@@ -253,7 +253,7 @@ const COMMANDS: Command[] = [
       out(
         ...experience.flatMap((j) => [
           [s(j.role, "bold"), s(` @ ${j.company}`, "accent")] as Line,
-          line(`  ${j.period} · ${j.location}`, "dim"),
+          line(`  ${[j.period, j.location].filter(Boolean).join(" · ")}`, "dim"),
           ...j.highlights.map((h) => line(`  • ${h}`)),
           blank,
         ]),

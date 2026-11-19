@@ -54,7 +54,7 @@ export const resumeMd = [
   "## Experience",
   ...experience.flatMap((j) => [
     `### ${j.role}, ${j.company}`,
-    `${j.period} · ${j.location}`,
+    [j.period, j.location].filter(Boolean).join(" · "),
     ...j.highlights.map((h) => `- ${h}`),
     "",
   ]),
@@ -130,7 +130,7 @@ export const HOME: VDir = dir("~", [
       file(
         `${slug(j.company)}.md`,
         "markdown",
-        [`# ${j.company}`, `${j.role} · ${j.period} · ${j.location}`, "", ...j.highlights.map((h) => `- ${h}`)].join(
+        [`# ${j.company}`, [j.role, j.period, j.location].filter(Boolean).join(" · "), "", ...j.highlights.map((h) => `- ${h}`)].join(
           "\n",
         ),
       ),

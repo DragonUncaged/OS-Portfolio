@@ -39,7 +39,7 @@ function ResumeDoc() {
               </h3>
               <span>{j.period}</span>
             </div>
-            <p className="resume-meta">{j.location}</p>
+            {j.location && <p className="resume-meta">{j.location}</p>}
             <ul>
               {j.highlights.map((h) => (
                 <li key={h}>{h}</li>
