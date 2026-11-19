@@ -7,7 +7,6 @@ import {
   Copy,
   EnvelopeSimple,
   LinkSimple,
-  MapPin,
   PaperPlaneTilt,
   PencilSimple,
 } from "@phosphor-icons/react";
@@ -123,10 +122,6 @@ export default function Contact() {
           <div className="min-w-0">
             <div className="selectable text-[17px] font-semibold">{profile.name}</div>
             <div className="flex flex-wrap items-center gap-x-3 text-[12.5px] text-fg2">
-              <span className="inline-flex items-center gap-1">
-                <MapPin size={12} />
-                {profile.location}
-              </span>
               <span className="inline-flex items-center gap-1">
                 <Clock size={12} />
                 Replies {profile.responseTime}

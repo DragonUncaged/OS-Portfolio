@@ -216,7 +216,6 @@ function System() {
     ["Currently", `${currentJob.role} at ${currentJob.company}`],
     ["Processor", skills.slice(0, 4).map((s) => s.name.split(" ")[0]).join(" · ")],
     ["Storage", `${projects.length} live projects`],
-    ["Location", profile.location],
   ];
   return (
     <>

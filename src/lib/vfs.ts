@@ -37,7 +37,7 @@ const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(
 
 const aboutMd = [
   `# ${profile.name}`,
-  `${profile.role} · ${profile.location}`,
+  profile.role,
   "",
   `> ${profile.tagline}`,
   "",
@@ -48,7 +48,7 @@ const aboutMd = [
 
 export const resumeMd = [
   `# ${profile.name}`,
-  `${profile.role} · ${profile.location}`,
+  profile.role,
   links.map((l) => l.handle).join(" · "),
   "",
   "## Experience",

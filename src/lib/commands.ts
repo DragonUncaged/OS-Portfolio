@@ -198,7 +198,6 @@ const COMMANDS: Command[] = [
     run: () =>
       out(
         [s(profile.name, "bold"), s(`, ${profile.role}`)],
-        line(profile.location, "dim"),
         blank,
         ...profile.about.flatMap((p) => [line(p), blank]),
       ),
@@ -395,7 +394,6 @@ const COMMANDS: Command[] = [
         [s("Shell    ", "accent"), s(shellName(ctx.platform))],
         [s("Stack    ", "accent"), s(skills.slice(0, 5).map((x) => x.name.split(" ")[0]).join(", "))],
         [s("Shipped  ", "accent"), s(`${projects.length} live projects`)],
-        [s("Location ", "accent"), s(profile.location)],
       ];
       const logo = LOGO[FAMILY[ctx.platform]];
       const rows = Math.max(logo.length, info.length);
